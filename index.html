@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V3SOFT CartoLinka v1.00 (Native Canvas & Fixed-Step Engine)</title>
+    <title>V3SOFT CartoLinka v1.01 (Native Canvas & Fixed-Step Engine)</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
@@ -106,6 +106,7 @@
         #cg-hud-scale { width: 110px; }
         #cg-hud-opacity { width: 110px; }
         #cg-font-size { width: 72px; }
+        #cg-keep-buffer { width: 88px; }
         input, select, button {
             padding: 6px 9px;
             border-radius: 5px;
@@ -1858,7 +1859,7 @@
         <div class="controls-row">
             <div class="app-version-badge">
                 <span class="app-version-title">V3SOFT CartoLinka</span>
-                <span class="app-version-num">v1.00</span>
+                <span class="app-version-num">v1.01</span>
             </div>
             <button id="btn-info" type="button" title="Informácie o aplikácii">ℹ️ INFO</button>
             <button id="btn-help" type="button" title="Zobraziť podrobný návod a vysvetlenie všetkých nastavení aplikácie">❓ HELP</button>
@@ -1891,10 +1892,9 @@
                     <option value="satellite">Google Satellite (Čistá)</option>
                     <option value="mapy_outdoor">Mapy.com Turistická</option>
                     <option value="mapy_aerial">Mapy.com Letecká</option>
-                    <option value="opentopomap">OpenTopoMap</option>
+                    <option value="opentopomap">OpenTopoMap (Turistická)</option>
                     <option value="esri_topo">Esri World Topographic Map</option>
                     <option value="cyclosm">CyclOSM (Cyklistická)</option>
-                    <option value="topo">OpenTopoMap (Turistická)</option>
                 </select>
             </div>
             <div class="control-group group-disabled" id="mapy-key-group">
@@ -2185,6 +2185,10 @@
                         </div>
                     </div>
                 </div>
+                <div class="control-group" id="cg-keep-buffer">
+                    <label>Buffer (<span id="lbl-keep-buffer">18</span>)</label>
+                    <input type="range" id="keep-buffer" min="4" max="18" step="1" value="18" style="width: 70px;" title="Veľkosť prednačítania mapových dlaždíc v okolí pohľadu (4 až 18, predvolené 18)">
+                </div>
             </div>
             <div class="controls-row-right">
                 <button id="btn-style" type="button" title="Prepínať vzhľad ovládacieho panela (NORMAL / RETRO)">Štýl</button>
@@ -2439,7 +2443,7 @@
 <div id="help-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="help-modal-title">
     <div class="help-modal-box">
         <div class="help-modal-header">
-            <span class="help-modal-title" id="help-modal-title">❓ Návod na používanie – V3SOFT CartoLinka v1.00</span>
+            <span class="help-modal-title" id="help-modal-title">❓ Návod na používanie – V3SOFT CartoLinka v1.01</span>
             <button type="button" id="btn-close-help" title="Zavrieť nápovedu (Esc)">✕ Zavrieť</button>
         </div>
         <div class="help-modal-body">
@@ -2585,11 +2589,12 @@
             <div class="help-section">
                 <h3>6. Zobrazené údaje, vzhľad HUD okien a spustenie</h3>
                 <div class="help-item">
-                    <span class="help-item-title">Zobrazené údaje (KM, M, KM/H, W, TEP, ČAS, °C):</span>
-                    Sedem samostatných prepínačov, ktorými si presne zvolíte, ktoré telemetrické veličiny chcete v okne štatistiky vidieť:
+                    <span class="help-item-title">Zobrazené údaje (KM, M, KM/H, TEMPO, W, TEP, ČAS, °C):</span>
+                    Osem samostatných prepínačov, ktorými si presne zvolíte, ktoré telemetrické veličiny chcete v okne štatistiky vidieť:
                     <br>• <strong>KM:</strong> Prejdená vzdialenosť v kilometroch.
-                    <br>• <strong>M:</strong> Nastúpané výškové metre.
+                    <br>• <strong>M:</strong> Nastúpané výškové metre (s prahom citlivosti / hysteréziou 1,5 m pre elimináciu barometrického a GPS šumu, presne podľa logiky cyklopočítačov).
                     <br>• <strong>KM/H:</strong> Vyhladená okamžitá rýchlosť v km/h.
+                    <br>• <strong>TEMPO:</strong> Vyhladené tempo pohybu v min/km (formát MM:SS).
                     <br>• <strong>W:</strong> Vyhladený výkon vo wattoch (zobrazí sa, ak súbor obsahuje dáta z wattmetra).
                     <br>• <strong>TEP:</strong> Vyhladená srdcová frekvencia v bpm (ak súbor obsahuje záznam tepu).
                     <br>• <strong>ČAS:</strong> Reálny denný čas aktivity vo formáte HH:MM.
@@ -2610,6 +2615,10 @@
                 <div class="help-item">
                     <span class="help-item-title">Písmo (20px – 80px) & Farba písma:</span>
                     Nastavuje veľkosť hlavných číselných hodnôt a farbu písma, ikon a krivky výškového profilu.
+                </div>
+                <div class="help-item">
+                    <span class="help-item-title">Buffer (4 – 18):</span>
+                    Nastavuje veľkosť zásobníka prednačítaných mapových dlaždíc (<code>EXTREME_KEEP_BUFFER</code>) mimo viditeľného okna mapy (predvolená hodnota <em>18</em>). Vyššia hodnota udržiava v pamäti omnoho širšie okolie trasy, čím zabraňuje dodatočnému načítavaniu (blikanie sivých štvorcov) pri rýchlom lete kamery, zatiaľ čo nižšia hodnota (napr. <em>4 – 8</em>) šetrí operačnú pamäť RAM a znižuje počet požiadaviek na mapový server.
                 </div>
                 <div class="help-item">
                     <span class="help-item-title">▶ Spustiť:</span>
@@ -2635,7 +2644,7 @@
             <div class="info-line"><strong>Koncept a dizajn:</strong> Vlado Troják</div>
             <div class="info-line"><strong>Kód a vývoj:</strong> AI Gemini Argon</div>
             <div class="info-line"><strong>Rok výroby:</strong> 11/2026</div>
-            <div class="info-line"><strong>Verzia:</strong> v1.00</div>
+            <div class="info-line"><strong>Verzia:</strong> v1.01</div>
             <div class="info-freeware">Táto aplikácia je freeware.</div>
             <div class="info-yt-label">Tu môžeš sledovať moje videá:</div>
             <a href="https://www.youtube.com/@VladoTrojak" target="_blank" rel="noopener noreferrer" class="btn-yt-link">
@@ -2648,38 +2657,13 @@
 
 <div id="hckd-overlay" aria-hidden="true">HCKD</div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
-    // Obsluha modálneho okna HELP
-    const btnHelp = document.getElementById('btn-help');
-    const helpModalOverlay = document.getElementById('help-modal-overlay');
-    const btnCloseHelp = document.getElementById('btn-close-help');
-
-    btnHelp.addEventListener('click', () => {
-        helpModalOverlay.classList.add('open');
-    });
-
-    btnCloseHelp.addEventListener('click', () => {
-        helpModalOverlay.classList.remove('open');
-    });
-
-    helpModalOverlay.addEventListener('click', e => {
-        if (e.target === helpModalOverlay) {
-            helpModalOverlay.classList.remove('open');
-        }
-    });
-
-    document.addEventListener('keydown', e => {
-        if (e.key === 'Escape' && helpModalOverlay.classList.contains('open')) {
-            helpModalOverlay.classList.remove('open');
-        }
-    });
-
-</script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
     // =========================================================================
     // 1. EXTRÉMNY BUFFER DLAŽDÍC V JADRE LEAFLETU + ASYNCHRÓNNE DEKÓDOVANIE
     // =========================================================================
-    const EXTREME_KEEP_BUFFER = 18;
+    let EXTREME_KEEP_BUFFER = 18;
+    const ELEVATION_HYSTERESIS_M = 1.5;
     L.GridLayer.prototype.options.keepBuffer = EXTREME_KEEP_BUFFER;
     L.GridLayer.prototype.options.updateWhenIdle = false;
     L.GridLayer.prototype.options.updateWhenZooming = false;
@@ -5634,6 +5618,24 @@
         }
     });
 
+    // Posuvník pre EXTREME_KEEP_BUFFER (4 až 18, predvolené 18)
+    document.getElementById('keep-buffer').addEventListener('input', e => {
+        const val = parseInt(e.target.value) || 18;
+        EXTREME_KEEP_BUFFER = Math.max(4, Math.min(18, val));
+        document.getElementById('lbl-keep-buffer').innerText = EXTREME_KEEP_BUFFER;
+        L.GridLayer.prototype.options.keepBuffer = EXTREME_KEEP_BUFFER;
+        if (currentTileLayer) {
+            currentTileLayer.options.keepBuffer = EXTREME_KEEP_BUFFER;
+            // Okamžité prepočítanie v reálnom čase: uvoľní prebytočné dlaždice alebo dočíta chýbajúce okolie
+            if (typeof currentTileLayer._pruneTiles === 'function') {
+                currentTileLayer._pruneTiles();
+            }
+            if (typeof currentTileLayer._update === 'function') {
+                currentTileLayer._update();
+            }
+        }
+    });
+
     // Tlačidlo pre celkové zapínanie a vypínanie štatistiky a prepínač KLASIK HUD / MINI HUD
     const btnToggleHud = document.getElementById('btn-toggle-hud');
     const btnHudMode = document.getElementById('btn-hud-mode');
@@ -5770,11 +5772,6 @@
             currentTileLayer = L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
                 ...baseTileOpts,
                 maxZoom: 19
-            });
-        } else if (style === 'topo') {
-            currentTileLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-                ...baseTileOpts,
-                maxZoom: 17
             });
         } else if (style === 'satellite') {
             currentTileLayer = L.tileLayer('https://mt0.google.com/vt/lyrs=s&hl=sk&x={x}&y={y}&z={z}', {
@@ -6102,14 +6099,19 @@
         rawPoints = [];
         let cumDist = 0;
         let cumEle = 0;
+        let refEle = originalRawPoints[startIdx].ele || 0;
 
         for (let i = startIdx; i <= endIdx; i++) {
             const pt = originalRawPoints[i];
             if (rawPoints.length > 0) {
                 const prev = rawPoints[rawPoints.length - 1];
                 cumDist += getDistance(prev.lat, prev.lon, pt.lat, pt.lon);
-                if (pt.ele > prev.ele) {
-                    cumEle += (pt.ele - prev.ele);
+                const diffEle = pt.ele - refEle;
+                if (diffEle >= ELEVATION_HYSTERESIS_M) {
+                    cumEle += diffEle;
+                    refEle = pt.ele;
+                } else if (diffEle <= -ELEVATION_HYSTERESIS_M) {
+                    refEle = pt.ele;
                 }
             }
             rawPoints.push({
@@ -6309,8 +6311,9 @@
                 });
             }
 
-            // Doplnenie chýbajúcej nadmorskej výšky (ak niektorý TCX/GPX bod nemal <AltitudeMeters>/<ele>) a výpočet vzdialenosti a prevýšenia
+            // Doplnenie chýbajúcej nadmorskej výšky (ak niektorý TCX/GPX bod nemal <AltitudeMeters>/<ele>) a výpočet vzdialenosti a prevýšenia s hysteréziou 1.5 m
             let lastEle = (firstValidEle !== null) ? firstValidEle : 0;
+            let refOrigEle = lastEle;
             for (let i = 0; i < originalRawPoints.length; i++) {
                 const pt = originalRawPoints[i];
                 if (pt.ele === null || isNaN(pt.ele)) {
@@ -6318,11 +6321,17 @@
                 } else {
                     lastEle = pt.ele;
                 }
-                if (i > 0) {
+                if (i === 0) {
+                    refOrigEle = pt.ele;
+                } else {
                     const prev = originalRawPoints[i - 1];
                     origCumDist += getDistance(prev.lat, prev.lon, pt.lat, pt.lon);
-                    if (pt.ele > prev.ele) {
-                        origCumEle += (pt.ele - prev.ele);
+                    const diffEle = pt.ele - refOrigEle;
+                    if (diffEle >= ELEVATION_HYSTERESIS_M) {
+                        origCumEle += diffEle;
+                        refOrigEle = pt.ele;
+                    } else if (diffEle <= -ELEVATION_HYSTERESIS_M) {
+                        refOrigEle = pt.ele;
                     }
                 }
                 pt.origCumDist = origCumDist;
