@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V3SOFT CartoLinka v1.01 (Native Canvas & Fixed-Step Engine)</title>
+    <title>V3SOFT CartoLinka v1.031 (Stability & Validation)</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
@@ -419,7 +419,7 @@
             position: absolute;
             top: calc(100% + 8px);
             left: 0;
-            width: 635px;
+            width: 720px;
             max-width: 95vw;
             background: #1b1b1b;
             border: 1px solid #484848;
@@ -492,7 +492,7 @@
         }
         .poi-add-form {
             display: grid;
-            grid-template-columns: 82px 1fr 142px 68px 36px auto;
+            grid-template-columns: 74px 1fr 132px 48px 36px auto;
             gap: 8px;
             align-items: end;
             background: #252525;
@@ -598,7 +598,7 @@
         }
         .poi-row-item {
             display: grid;
-            grid-template-columns: 52px 76px 1fr 135px 62px 32px 32px 32px;
+            grid-template-columns: 50px 70px 1fr 128px 46px 32px 32px 32px;
             gap: 6px;
             align-items: center;
             background: #262626;
@@ -1629,7 +1629,7 @@
         }
         .summary-add-form {
             display: grid;
-            grid-template-columns: 82px 1fr 142px 68px auto;
+            grid-template-columns: 1fr 142px 68px auto;
             gap: 8px;
             align-items: end;
             background: #252525;
@@ -1648,7 +1648,7 @@
         }
         .summary-row-item {
             display: grid;
-            grid-template-columns: 52px 76px 1fr 135px 62px 32px 32px;
+            grid-template-columns: 52px 1fr 135px 62px 32px 32px;
             gap: 6px;
             align-items: center;
             background: #262626;
@@ -1859,7 +1859,7 @@
         <div class="controls-row">
             <div class="app-version-badge">
                 <span class="app-version-title">V3SOFT CartoLinka</span>
-                <span class="app-version-num">v1.01</span>
+                <span class="app-version-num">v1.031</span>
             </div>
             <button id="btn-info" type="button" title="Informácie o aplikácii">ℹ️ INFO</button>
             <button id="btn-help" type="button" title="Zobraziť podrobný návod a vysvetlenie všetkých nastavení aplikácie">❓ HELP</button>
@@ -2136,10 +2136,6 @@
                             </div>
                         </div>
                         <div class="summary-add-form">
-                            <div class="poi-field-col">
-                                <label>Kilometer (km)</label>
-                                <input type="number" id="summary-input-km" step="0.01" min="0" max="9999" value="0.00" placeholder="0.00">
-                            </div>
                             <div class="poi-field-col">
                                 <label>Položka súhrnu (Štatistika)</label>
                                 <input type="text" id="summary-input-name" placeholder="Napr. Prejdená vzdialenosť: 45.2 km">
@@ -2443,7 +2439,7 @@
 <div id="help-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="help-modal-title">
     <div class="help-modal-box">
         <div class="help-modal-header">
-            <span class="help-modal-title" id="help-modal-title">❓ Návod na používanie – V3SOFT CartoLinka v1.01</span>
+            <span class="help-modal-title" id="help-modal-title">❓ Návod na používanie – V3SOFT CartoLinka v1.031</span>
             <button type="button" id="btn-close-help" title="Zavrieť nápovedu (Esc)">✕ Zavrieť</button>
         </div>
         <div class="help-modal-body">
@@ -2644,7 +2640,7 @@
             <div class="info-line"><strong>Koncept a dizajn:</strong> Vlado Troják</div>
             <div class="info-line"><strong>Kód a vývoj:</strong> AI Gemini Argon</div>
             <div class="info-line"><strong>Rok výroby:</strong> 11/2026</div>
-            <div class="info-line"><strong>Verzia:</strong> v1.01</div>
+            <div class="info-line"><strong>Verzia:</strong> v1.031</div>
             <div class="info-freeware">Táto aplikácia je freeware.</div>
             <div class="info-yt-label">Tu môžeš sledovať moje videá:</div>
             <a href="https://www.youtube.com/@VladoTrojak" target="_blank" rel="noopener noreferrer" class="btn-yt-link">
@@ -2979,8 +2975,10 @@
 
     // Uložený Mapy.com API kľúč v localStorage
     const mapyKeyInput = document.getElementById('mapy-api-key');
-    const savedKey = localStorage.getItem('mapy_com_api_key');
-    if (savedKey) {
+    let savedKey = null;
+    try { savedKey = localStorage.getItem('mapy_com_api_key'); }
+    catch (err) { console.warn('LocalStorage nie je dostupné:', err); }
+    if (savedKey && mapyKeyInput) {
         mapyKeyInput.value = savedKey;
     }
 
@@ -3422,18 +3420,24 @@
         }
     });
 
-    function parseKmValue(rawVal) {
-        if (typeof rawVal === 'number') return Math.max(0, Math.round(rawVal * 100) / 100);
+    function parseKmValue(rawVal, allowNegative = false) {
+        if (typeof rawVal === 'number') {
+            const val = Math.round(rawVal * 100) / 100;
+            return allowNegative ? val : Math.max(0, val);
+        }
         const cleaned = String(rawVal || '0').replace(',', '.').trim();
         const num = parseFloat(cleaned);
-        if (isNaN(num) || num < 0) return 0;
-        return Math.round(num * 100) / 100;
+        if (isNaN(num)) return 0;
+        const rounded = Math.round(num * 100) / 100;
+        return allowNegative ? rounded : Math.max(0, rounded);
     }
 
     function savePoisToStorage() {
         try {
             const serializable = poiItems.map(p => ({
                 km: p.km,
+                origKm: (typeof p.origKm === 'number' && !isNaN(p.origKm)) ? p.origKm : p.km,
+                customKm: Boolean(p.customKm),
                 name: p.name,
                 icon: p.icon,
                 duration: p.duration,
@@ -3459,19 +3463,27 @@
             if (!raw) return false;
             const parsed = JSON.parse(raw);
             if (!Array.isArray(parsed)) return false;
-            poiItems = parsed.map(item => ({
-                id: poiNextId++,
-                km: parseKmValue(item.km),
-                name: String(item.name || 'Bod záujmu'),
-                icon: POI_ICONS_SVG[item.icon] ? item.icon : 'mountain',
-                duration: Math.max(0.5, parseFloat(item.duration) || 4.0),
-                photoData: (typeof item.photoData === 'string' && item.photoData.startsWith('data:image/')) ? item.photoData : null,
-                enabled: item.enabled !== false,
-                isAuto: Boolean(item.isAuto),
-                autoType: item.autoType || null,
-                rawTempC: (typeof item.rawTempC === 'number' && !isNaN(item.rawTempC)) ? item.rawTempC : null,
-                triggered: false
-            }));
+            poiItems = parsed.map(item => {
+                const loadedKm = parseKmValue(item.km, true);
+                const loadedOrigKm = (typeof item.origKm === 'number' && !isNaN(item.origKm))
+                    ? parseKmValue(item.origKm, false)
+                    : Math.max(0, loadedKm);
+                return {
+                    id: poiNextId++,
+                    km: loadedKm,
+                    origKm: loadedOrigKm,
+                    customKm: Boolean(item.customKm),
+                    name: String(item.name || 'Bod záujmu'),
+                    icon: POI_ICONS_SVG[item.icon] ? item.icon : 'mountain',
+                    duration: Math.max(0.5, parseFloat(item.duration) || 4.0),
+                    photoData: (typeof item.photoData === 'string' && item.photoData.startsWith('data:image/')) ? item.photoData : null,
+                    enabled: item.enabled !== false,
+                    isAuto: Boolean(item.isAuto),
+                    autoType: item.autoType || null,
+                    rawTempC: (typeof item.rawTempC === 'number' && !isNaN(item.rawTempC)) ? item.rawTempC : null,
+                    triggered: false
+                };
+            });
             sortPoisByKm();
             renderPoiList();
             return poiItems.length > 0;
@@ -3490,6 +3502,14 @@
     function analyzeTrackAutoPois(points) {
         const result = [];
         if (!points || points.length < 2) return result;
+
+        const isTrimmedPts = typeof points[points.length - 1].cumDist === 'number';
+        const ptRelDist = p => isTrimmedPts ? p.cumDist : (p.origCumDist || 0);
+        const toPoiKm = relKm => {
+            const origKm = Math.round(((isTrimmedPts ? trimOffsetDist : 0) + relKm) * 100) / 100;
+            const km = Math.round((isTrimmedPts ? getDisplayDist(relKm) : relKm) * 100) / 100;
+            return { km, origKm };
+        };
 
         // 1. Najvyšší a 2. Najnižší bod trasy
         let maxEle = -Infinity;
@@ -3510,10 +3530,9 @@
             }
         }
         if (maxEleIdx !== -1 && isFinite(maxEle)) {
-            const kmHigh = Math.round((points[maxEleIdx].origCumDist || 0) * 100) / 100;
             result.push({
                 id: poiNextId++,
-                km: kmHigh,
+                ...toPoiKm(ptRelDist(points[maxEleIdx])),
                 name: `Najvyšší bod (${Math.round(maxEle)} m)`,
                 icon: 'triangle',
                 duration: 4.0,
@@ -3525,10 +3544,9 @@
             });
         }
         if (minEleIdx !== -1 && isFinite(minEle)) {
-            const kmLow = Math.round((points[minEleIdx].origCumDist || 0) * 100) / 100;
             result.push({
                 id: poiNextId++,
-                km: kmLow,
+                ...toPoiKm(ptRelDist(points[minEleIdx])),
                 name: `Najnižší bod (${Math.round(minEle)} m)`,
                 icon: 'triangle_down',
                 duration: 4.0,
@@ -3541,26 +3559,26 @@
         }
 
         // 3. Najprudšie stúpanie na 100 m (sklon v %) počítané v okne 100 m (0.10 km)
-        const totalDist = points[points.length - 1].origCumDist || 0;
+        const totalDist = ptRelDist(points[points.length - 1]);
         if (totalDist >= 0.10) {
             let maxGradePct = -Infinity;
             let bestClimbKm = 0;
             let climbFwdIdx = 0;
 
             for (let i = 0; i < points.length - 1; i++) {
-                const startDist = points[i].origCumDist || 0;
+                const startDist = ptRelDist(points[i]);
                 const targetEndDist = startDist + 0.10;
                 if (targetEndDist > totalDist) break;
 
                 if (climbFwdIdx < i) climbFwdIdx = i;
-                while (climbFwdIdx < points.length - 1 && (points[climbFwdIdx + 1].origCumDist || 0) < targetEndDist) {
+                while (climbFwdIdx < points.length - 1 && ptRelDist(points[climbFwdIdx + 1]) < targetEndDist) {
                     climbFwdIdx++;
                 }
 
                 const p0 = points[climbFwdIdx];
                 const p1 = points[Math.min(points.length - 1, climbFwdIdx + 1)];
-                const d0 = p0.origCumDist || 0;
-                const d1 = p1.origCumDist || 0;
+                const d0 = ptRelDist(p0);
+                const d1 = ptRelDist(p1);
                 if (d1 < targetEndDist) continue;
 
                 const frac = (d1 > d0) ? (targetEndDist - d0) / (d1 - d0) : 0;
@@ -3577,11 +3595,10 @@
             }
 
             if (maxGradePct > 0.5 && isFinite(maxGradePct)) {
-                const kmClimb = Math.round(bestClimbKm * 100) / 100;
                 const gradeFormatted = Math.round(maxGradePct * 10) / 10;
                 result.push({
                     id: poiNextId++,
-                    km: kmClimb,
+                    ...toPoiKm(bestClimbKm),
                     name: `Najprudšie stúpanie (${gradeFormatted} %)`,
                     icon: 'steep_climb',
                     duration: 4.0,
@@ -3602,15 +3619,15 @@
             let fwdIdx = 0;
 
             for (let i = 0; i < points.length; i++) {
-                const d = points[i].origCumDist || 0;
+                const d = ptRelDist(points[i]);
                 const winBack = Math.max(0, d - 0.08);
                 const winFwd = Math.min(totalDist, d + 0.08);
 
-                while (backIdx < i && (points[backIdx + 1].origCumDist || 0) <= winBack) {
+                while (backIdx < i && ptRelDist(points[backIdx + 1]) <= winBack) {
                     backIdx++;
                 }
                 if (fwdIdx < i) fwdIdx = i;
-                while (fwdIdx < points.length - 1 && (points[fwdIdx].origCumDist || 0) < winFwd) {
+                while (fwdIdx < points.length - 1 && ptRelDist(points[fwdIdx]) < winFwd) {
                     fwdIdx++;
                 }
 
@@ -3618,7 +3635,7 @@
                 const pF = points[fwdIdx];
                 if (pB.timeMs && pF.timeMs && pF.timeMs > pB.timeMs) {
                     const dtHours = (pF.timeMs - pB.timeMs) / 3600000;
-                    const distKm = (pF.origCumDist || 0) - (pB.origCumDist || 0);
+                    const distKm = ptRelDist(pF) - ptRelDist(pB);
                     if (dtHours > 1e-5 && distKm >= 0.02) {
                         const spd = distKm / dtHours;
                         if (spd > maxSpeedKmh && spd <= 130) {
@@ -3630,10 +3647,9 @@
             }
 
             if (maxSpeedIdx !== -1 && maxSpeedKmh > 0.5) {
-                const kmSpd = Math.round((points[maxSpeedIdx].origCumDist || 0) * 100) / 100;
                 result.push({
                     id: poiNextId++,
-                    km: kmSpd,
+                    ...toPoiKm(ptRelDist(points[maxSpeedIdx])),
                     name: `Max. rýchlosť (${Math.round(maxSpeedKmh)} km/h)`,
                     icon: 'speedometer',
                     duration: 4.0,
@@ -3663,7 +3679,7 @@
                 // A) Priamy časový skok medzi susednými bodmi (Auto-Pause)
                 const pNext = points[i + 1];
                 if (pNext && pNext.timeMs && (pNext.timeMs - pStart.timeMs) >= MIN_PAUSE_MS) {
-                    const stepDist = (pNext.origCumDist || 0) - (pStart.origCumDist || 0);
+                    const stepDist = ptRelDist(pNext) - ptRelDist(pStart);
                     if (stepDist <= 0.25) {
                         let endIdx = i + 1;
                         while (endIdx + 1 < points.length && points[endIdx + 1].timeMs &&
@@ -3672,7 +3688,7 @@
                         }
                         const pauseMs = points[endIdx].timeMs - pStart.timeMs;
                         detectedPauses.push({
-                            km: pStart.origCumDist || 0,
+                            km: ptRelDist(pStart),
                             durationMs: pauseMs
                         });
                         i = endIdx + 1;
@@ -3684,7 +3700,7 @@
                 let j = i + 1;
                 while (j < points.length && points[j].timeMs) {
                     const directDist = getDistance(pStart.lat, pStart.lon, points[j].lat, points[j].lon);
-                    const cumDelta = (points[j].origCumDist || 0) - (pStart.origCumDist || 0);
+                    const cumDelta = ptRelDist(points[j]) - ptRelDist(pStart);
                     if (directDist <= MAX_ROAM_KM && cumDelta <= 0.25) {
                         j++;
                     } else {
@@ -3697,7 +3713,7 @@
                     const stayMs = points[lastStayIdx].timeMs - pStart.timeMs;
                     if (stayMs >= MIN_PAUSE_MS) {
                         detectedPauses.push({
-                            km: pStart.origCumDist || 0,
+                            km: ptRelDist(pStart),
                             durationMs: stayMs
                         });
                         i = lastStayIdx + 1;
@@ -3721,10 +3737,9 @@
 
             for (let p = 0; p < mergedPauses.length; p++) {
                 const pauseMins = Math.round(mergedPauses[p].durationMs / 60000);
-                const kmPause = Math.round(mergedPauses[p].km * 100) / 100;
                 result.push({
                     id: poiNextId++,
-                    km: kmPause,
+                    ...toPoiKm(mergedPauses[p].km),
                     name: `Prestávka (${pauseMins} min)`,
                     icon: 'pause',
                     duration: 4.0,
@@ -3796,11 +3811,10 @@
 
                 const tOffset = getTempOffset();
                 if (maxWindowMidIdx !== -1 && isFinite(maxWindowTemp)) {
-                    const kmMaxT = Math.round((points[maxWindowMidIdx].origCumDist || 0) * 100) / 100;
                     const dispMaxT = Math.round(maxWindowTemp + tOffset);
                     result.push({
                         id: poiNextId++,
-                        km: kmMaxT,
+                        ...toPoiKm(ptRelDist(points[maxWindowMidIdx])),
                         name: `Max. teplota (${dispMaxT} °C)`,
                         icon: 'temp_high',
                         duration: 4.0,
@@ -3813,11 +3827,10 @@
                     });
                 }
                 if (minWindowMidIdx !== -1 && isFinite(minWindowTemp)) {
-                    const kmMinT = Math.round((points[minWindowMidIdx].origCumDist || 0) * 100) / 100;
                     const dispMinT = Math.round(minWindowTemp + tOffset);
                     result.push({
                         id: poiNextId++,
-                        km: kmMinT,
+                        ...toPoiKm(ptRelDist(points[minWindowMidIdx])),
                         name: `Min. teplota (${dispMinT} °C)`,
                         icon: 'temp_low',
                         duration: 4.0,
@@ -3833,6 +3846,36 @@
         }
 
         return result;
+    }
+
+    function updatePoisOnTrim() {
+        if (!rawPoints || rawPoints.length < 2 || poiItems.length === 0) return;
+        const mode = document.getElementById('trim-stats-mode').value;
+        const freshAuto = analyzeTrackAutoPois(rawPoints);
+
+        for (let i = 0; i < poiItems.length; i++) {
+            const p = poiItems[i];
+            if (typeof p.origKm !== 'number' || isNaN(p.origKm)) {
+                p.origKm = Math.max(0, p.km);
+            }
+            if (p.isAuto && p.autoType && !p.customKm) {
+                const fresh = freshAuto.find(f => f.autoType === p.autoType);
+                if (fresh) {
+                    p.origKm = fresh.origKm;
+                    p.km = fresh.km;
+                    p.name = fresh.name;
+                    if (typeof fresh.rawTempC === 'number') {
+                        p.rawTempC = fresh.rawTempC;
+                    }
+                    continue;
+                }
+            }
+            p.km = Math.round(((mode === 'preserve') ? p.origKm : (p.origKm - trimOffsetDist)) * 100) / 100;
+        }
+
+        sortPoisByKm();
+        savePoisToStorage();
+        renderPoiList();
     }
 
     function sortPoisByKm() {
@@ -4156,12 +4199,15 @@
             const inputKm = document.createElement('input');
             inputKm.type = 'number';
             inputKm.step = '0.01';
-            inputKm.min = '0';
+            inputKm.min = '-9999';
             inputKm.max = '9999';
             inputKm.value = poi.km.toFixed(2);
             inputKm.title = 'Kilometer na trase (napr. 10.84)';
             inputKm.addEventListener('change', () => {
-                poi.km = parseKmValue(inputKm.value);
+                const mode = document.getElementById('trim-stats-mode').value;
+                poi.km = parseKmValue(inputKm.value, true);
+                poi.origKm = Math.max(0, Math.round(((mode === 'preserve') ? poi.km : (poi.km + trimOffsetDist)) * 100) / 100);
+                poi.customKm = true;
                 inputKm.value = poi.km.toFixed(2);
                 sortPoisByKm();
                 savePoisToStorage();
@@ -4332,7 +4378,9 @@
     }
 
     function addNewPoiFromForm() {
+        const mode = document.getElementById('trim-stats-mode').value;
         const kmVal = parseKmValue(poiInputKm.value);
+        const origKmVal = Math.max(0, Math.round(((mode === 'preserve') ? kmVal : (kmVal + trimOffsetDist)) * 100) / 100);
         const nameVal = poiInputName.value.trim() || `Bod ${kmVal.toFixed(2)} km`;
         const iconVal = poiInputIcon.value || 'mountain';
         const durVal = Math.max(0.5, parseFloat(poiInputDuration.value) || 4.0);
@@ -4340,6 +4388,8 @@
         const newPoi = {
             id: poiNextId++,
             km: kmVal,
+            origKm: origKmVal,
+            customKm: true,
             name: nameVal,
             icon: iconVal,
             duration: durVal,
@@ -4652,7 +4702,6 @@
     const btnCloseSummaryEditor = document.getElementById('btn-close-summary-editor');
     const btnClearSummary = document.getElementById('btn-clear-summary');
     const btnAddSummary = document.getElementById('btn-add-summary');
-    const summaryInputKm = document.getElementById('summary-input-km');
     const summaryInputName = document.getElementById('summary-input-name');
     const summaryInputIcon = document.getElementById('summary-input-icon');
     const summaryInputDuration = document.getElementById('summary-input-duration');
@@ -5141,22 +5190,7 @@
                 renderSummaryList();
             });
 
-            // 2. Kilometer (2 desatinné miesta)
-            const inputKm = document.createElement('input');
-            inputKm.type = 'number';
-            inputKm.step = '0.01';
-            inputKm.min = '0';
-            inputKm.max = '9999';
-            inputKm.value = item.km.toFixed(2);
-            inputKm.title = 'Kilometer na trase pre zobrazenie položky súhrnu';
-            inputKm.addEventListener('change', () => {
-                item.km = parseKmValue(inputKm.value);
-                inputKm.value = item.km.toFixed(2);
-                saveSummaryToStorage();
-                renderSummaryList();
-            });
-
-            // 3. Text štatistiky
+            // 2. Text štatistiky
             const inputName = document.createElement('input');
             inputName.type = 'text';
             inputName.value = item.name;
@@ -5220,7 +5254,6 @@
             });
 
             row.appendChild(btnToggle);
-            row.appendChild(inputKm);
             row.appendChild(inputName);
             row.appendChild(selectIcon);
             row.appendChild(inputDur);
@@ -5231,14 +5264,13 @@
     }
 
     function addNewSummaryFromForm() {
-        const kmVal = parseKmValue(summaryInputKm.value);
-        const nameVal = summaryInputName.value.trim() || `Štatistika (${kmVal.toFixed(2)} km)`;
+        const nameVal = summaryInputName.value.trim() || 'Štatistika jazdy';
         const iconVal = summaryInputIcon.value || 'distance';
         const durVal = Math.max(0.5, parseFloat(summaryInputDuration.value) || 5.0);
 
         summaryItems.push({
             id: summaryNextId++,
-            km: kmVal,
+            km: 0,
             name: nameVal,
             icon: iconVal,
             duration: durVal,
@@ -5291,12 +5323,7 @@
             addNewSummaryFromForm();
         }
     });
-    summaryInputKm.addEventListener('keydown', e => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            addNewSummaryFromForm();
-        }
-    });
+
 
     btnClearSummary.addEventListener('click', () => {
         summaryItems = [];
@@ -5749,12 +5776,12 @@
         };
 
         if (style === 'mapy_outdoor') {
-            currentTileLayer = L.tileLayer(`https://api.mapy.cz/v1/maptiles/outdoor/256/{z}/{x}/{y}?apikey=${apiKey}`, {
+            currentTileLayer = L.tileLayer(`https://api.mapy.com/v1/maptiles/outdoor/256/{z}/{x}/{y}?apikey=${encodeURIComponent(apiKey)}`, {
                 ...baseTileOpts,
                 maxZoom: 19
             });
         } else if (style === 'mapy_aerial') {
-            currentTileLayer = L.tileLayer(`https://api.mapy.cz/v1/maptiles/aerial/256/{z}/{x}/{y}?apikey=${apiKey}`, {
+            currentTileLayer = L.tileLayer(`https://api.mapy.com/v1/maptiles/aerial/256/{z}/{x}/{y}?apikey=${encodeURIComponent(apiKey)}`, {
                 ...baseTileOpts,
                 maxZoom: 19
             });        
@@ -5792,7 +5819,11 @@
 
     document.getElementById('map-style').addEventListener('change', updateMapLayer);
     mapyKeyInput.addEventListener('input', () => {
-        localStorage.setItem('mapy_com_api_key', mapyKeyInput.value.trim());
+        try {
+            localStorage.setItem('mapy_com_api_key', mapyKeyInput.value.trim());
+        } catch (err) {
+            console.warn('LocalStorage nie je dostupné:', err);
+        }
         updateMapLayer();
     });
 
@@ -6133,6 +6164,9 @@
             map.fitBounds(L.latLngBounds(latLngs), { padding: [80, 80] });
         }
 
+        if (typeof updatePoisOnTrim === 'function') {
+            updatePoisOnTrim();
+        }
         renderTrimmedRoutePreview();
         if (typeof updateAutoSummaryOnTrim === 'function') {
             updateAutoSummaryOnTrim();
@@ -6163,6 +6197,9 @@
 
     trimStatsModeSelect.addEventListener('change', () => {
         if (!isAnimating && rawPoints.length > 0) {
+            if (typeof updatePoisOnTrim === 'function') {
+                updatePoisOnTrim();
+            }
             renderTrimmedRoutePreview();
             if (typeof updateAutoSummaryOnTrim === 'function') {
                 updateAutoSummaryOnTrim();
@@ -6170,15 +6207,46 @@
         }
     });
 
+    // Stabilný identifikátor obsahu trasy: odlišuje súbory s rovnakým názvom.
+    // Dva nezávislé 32-bitové hashe znižujú pravdepodobnosť kolízie bez Web Crypto API.
+    function createTrackStorageId(content) {
+        let h1 = 0x811c9dc5;
+        let h2 = 0x9e3779b9;
+        for (let i = 0; i < content.length; i++) {
+            const code = content.charCodeAt(i);
+            h1 = Math.imul(h1 ^ code, 0x01000193);
+            h2 = Math.imul(h2 ^ (code + i), 0x85ebca6b);
+        }
+        return (h1 >>> 0).toString(16).padStart(8, '0') + (h2 >>> 0).toString(16).padStart(8, '0');
+    }
+
+    function parseStrictCoordinate(value) {
+        if (value === null || value === undefined || String(value).trim() === '') return NaN;
+        const n = Number(String(value).trim());
+        return Number.isFinite(n) ? n : NaN;
+    }
+
     // Načítanie a spracovanie GPX / TCX + jednorazová alokácia Float64Array polí
     document.getElementById('gpx-file').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (!file) return;
+        const MAX_TRACK_FILE_BYTES = 50 * 1024 * 1024;
+        if (file.size > MAX_TRACK_FILE_BYTES) {
+            alert('Súbor je príliš veľký. Maximálna podporovaná veľkosť je 50 MB.');
+            e.target.value = '';
+            return;
+        }
 
         const reader = new FileReader();
+        reader.onerror = function() { alert('Súbor sa nepodarilo načítať.'); };
         reader.onload = function(event) {
             const parser = new DOMParser();
             const xml = parser.parseFromString(event.target.result, "text/xml");
+            if (xml.getElementsByTagName('parsererror').length > 0) {
+                alert('Súbor nie je platný GPX/TCX XML. Skontrolujte jeho formát.');
+                return;
+            }
+            const trackStorageId = createTrackStorageId(event.target.result);
 
             // Podpora pre GPX (<trkpt>, <rtept>) aj Garmin TCX (<Trackpoint>) bez ohľadu na XML namespace
             let ptNodes = Array.from(xml.getElementsByTagName('trkpt'));
@@ -6218,8 +6286,8 @@
                 const ptNode = ptNodes[i];
 
                 // 1. Súradnice: atribúty lat/lon (GPX) alebo vnorené elementy LatitudeDegrees/LongitudeDegrees (TCX)
-                let lat = parseFloat(ptNode.getAttribute('lat'));
-                let lon = parseFloat(ptNode.getAttribute('lon'));
+                let lat = parseStrictCoordinate(ptNode.getAttribute('lat'));
+                let lon = parseStrictCoordinate(ptNode.getAttribute('lon'));
                 let rawEle = null;
                 let timeMs = null;
                 let pwr = null;
@@ -6233,9 +6301,9 @@
                     const localName = (child.localName || child.tagName.split(':').pop()).toLowerCase();
 
                     if (isNaN(lat) && localName === 'latitudedegrees') {
-                        lat = parseFloat(child.textContent);
+                        lat = parseStrictCoordinate(child.textContent);
                     } else if (isNaN(lon) && localName === 'longitudedegrees') {
-                        lon = parseFloat(child.textContent);
+                        lon = parseStrictCoordinate(child.textContent);
                     } else if (rawEle === null && (localName === 'ele' || localName === 'altitudemeters')) {
                         const eVal = parseFloat(child.textContent);
                         if (!isNaN(eVal)) {
@@ -6288,7 +6356,7 @@
                 if (cad !== null) pendingCad = cad;
 
                 // V TCX súboroch môžu existovať záznamy <Trackpoint> bez <Position> (napr. pri pauze alebo pred fixom GPS)
-                if (isNaN(lat) || isNaN(lon)) {
+                if (!Number.isFinite(lat) || !Number.isFinite(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
                     continue;
                 }
 
@@ -6380,8 +6448,16 @@
                 stopCurrentAnimation();
 
                 // Načítanie uložených POI pre tento konkrétny GPX / TCX súbor + automatická analýza najvyššieho bodu a max. rýchlosti
-                const fileKey = 'gpx_pois_' + (file.name || 'track').replace(/[^a-zA-Z0-9_-]/g, '_');
-                const hadSavedPois = loadPoisFromStorage(fileKey);
+                const legacyFileKey = 'gpx_pois_' + (file.name || 'track').replace(/[^a-zA-Z0-9_-]/g, '_');
+                const fileKey = 'gpx_v2_pois_' + trackStorageId;
+                let hadSavedPois = loadPoisFromStorage(fileKey);
+                if (!hadSavedPois) {
+                    hadSavedPois = loadPoisFromStorage(legacyFileKey);
+                    if (hadSavedPois) {
+                        currentGpxStorageKey = fileKey;
+                        savePoisToStorage(); // jednorazová migrácia starých údajov
+                    }
+                }
                 const autoPois = analyzeTrackAutoPois(originalRawPoints);
                 if (!hadSavedPois) {
                     poiItems = [...autoPois];
@@ -6446,9 +6522,12 @@
                                     bestKm = originalRawPoints[k].origCumDist;
                                 }
                             }
+                            const wpOrigKm = Math.round(bestKm * 100) / 100;
                             poiItems.push({
                                 id: poiNextId++,
-                                km: Math.round(bestKm * 100) / 100,
+                                km: wpOrigKm,
+                                origKm: wpOrigKm,
+                                customKm: false,
                                 name: wp.name,
                                 icon: wp.icon || 'pin',
                                 duration: 4.0,
@@ -6481,8 +6560,16 @@
                 }
 
                 // Automatické vytvorenie štatistík jazdy v editore SÚHRN pre načítaný GPX / TCX súbor
-                const summaryFileKey = 'gpx_summary_' + (file.name || 'track').replace(/[^a-zA-Z0-9_-]/g, '_');
-                const hadSavedSummary = loadSummaryFromStorage(summaryFileKey);
+                const legacySummaryFileKey = 'gpx_summary_' + (file.name || 'track').replace(/[^a-zA-Z0-9_-]/g, '_');
+                const summaryFileKey = 'gpx_v2_summary_' + trackStorageId;
+                let hadSavedSummary = loadSummaryFromStorage(summaryFileKey);
+                if (!hadSavedSummary) {
+                    hadSavedSummary = loadSummaryFromStorage(legacySummaryFileKey);
+                    if (hadSavedSummary) {
+                        currentSummaryStorageKey = summaryFileKey;
+                        saveSummaryToStorage(); // jednorazová migrácia starých údajov
+                    }
+                }
                 const autoSummary = analyzeTrackSummaryStats(originalRawPoints);
                 if (!hadSavedSummary) {
                     summaryItems = [...autoSummary];
@@ -6503,9 +6590,7 @@
                         renderSummaryList();
                     }
                 }
-                if (summaryInputKm && originalRawPoints.length > 0) {
-                    summaryInputKm.value = (originalRawPoints[originalRawPoints.length - 1].origCumDist || 0).toFixed(2);
-                }
+
 
                 // Reset posuvníkov orezania na 0 % – 100 %
                 trimStartInput.value = 0;
@@ -6648,20 +6733,17 @@
     }
 
     function findIndexByTime(points, targetTimeMs, startIndex) {
-        let i = startIndex;
-        if (i >= points.length) i = 0;
-        while (i > 0 && points[i].timeMs !== null && points[i].timeMs > targetTimeMs) {
-            i--;
-        }
-        while (i < points.length - 1 && points[i + 1].timeMs !== null && points[i + 1].timeMs <= targetTimeMs) {
-            i++;
-        }
-        if (i >= points.length - 1) {
-            return { index: points.length - 1, frac: 0 };
-        }
+        if (!points || points.length === 0) return { index: 0, frac: 0 };
+        let i = Math.max(0, Math.min(points.length - 1, startIndex || 0));
+        // Režim reálneho času sa používa len pri kompletnej časovej osi; napriek tomu
+        // funkcia bezpečne zvládne chybný bod bez nekonečného/uviaznutého hľadania.
+        while (i > 0 && (!Number.isFinite(points[i].timeMs) || points[i].timeMs > targetTimeMs)) i--;
+        while (i < points.length - 1 && Number.isFinite(points[i + 1].timeMs) && points[i + 1].timeMs <= targetTimeMs) i++;
+        if (i >= points.length - 1) return { index: points.length - 1, frac: 0 };
         const t0 = points[i].timeMs;
         const t1 = points[i + 1].timeMs;
-        const frac = (t1 && t0 && t1 > t0) ? (targetTimeMs - t0) / (t1 - t0) : 0;
+        const frac = (Number.isFinite(t0) && Number.isFinite(t1) && t1 > t0)
+            ? (targetTimeMs - t0) / (t1 - t0) : 0;
         return { index: i, frac: Math.max(0, Math.min(1, frac)) };
     }
 
@@ -6770,7 +6852,14 @@
         const totalDistKm = activePoints[activePoints.length - 1].cumDist;
         const startTimeMs = activePoints[0].timeMs || 0;
         const endTimeMs = activePoints[activePoints.length - 1].timeMs || 0;
-        const canUseRealTime = hasTimeData && startTimeMs && endTimeMs && (endTimeMs > startTimeMs);
+        let hasCompleteMonotonicTime = activePoints.length > 1;
+        for (let ti = 0; ti < activePoints.length && hasCompleteMonotonicTime; ti++) {
+            const currentTime = activePoints[ti].timeMs;
+            if (!Number.isFinite(currentTime) || currentTime <= 0 || (ti > 0 && currentTime < activePoints[ti - 1].timeMs)) {
+                hasCompleteMonotonicTime = false;
+            }
+        }
+        const canUseRealTime = hasTimeData && hasCompleteMonotonicTime && endTimeMs > startTimeMs;
 
         const baseRealTimeFactor = 60;
         const densityMultiplier = activePoints.length / Math.max(1, rawPoints.length);
@@ -7304,32 +7393,53 @@
     });
 
     // Tlačidlo Celá obrazovka -> Fullscreen + tichý 5-sekundový odpočet na pozadí (bez vizuálu na obrazovke)
-    document.getElementById('btn-fullscreen').addEventListener('click', () => {
+    document.getElementById('btn-fullscreen').addEventListener('click', async () => {
         if (rawPoints.length === 0) return;
-
         const elem = document.getElementById('map-container');
-        if (elem.requestFullscreen) {
-            elem.requestFullscreen();
-        } else if (elem.webkitRequestFullscreen) {
-            elem.webkitRequestFullscreen();
-        }
-
-        document.getElementById('controls').style.display = 'none';
-
-        setTimeout(() => {
-            map.invalidateSize();
-            resizeRouteCanvas();
-            prepareSceneBeforeStart();
-
-            // Tichý 5-sekundový odpočet bez akéhokoľvek čísla na obrazovke
-            silentStartTimeout = setTimeout(() => {
+        const controls = document.getElementById('controls');
+        try {
+            let requestResult;
+            if (elem.requestFullscreen) requestResult = elem.requestFullscreen();
+            else if (elem.webkitRequestFullscreen) requestResult = elem.webkitRequestFullscreen();
+            else throw new Error('Tento prehliadač nepodporuje režim celej obrazovky.');
+            if (requestResult && typeof requestResult.then === 'function') await requestResult;
+            // Niektoré staršie WebKit implementácie nevracajú Promise.
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                await new Promise(resolve => {
+                    const onChange = () => {
+                        document.removeEventListener('fullscreenchange', onChange);
+                        document.removeEventListener('webkitfullscreenchange', onChange);
+                        resolve();
+                    };
+                    document.addEventListener('fullscreenchange', onChange, { once: true });
+                    document.addEventListener('webkitfullscreenchange', onChange, { once: true });
+                    setTimeout(resolve, 1000);
+                });
+            }
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                throw new Error('Prehliadač nepovolil zobrazenie na celú obrazovku.');
+            }
+            controls.style.display = 'none';
+            setTimeout(() => {
+                map.invalidateSize();
+                resizeRouteCanvas();
+                prepareSceneBeforeStart();
+                silentStartTimeout = setTimeout(() => {
+                    silentStartTimeout = null;
+                    startAnimationNow();
+                }, 5000);
+            }, 250);
+        } catch (err) {
+            controls.style.display = 'flex';
+            if (silentStartTimeout) {
+                clearTimeout(silentStartTimeout);
                 silentStartTimeout = null;
-                startAnimationNow();
-            }, 5000);
-        }, 250);
+            }
+            alert('Nepodarilo sa spustiť režim celej obrazovky: ' + (err.message || err));
+        }
     });
 
-    document.addEventListener('fullscreenchange', () => {
+    const handleFullscreenChange = () => {
         if (!document.fullscreenElement && !document.webkitFullscreenElement) {
             document.getElementById('controls').style.display = 'flex';
             if (silentStartTimeout) {
@@ -7343,7 +7453,9 @@
                 resizeRouteCanvas();
             }, 150);
         }
-    });
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
 
     // Obsluha modálneho okna HELP
     const btnHelp = document.getElementById('btn-help');
