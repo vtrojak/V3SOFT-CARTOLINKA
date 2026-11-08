@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V3SOFT CartoLinka v1.042 (WebGL GPU Engine)</title>
+    <title>V3SOFT CartoLinka v1.045 (WebGL GPU Engine)</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
             --hud-font-size: 40px;
-            --hud-font-color: #9bff0a;
+            --hud-font-color: #ffffff;
             --hud-scale: 0.70;
-            --hud-bg-opacity: 0.60;
-            --neon-color: #ff0000;
-            --milestone-glow-color: #4caf50;
+            --hud-bg-opacity: 0.80;
+            --neon-color: #c8ff00;
+            --milestone-glow-color: #ffffff;
             --mapy-logo-height: 50px;
             --mapy-copy-font-size: 11px;
+            --controls-height: 0px;
         }
         body, html {
             margin: 0;
@@ -1713,6 +1714,289 @@
             border-color: #0b2e0b;
         }
 
+        /* =========================================================================
+           VZHĽAD SKLO (Glassmorphism – 33% priehľadné pozadie s rozmazanou mapou,
+           sklenený vizuál pre tlačidlá, vstupy a tiahla posuvníkov)
+           ========================================================================= */
+        #app-container.glass-mode #map-container {
+            overflow: visible;
+        }
+        #app-container.glass-mode #map-container:fullscreen,
+        #app-container.glass-mode #map-container:-webkit-full-screen {
+            overflow: hidden;
+        }
+        #app-container.glass-mode #map-container:not(:fullscreen):not(:-webkit-full-screen) #map,
+        #app-container.glass-mode #map-container:not(:fullscreen):not(:-webkit-full-screen) #route-canvas {
+            top: calc(-1 * var(--controls-height, 0px));
+            height: calc(100% + var(--controls-height, 0px));
+        }
+        #controls.glass-theme {
+            background: rgba(18, 22, 28, 0.33);
+            backdrop-filter: blur(8px) saturate(130%);
+            -webkit-backdrop-filter: blur(8px) saturate(130%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+        }
+        #controls.glass-theme .app-version-badge {
+            border-right-color: rgba(255, 255, 255, 0.25);
+        }
+        #controls.glass-theme .app-version-title {
+            color: #ffffff;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8), 0 0 10px rgba(255, 255, 255, 0.35);
+        }
+        #controls.glass-theme .app-version-num {
+            color: rgba(255, 255, 255, 0.85);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+        }
+        #controls.glass-theme .control-group label,
+        #controls.glass-theme .poi-field-col label {
+            color: #ffffff;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+        }
+        #controls.glass-theme input:not([type="range"]),
+        #controls.glass-theme select {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.10) 100%);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.38);
+            border-bottom-color: rgba(255, 255, 255, 0.20);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.40), 0 2px 6px rgba(0, 0, 0, 0.28);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75);
+        }
+        #controls.glass-theme input::placeholder {
+            color: rgba(255, 255, 255, 0.65);
+        }
+        #controls.glass-theme input:not([type="range"]):focus,
+        #controls.glass-theme select:focus {
+            border-color: rgba(255, 255, 255, 0.75);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.5);
+        }
+        #controls.glass-theme select option {
+            background: #1a2028;
+            color: #ffffff;
+        }
+        #controls.glass-theme input[type="file"]::file-selector-button {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.14) 100%);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            border-radius: 4px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+            cursor: pointer;
+        }
+
+        /* Sklenený vizuál pre tiahla (posuvníky input[type="range"]) v režime SKLO */
+        #controls.glass-theme input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            height: 22px;
+        }
+        #controls.glass-theme input[type="range"]::-webkit-slider-runnable-track {
+            height: 6px;
+            border-radius: 999px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0.10) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.40);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(255, 255, 255, 0.18);
+        }
+        #controls.glass-theme input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-top: -5.5px;
+            background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.96) 0%, rgba(215, 238, 255, 0.62) 55%, rgba(160, 205, 255, 0.38) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.88);
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.95),
+                        0 2px 5px rgba(0, 0, 0, 0.55),
+                        0 0 8px rgba(255, 255, 255, 0.38);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            cursor: pointer;
+            transition: transform 0.12s ease, box-shadow 0.12s ease;
+        }
+        #controls.glass-theme input[type="range"]:hover:not(:disabled)::-webkit-slider-thumb {
+            transform: scale(1.12);
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 1),
+                        0 2px 7px rgba(0, 0, 0, 0.65),
+                        0 0 12px rgba(255, 255, 255, 0.7);
+        }
+        #controls.glass-theme input[type="range"]::-moz-range-track {
+            height: 6px;
+            border-radius: 999px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0.10) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.40);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(255, 255, 255, 0.18);
+        }
+        #controls.glass-theme input[type="range"]::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.96) 0%, rgba(215, 238, 255, 0.62) 55%, rgba(160, 205, 255, 0.38) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.88);
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.95),
+                        0 2px 5px rgba(0, 0, 0, 0.55),
+                        0 0 8px rgba(255, 255, 255, 0.38);
+            backdrop-filter: blur(4px);
+            cursor: pointer;
+            transition: transform 0.12s ease, box-shadow 0.12s ease;
+        }
+        #controls.glass-theme input[type="range"]:hover:not(:disabled)::-moz-range-thumb {
+            transform: scale(1.12);
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 1),
+                        0 2px 7px rgba(0, 0, 0, 0.65),
+                        0 0 12px rgba(255, 255, 255, 0.7);
+        }
+
+        /* Všetky tlačidlá v ovládacom paneli v režime SKLO */
+        #controls.glass-theme button,
+        #controls.glass-theme #btn-info,
+        #controls.glass-theme #btn-help,
+        #controls.glass-theme #btn-poi-editor,
+        #controls.glass-theme #btn-summary-editor,
+        #controls.glass-theme .btn-toggle,
+        #controls.glass-theme #btn-hud-mode,
+        #controls.glass-theme .btn-mini-toggle,
+        #controls.glass-theme #btn-play,
+        #controls.glass-theme #btn-fullscreen,
+        #controls.glass-theme #btn-reset-cache,
+        #controls.glass-theme #btn-add-poi,
+        #controls.glass-theme #btn-add-summary,
+        #controls.glass-theme .btn-poi-small,
+        #controls.glass-theme .btn-poi-photo,
+        #controls.glass-theme .btn-poi-row-toggle,
+        #controls.glass-theme .btn-poi-icon-action {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.30) 0%, rgba(255, 255, 255, 0.10) 100%);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            border-bottom-color: rgba(255, 255, 255, 0.22);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.60),
+                        inset 0 -1px 1px rgba(0, 0, 0, 0.15),
+                        0 3px 8px rgba(0, 0, 0, 0.32);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+        }
+        #controls.glass-theme button:hover:not(:disabled),
+        #controls.glass-theme #btn-info:hover:not(:disabled),
+        #controls.glass-theme #btn-help:hover:not(:disabled),
+        #controls.glass-theme #btn-poi-editor:hover:not(:disabled),
+        #controls.glass-theme #btn-summary-editor:hover:not(:disabled),
+        #controls.glass-theme .btn-toggle:hover:not(:disabled),
+        #controls.glass-theme #btn-hud-mode:hover:not(:disabled),
+        #controls.glass-theme .btn-mini-toggle:hover:not(:disabled),
+        #controls.glass-theme #btn-play:hover:not(:disabled),
+        #controls.glass-theme #btn-fullscreen:hover:not(:disabled),
+        #controls.glass-theme #btn-reset-cache:hover:not(:disabled),
+        #controls.glass-theme #btn-add-poi:hover:not(:disabled),
+        #controls.glass-theme #btn-add-summary:hover:not(:disabled),
+        #controls.glass-theme .btn-poi-small:hover:not(:disabled),
+        #controls.glass-theme .btn-poi-photo:hover:not(:disabled),
+        #controls.glass-theme .btn-poi-row-toggle:hover:not(:disabled),
+        #controls.glass-theme .btn-poi-icon-action:hover:not(:disabled) {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.18) 100%);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.75);
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.82),
+                        0 4px 12px rgba(0, 0, 0, 0.42),
+                        0 0 12px rgba(255, 255, 255, 0.35);
+        }
+        #controls.glass-theme #btn-poi-editor.active,
+        #controls.glass-theme #btn-summary-editor.active,
+        #controls.glass-theme .btn-poi-photo.has-photo,
+        #controls.glass-theme .btn-poi-icon-action.has-photo {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.46) 0%, rgba(255, 255, 255, 0.22) 100%);
+            border-color: rgba(255, 255, 255, 0.85);
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.9),
+                        0 0 14px rgba(255, 255, 255, 0.45);
+        }
+
+        /* Pasívne / vypnuté tlačidlá v režime SKLO */
+        #controls.glass-theme .btn-toggle.inactive,
+        #controls.glass-theme .btn-mini-toggle.inactive,
+        #controls.glass-theme .btn-poi-row-toggle.inactive,
+        #controls.glass-theme #btn-hud-mode.inactive,
+        #controls.glass-theme #btn-poi-editor.inactive,
+        #controls.glass-theme #btn-summary-editor.inactive,
+        #controls.glass-theme button:disabled,
+        #controls.glass-theme #btn-play:disabled,
+        #controls.glass-theme #btn-fullscreen:disabled,
+        #controls.glass-theme #btn-hud-mode:disabled,
+        #controls.glass-theme #btn-poi-editor:disabled,
+        #controls.glass-theme #btn-summary-editor:disabled {
+            background: linear-gradient(180deg, rgba(15, 20, 28, 0.28) 0%, rgba(10, 14, 20, 0.18) 100%);
+            color: rgba(255, 255, 255, 0.48);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-bottom-color: rgba(255, 255, 255, 0.10);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08),
+                        0 1px 3px rgba(0, 0, 0, 0.22);
+            text-shadow: none;
+        }
+        #controls.glass-theme .btn-toggle.inactive:hover:not(:disabled),
+        #controls.glass-theme .btn-mini-toggle.inactive:hover:not(:disabled),
+        #controls.glass-theme .btn-poi-row-toggle.inactive:hover:not(:disabled) {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.06) 100%);
+            color: rgba(255, 255, 255, 0.78);
+            border-color: rgba(255, 255, 255, 0.30);
+        }
+
+        /* Samotné tlačidlo Štýl v režime SKLO */
+        #controls.glass-theme #btn-style {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.48) 0%, rgba(200, 235, 255, 0.22) 100%);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            border-bottom-color: rgba(255, 255, 255, 0.45);
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.95),
+                        0 3px 10px rgba(0, 0, 0, 0.4),
+                        0 0 16px rgba(255, 255, 255, 0.45);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+        }
+        #controls.glass-theme #btn-style:hover:not(:disabled) {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.60) 0%, rgba(215, 242, 255, 0.30) 100%);
+            border-color: #ffffff;
+            box-shadow: inset 0 1px 3px rgba(255, 255, 255, 1),
+                        0 4px 12px rgba(0, 0, 0, 0.45),
+                        0 0 22px rgba(255, 255, 255, 0.65);
+        }
+
+        /* POI a SÚHRN rozbaľovacie panely v režime SKLO */
+        #controls.glass-theme .poi-editor-popover {
+            background: rgba(18, 22, 28, 0.55);
+            backdrop-filter: blur(14px) saturate(135%);
+            -webkit-backdrop-filter: blur(14px) saturate(135%);
+            border-color: rgba(255, 255, 255, 0.38);
+            box-shadow: 0 14px 38px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+        }
+        #controls.glass-theme .poi-editor-header {
+            border-bottom-color: rgba(255, 255, 255, 0.22);
+        }
+        #controls.glass-theme .poi-editor-title {
+            color: #ffffff;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+        }
+        #controls.glass-theme .poi-add-form,
+        #controls.glass-theme .poi-row-item,
+        #controls.glass-theme .summary-add-form,
+        #controls.glass-theme .summary-row-item {
+            background: rgba(255, 255, 255, 0.10);
+            border-color: rgba(255, 255, 255, 0.24);
+        }
+        #controls.glass-theme .poi-row-item.poi-disabled,
+        #controls.glass-theme .summary-row-item.poi-disabled {
+            background: rgba(0, 0, 0, 0.22);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+        #controls.glass-theme .poi-list-empty {
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+
         /* Samostatné vycentrované okno záverečných štatistík (#final-summary-hud) */
         #final-summary-hud {
             position: absolute;
@@ -2020,13 +2304,13 @@
 </head>
 <body>
 
-<div id="app-container">
-    <div id="controls">
+<div id="app-container" class="glass-mode">
+    <div id="controls" class="glass-theme">
         <!-- 1. RIADOK -->
         <div class="controls-row">
             <div class="app-version-badge">
                 <span class="app-version-title">V3SOFT CartoLinka</span>
-                <span class="app-version-num">v1.042</span>
+                <span class="app-version-num">v1.045</span>
             </div>
             <button id="btn-info" type="button" title="Informácie o aplikácii">ℹ️ INFO</button>
             <button id="btn-help" type="button" title="Zobraziť podrobný návod a vysvetlenie všetkých nastavení aplikácie">❓ HELP</button>
@@ -2082,11 +2366,11 @@
         <div class="controls-row">
             <div class="control-group">
                 <label>Farba čiary</label>
-                <input type="color" id="line-color" value="#ff0000">
+                <input type="color" id="line-color" value="#c8ff00">
             </div>
             <div class="control-group" id="cg-width">
-                <label>Hrúbka (<span id="lbl-width">10</span>px)</label>
-                <input type="range" id="line-width" min="1" max="15" value="10" style="width: 65px;">
+                <label>Hrúbka (<span id="lbl-width">6</span>px)</label>
+                <input type="range" id="line-width" min="1" max="15" value="6" style="width: 65px;">
             </div>
             <div class="control-group" id="cg-head-size">
                 <label>Hlavička (<span id="lbl-head-size">40</span>%)</label>
@@ -2149,7 +2433,7 @@
             </div>
             <div class="control-group" id="milestone-color-group">
                 <label>Farba bliknutia</label>
-                <input type="color" id="milestone-flash-color" value="#4caf50" title="Výber farby pre efekt bliknutia míľnika">
+                <input type="color" id="milestone-flash-color" value="#ffffff" title="Výber farby pre efekt bliknutia míľnika">
             </div>
         </div>
 
@@ -2219,8 +2503,8 @@
                     <input type="range" id="hud-scale" min="50" max="180" value="70" style="width: 70px;">
                 </div>
                 <div class="control-group" id="cg-hud-opacity">
-                    <label>Priehľadnosť (<span id="lbl-hud-opacity">60</span>%)</label>
-                    <input type="range" id="hud-opacity" min="0" max="100" value="60" style="width: 70px;" title="Krytie pozadia okna štatistiky (0% = úplne priehľadné)">
+                    <label>Priehľadnosť (<span id="lbl-hud-opacity">80</span>%)</label>
+                    <input type="range" id="hud-opacity" min="0" max="100" value="80" style="width: 70px;" title="Krytie pozadia okna štatistiky (0% = úplne priehľadné)">
                 </div>
                 <div class="control-group" id="cg-font-size">
                     <label>Písmo (<span id="lbl-font-size">40</span>px)</label>
@@ -2228,7 +2512,7 @@
                 </div>
                 <div class="control-group">
                     <label>Farba písma</label>
-                    <input type="color" id="hud-font-color" value="#9bff0a">
+                    <input type="color" id="hud-font-color" value="#ffffff">
                 </div>
                 <div class="control-group poi-dropdown-wrapper" id="poi-editor-group">
                     <label>Body záujmu (POI)</label>
@@ -2319,6 +2603,7 @@
                                     <option value="power">⚡ Výkon (Watty)</option>
                                     <option value="cadence">🔄 Kadencia</option>
                                     <option value="revolutions">⚙️ Počet otáčok</option>
+                                    <option value="sun">🌡️ Teplota (Slnko)</option>
                                     <option value="flag">🚩 Vlajka</option>
                                     <option value="pin">📍 Špendlík</option>
                                     <option value="triangle">🔺 Trojuholník</option>
@@ -2349,8 +2634,8 @@
                     </div>
                 </div>
                 <div class="control-group" id="cg-keep-buffer">
-                    <label>Buffer (<span id="lbl-keep-buffer">18</span>)</label>
-                    <input type="range" id="keep-buffer" min="4" max="18" step="1" value="18" style="width: 70px;" title="Veľkosť prednačítania mapových dlaždíc v okolí pohľadu (4 až 18, predvolené 18)">
+                    <label>Buffer (<span id="lbl-keep-buffer">8</span>)</label>
+                    <input type="range" id="keep-buffer" min="4" max="18" step="1" value="8" style="width: 70px;" title="Veľkosť prednačítania mapových dlaždíc v okolí pohľadu (4 až 18, predvolené 8)">
                 </div>
                 <div class="control-group" id="cg-reset-cache">
                     <label>Vyčistiť pamäť</label>
@@ -2358,7 +2643,7 @@
                 </div>
             </div>
             <div class="controls-row-right">
-                <button id="btn-style" type="button" title="Prepínať vzhľad ovládacieho panela (NORMAL / RETRO)">Štýl</button>
+                <button id="btn-style" type="button" title="Prepínať vzhľad ovládacieho panela (SKLO / NORMAL / RETRO)">Štýl</button>
                 <button id="btn-play" disabled>▶ Spustiť</button>
                 <button id="btn-fullscreen" disabled title="Prepne na celú obrazovku a po 5s potichu spustí animáciu">⛶ Fullscreen (5s štart)</button>
             </div>
@@ -2610,7 +2895,7 @@
 <div id="help-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="help-modal-title">
     <div class="help-modal-box">
         <div class="help-modal-header">
-            <span class="help-modal-title" id="help-modal-title">❓ Návod na používanie – V3SOFT CartoLinka v1.042</span>
+            <span class="help-modal-title" id="help-modal-title">❓ Návod na používanie – V3SOFT CartoLinka v1.045</span>
             <button type="button" id="btn-close-help" title="Zavrieť nápovedu (Esc)">✕ Zavrieť</button>
         </div>
         <div class="help-modal-body">
@@ -2785,7 +3070,7 @@
                 </div>
                 <div class="help-item">
                     <span class="help-item-title">Buffer (4 – 18):</span>
-                    Nastavuje veľkosť zásobníka prednačítaných mapových dlaždíc (<code>EXTREME_KEEP_BUFFER</code>) mimo viditeľného okna mapy (predvolená hodnota <em>18</em>). Vyššia hodnota udržiava v pamäti omnoho širšie okolie trasy, čím zabraňuje dodatočnému načítavaniu (blikanie sivých štvorcov) pri rýchlom lete kamery, zatiaľ čo nižšia hodnota (napr. <em>4 – 8</em>) šetrí operačnú pamäť RAM a znižuje počet požiadaviek na mapový server.
+                    Nastavuje veľkosť zásobníka prednačítaných mapových dlaždíc (<code>EXTREME_KEEP_BUFFER</code>) mimo viditeľného okna mapy (predvolená hodnota <em>8</em>). Vyššia hodnota udržiava v pamäti omnoho širšie okolie trasy, čím zabraňuje dodatočnému načítavaniu (blikanie sivých štvorcov) pri rýchlom lete kamery, zatiaľ čo nižšia hodnota (napr. <em>4 – 8</em>) šetrí operačnú pamäť RAM a znižuje počet požiadaviek na mapový server.
                 </div>
                 <div class="help-item">
                     <span class="help-item-title">Vyčistiť pamäť – RESET (0% – 100%):</span>
@@ -2815,7 +3100,7 @@
             <div class="info-line"><strong>Koncept a dizajn:</strong> Vlado Troják</div>
             <div class="info-line"><strong>Kód a vývoj:</strong> AI Gemini Argon</div>
             <div class="info-line"><strong>Rok výroby:</strong> 11/2026</div>
-            <div class="info-line"><strong>Verzia:</strong> v1.042</div>
+            <div class="info-line"><strong>Verzia:</strong> v1.045</div>
             <div class="info-freeware">Táto aplikácia je freeware.</div>
             <div class="info-yt-label">Tu môžeš sledovať moje videá:</div>
             <a href="https://www.youtube.com/@VladoTrojak" target="_blank" rel="noopener noreferrer" class="btn-yt-link">
@@ -2864,7 +3149,7 @@
     // =========================================================================
     // 1. EXTRÉMNY BUFFER DLAŽDÍC V JADRE LEAFLETU + ASYNCHRÓNNE DEKÓDOVANIE
     // =========================================================================
-    let EXTREME_KEEP_BUFFER = 18;
+    let EXTREME_KEEP_BUFFER = 8;
     const ELEVATION_HYSTERESIS_M = 1.5;
     L.GridLayer.prototype.options.keepBuffer = EXTREME_KEEP_BUFFER;
     L.GridLayer.prototype.options.updateWhenIdle = false;
@@ -2940,9 +3225,9 @@
     let lastRenderZoom = 11;
     let hasCustomSubPixelOrigin = false;
 
-    let currentLineColor = '#ff0000';
-    let currentLineRgb = [1.0, 0.0, 0.0];
-    let currentLineWeight = 10;
+    let currentLineColor = '#c8ff00';
+    let currentLineRgb = [200 / 255, 1.0, 0.0];
+    let currentLineWeight = 6;
     let currentHeadSizePercent = 40;
     const START_MARKER_FILL_RGB = [155 / 255, 255 / 255, 10 / 255];
     const START_MARKER_STROKE_RGB = [17 / 255, 17 / 255, 17 / 255];
@@ -3707,7 +3992,7 @@
     function syncCanvasStyles() {
         currentLineColor = document.getElementById('line-color').value;
         currentLineRgb = hexToRgbFloat(currentLineColor);
-        currentLineWeight = parseInt(document.getElementById('line-width').value) || 10;
+        currentLineWeight = parseInt(document.getElementById('line-width').value) || 6;
         const headSizeEl = document.getElementById('head-size');
         currentHeadSizePercent = headSizeEl ? parseFloat(headSizeEl.value) : 40;
         const neon = document.getElementById('neon-effect').value === 'on';
@@ -3957,6 +4242,7 @@
         pause: '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>',
         temp_high: '<svg viewBox="0 0 24 24"><path d="M15 13V5c0-1.66-1.34-3-3-3S9 3.34 9 5v8c-1.21.91-2 2.37-2 4 0 2.76 2.24 5 5 5s5-2.24 5-5c0-1.63-.79-3.09-2-4zm-3-9c.55 0 1 .45 1 1v3h-2V5c0-.55.45-1 1-1zm7-1v2h3V3h-3zm0 4v2h3V7h-3zm0 4v2h3v-2h-3z"/></svg>',
         temp_low: '<svg viewBox="0 0 24 24"><path d="M22 11h-4.17l3.24-3.24-1.41-1.42L15 11h-2V9l4.66-4.66-1.42-1.41L13 6.17V2h-2v4.17L7.76 2.93 6.34 4.34 11 9v2H9L4.34 6.34 2.93 7.76 6.17 11H2v2h4.17l-3.24 3.24 1.41 1.42L9 13h2v2l-4.66 4.66 1.42 1.41L11 17.83V22h2v-4.17l3.24 3.24 1.42-1.41L13 15v-2h2l4.66 4.66 1.41-1.42L17.83 13H22v-2z"/></svg>',
+        sun: '<svg viewBox="0 0 24 24"><path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm-1 16.95h2V19.5h-2v2.95zm-7.45-3.91l1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8z"/></svg>',
         distance: '<svg viewBox="0 0 24 24"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H3V8h2v4h2V8h2v2h2V8h2v4h2V8h2v2h2V8h2v8z"/></svg>',
         clock: '<svg viewBox="0 0 24 24"><path d="M22 5.72l-4.6-3.86-1.29 1.53 4.6 3.86L22 5.72zM7.88 3.39L6.6 1.86 2 5.71l1.29 1.53 4.59-3.85zM12.5 8H11v6l4.75 2.85.75-1.23-4-2.37V8zM12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 16c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>',
         stopwatch: '<svg viewBox="0 0 24 24"><path d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42C16.07 4.74 14.12 4 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>',
@@ -3985,6 +4271,7 @@
         { value: 'pause', label: '⏸️ Pauza' },
         { value: 'temp_high', label: '🔥 Max. teplota' },
         { value: 'temp_low', label: '❄️ Min. teplota' },
+        { value: 'sun', label: '🌡️ Teplota (Slnko)' },
         { value: 'distance', label: '📏 Vzdialenosť' },
         { value: 'clock', label: '🕒 Čas jazdy' },
         { value: 'stopwatch', label: '⏱️ Tempo (Stopky)' },
@@ -4222,6 +4509,156 @@
     // 4. Maximálna rýchlosť (speedometer)
     // 5. Prestávka >= 10 minút (pause)
     // 6. Najvyššia a najnižšia teplota z časového úseku >= 15 minút (temp_high, temp_low)
+
+    // Potlačenie teplotných výkyvov zo slnka (prehriatie Garminu na slnku počas státia na mieste):
+    // 1. Odfiltrovanie stojacich / nízkorýchlostných úsekov (< 3.5 km/h) a chladenie plášťa po rozjazde (~45 s / 150 m)
+    // 2. Teplotný limit (Slew-Rate Limiter): obmedzenie maximálnej fyzikálne reálnej zmeny teploty v čase a vzdialenosti
+    const TEMP_MIN_MOVING_SPEED_KMH = 3.5;
+    const TEMP_COOLDOWN_AFTER_STOP_MS = 45000;
+    const TEMP_COOLDOWN_AFTER_STOP_KM = 0.15;
+    const TEMP_MAX_RISE_PER_MIN_C = 0.45; // Max. stúpanie teploty vzduchu: 0.45 °C za minútu pohybu
+    const TEMP_MAX_DROP_PER_MIN_C = 0.90; // Max. klesanie teploty vzduchu (zjazd / tieň): 0.90 °C za minútu
+    const TEMP_MAX_RISE_PER_KM_C = 1.20;  // Max. stúpanie teploty na 1 km trasy
+    const TEMP_MAX_DROP_PER_KM_C = 2.00;  // Max. klesanie teploty na 1 km trasy
+
+    function sanitizeTrackTemperatures(points) {
+        if (!points || points.length < 2 || !hasTempData) return;
+
+        const isTrimmedPts = typeof points[points.length - 1].cumDist === 'number';
+        const ptDist = p => isTrimmedPts ? p.cumDist : (p.origCumDist || 0);
+
+        // Nájdenie počiatočnej referenčnej teploty (z prvého úseku v pohybe, aby sme nezačali prehriatym prístrojom na štarte)
+        let lockedTemp = null;
+        for (let i = 1; i < Math.min(points.length, 180); i++) {
+            const p0 = points[i - 1];
+            const p1 = points[i];
+            if (p1.temp !== null && !isNaN(p1.temp) && p0.timeMs && p1.timeMs && p1.timeMs > p0.timeMs) {
+                const dtH = (p1.timeMs - p0.timeMs) / 3600000;
+                const dKm = Math.max(0, ptDist(p1) - ptDist(p0));
+                if (dtH > 0 && (dKm / dtH) >= TEMP_MIN_MOVING_SPEED_KMH) {
+                    lockedTemp = p1.temp;
+                    break;
+                }
+            }
+        }
+        if (lockedTemp === null) {
+            for (let i = 0; i < points.length; i++) {
+                if (points[i].temp !== null && !isNaN(points[i].temp)) {
+                    lockedTemp = points[i].temp;
+                    break;
+                }
+            }
+        }
+        if (lockedTemp === null) return;
+
+        points[0].rawSensorTemp = points[0].temp;
+        points[0].temp = lockedTemp;
+        points[0].isTempMovingValid = true;
+
+        let isStoppedState = false;
+        let resumeMovingStartMs = null;
+        let resumeMovingStartKm = 0;
+        let backIdx = 0;
+
+        for (let i = 1; i < points.length; i++) {
+            const prevPt = points[i - 1];
+            const currPt = points[i];
+            const sensorT = (currPt.temp !== null && !isNaN(currPt.temp)) ? currPt.temp : lockedTemp;
+            currPt.rawSensorTemp = sensorT;
+
+            const currD = ptDist(currPt);
+            const prevD = ptDist(prevPt);
+            const stepDistKm = Math.max(0, currD - prevD);
+
+            // Výpočet lokálnej rýchlosti na krátkom okne (~40 m) pre spoľahlivú detekciu státia vs. jazdy
+            const winBackD = Math.max(0, currD - 0.04);
+            while (backIdx < i - 1 && ptDist(points[backIdx + 1]) <= winBackD) {
+                backIdx++;
+            }
+            const refBackPt = points[backIdx];
+
+            let localSpeedKmh = 0;
+            let stepDtMs = 0;
+            if (hasTimeData && prevPt.timeMs && currPt.timeMs && currPt.timeMs > prevPt.timeMs) {
+                stepDtMs = currPt.timeMs - prevPt.timeMs;
+                const winDtMs = (refBackPt.timeMs && currPt.timeMs > refBackPt.timeMs)
+                    ? (currPt.timeMs - refBackPt.timeMs)
+                    : stepDtMs;
+                const winDistKm = Math.max(stepDistKm, currD - ptDist(refBackPt));
+                if (winDtMs > 0) {
+                    localSpeedKmh = winDistKm / (winDtMs / 3600000);
+                }
+            } else {
+                // Ak GPX nemá časové značky, posudzujeme pohyb podľa nenulového kroku vzdialenosti
+                localSpeedKmh = stepDistKm > 0.0005 ? 12.0 : 0.0;
+            }
+
+            // Stojaci úsek: rýchlosť < 3.5 km/h alebo časová medzera (Auto-Pause) > 30 s
+            const isStationary = (hasTimeData && stepDtMs > 30000) || (localSpeedKmh < TEMP_MIN_MOVING_SPEED_KMH);
+
+            if (isStationary) {
+                isStoppedState = true;
+                resumeMovingStartMs = null;
+                currPt.temp = lockedTemp;
+                currPt.isTempMovingValid = false;
+                continue;
+            }
+
+            // Ak sa cyklista práve rozbehol po zastavení, počkáme kým prúdenie vzduchu schladí kryt Garminu (~45 s alebo 150 m jazdy),
+            // pokiaľ nameraná teplota zo senzora vystrelila nad uzamknutú teplotu pred prestávkou
+            if (isStoppedState) {
+                if (resumeMovingStartMs === null) {
+                    resumeMovingStartMs = currPt.timeMs || 0;
+                    resumeMovingStartKm = currD;
+                }
+                const movingElapsedMs = (hasTimeData && currPt.timeMs && resumeMovingStartMs)
+                    ? (currPt.timeMs - resumeMovingStartMs)
+                    : 0;
+                const movingDistKm = currD - resumeMovingStartKm;
+
+                const cooldownDone = (hasTimeData && movingElapsedMs >= TEMP_COOLDOWN_AFTER_STOP_MS) ||
+                                     (movingDistKm >= TEMP_COOLDOWN_AFTER_STOP_KM);
+
+                if (!cooldownDone && sensorT > lockedTemp + 0.3) {
+                    currPt.temp = lockedTemp;
+                    currPt.isTempMovingValid = false;
+                    continue;
+                }
+                if (cooldownDone || sensorT <= lockedTemp + 0.3) {
+                    isStoppedState = false;
+                }
+            }
+
+            // Slew-Rate Limiter (Teplotný limit): obmedzenie maximálneho nárastu / poklesu teploty
+            let maxRise = 0.15;
+            let maxDrop = 0.30;
+            if (hasTimeData && stepDtMs > 0 && stepDtMs <= 60000) {
+                const dtMin = stepDtMs / 60000;
+                const riseByTime = dtMin * TEMP_MAX_RISE_PER_MIN_C;
+                const dropByTime = dtMin * TEMP_MAX_DROP_PER_MIN_C;
+                const riseByDist = stepDistKm * TEMP_MAX_RISE_PER_KM_C;
+                const dropByDist = stepDistKm * TEMP_MAX_DROP_PER_KM_C;
+                maxRise = Math.max(riseByTime, riseByDist);
+                maxDrop = Math.max(dropByTime, dropByDist);
+            } else if (stepDistKm > 0) {
+                maxRise = Math.max(0.02, stepDistKm * TEMP_MAX_RISE_PER_KM_C);
+                maxDrop = Math.max(0.04, stepDistKm * TEMP_MAX_DROP_PER_KM_C);
+            }
+
+            const deltaT = sensorT - lockedTemp;
+            if (deltaT > maxRise) {
+                lockedTemp += maxRise;
+            } else if (deltaT < -maxDrop) {
+                lockedTemp -= maxDrop;
+            } else {
+                lockedTemp = sensorT;
+            }
+
+            currPt.temp = lockedTemp;
+            currPt.isTempMovingValid = true;
+        }
+    }
+
     function analyzeTrackAutoPois(points) {
         const result = [];
         if (!points || points.length < 2) return result;
@@ -4501,7 +4938,7 @@
                     if (!points[i].timeMs) continue;
 
                     while (j < points.length && (!points[j].timeMs || (points[j].timeMs - points[i].timeMs) < MIN_TEMP_WINDOW_MS)) {
-                        if (points[j].temp !== null && !isNaN(points[j].temp)) {
+                        if (points[j].temp !== null && !isNaN(points[j].temp) && points[j].isTempMovingValid !== false) {
                             tempSum += points[j].temp;
                             tempCount++;
                         }
@@ -4509,10 +4946,10 @@
                     }
 
                     if (j < points.length && points[j].timeMs && (points[j].timeMs - points[i].timeMs) >= MIN_TEMP_WINDOW_MS) {
-                        const includeJ = (points[j].temp !== null && !isNaN(points[j].temp));
+                        const includeJ = (points[j].temp !== null && !isNaN(points[j].temp) && points[j].isTempMovingValid !== false);
                         const curSum = tempSum + (includeJ ? points[j].temp : 0);
                         const curCount = tempCount + (includeJ ? 1 : 0);
-                        if (curCount > 0) {
+                        if (curCount >= 5) {
                             const avgT = curSum / curCount;
                             const midIdx = Math.floor((i + j) / 2);
                             if (avgT > maxWindowTemp) {
@@ -4526,7 +4963,7 @@
                         }
                     }
 
-                    if (points[i].temp !== null && !isNaN(points[i].temp)) {
+                    if (points[i].temp !== null && !isNaN(points[i].temp) && points[i].isTempMovingValid !== false) {
                         tempSum -= points[i].temp;
                         tempCount--;
                     }
@@ -5492,7 +5929,8 @@
                 duration: s.duration,
                 enabled: s.enabled,
                 isAuto: Boolean(s.isAuto),
-                autoType: s.autoType || null
+                autoType: s.autoType || null,
+                rawTempC: (typeof s.rawTempC === 'number' && !isNaN(s.rawTempC)) ? s.rawTempC : null
             }));
             localStorage.setItem(currentSummaryStorageKey, JSON.stringify(serializable));
             if (typeof updateStorageUsageBadge === 'function') updateStorageUsageBadge();
@@ -5519,6 +5957,7 @@
                 enabled: item.enabled !== false,
                 isAuto: Boolean(item.isAuto),
                 autoType: item.autoType || null,
+                rawTempC: (typeof item.rawTempC === 'number' && !isNaN(item.rawTempC)) ? item.rawTempC : null,
                 triggered: false
             }));
             renderSummaryList();
@@ -5727,6 +6166,8 @@
         let cadWeightedSum = 0;
         let cadWeightTotal = 0;
         let totalRevolutions = 0;
+        let tempWeightedSum = 0;
+        let tempWeightTotal = 0;
 
         if (hasTimeData) {
             for (let i = 1; i < points.length; i++) {
@@ -5789,6 +6230,16 @@
                                 totalRevolutions += segCad * (cadDt / 60000);
                             }
                         }
+                        // Započítanie teploty iba počas reálneho pohybu (>= 3.5 km/h) a mimo stojacich/chladiacich úsekov
+                        if (hasTempData && segSpeedKmh >= TEMP_MIN_MOVING_SPEED_KMH && p0.isTempMovingValid !== false && p1.isTempMovingValid !== false) {
+                            const t0 = (p0.temp !== null && !isNaN(p0.temp)) ? p0.temp : null;
+                            const t1 = (p1.temp !== null && !isNaN(p1.temp)) ? p1.temp : null;
+                            const segTemp = (t0 !== null && t1 !== null) ? (t0 + t1) * 0.5 : (t1 !== null ? t1 : t0);
+                            if (segTemp !== null && !isNaN(segTemp)) {
+                                tempWeightedSum += segTemp * dtMs;
+                                tempWeightTotal += dtMs;
+                            }
+                        }
                     } else if (hasCadData && dtMs <= 30000) {
                         const c0 = (p0.cad !== null && !isNaN(p0.cad) && p0.cad > 0) ? p0.cad : 0;
                         const c1 = (p1.cad !== null && !isNaN(p1.cad) && p1.cad > 0) ? p1.cad : 0;
@@ -5829,11 +6280,31 @@
                 }
             }
         }
+        if (hasTempData && tempWeightTotal <= 0) {
+            for (let i = 0; i < points.length; i++) {
+                const t = points[i].temp;
+                if (t !== null && !isNaN(t) && points[i].isTempMovingValid !== false) {
+                    tempWeightedSum += t;
+                    tempWeightTotal += 1;
+                }
+            }
+            if (tempWeightTotal <= 0) {
+                for (let i = 0; i < points.length; i++) {
+                    const t = points[i].temp;
+                    if (t !== null && !isNaN(t)) {
+                        tempWeightedSum += t;
+                        tempWeightTotal += 1;
+                    }
+                }
+            }
+        }
 
         const avgMovingHr = hrWeightTotal > 0 ? Math.round(hrWeightedSum / hrWeightTotal) : null;
         const avgMovingPwr = pwrWeightTotal > 0 ? Math.round(pwrWeightedSum / pwrWeightTotal) : null;
         const avgMovingCad = cadWeightTotal > 0 ? Math.round(cadWeightedSum / cadWeightTotal) : null;
         const totalRevRounded = (hasCadData && totalRevolutions > 0) ? Math.round(totalRevolutions) : null;
+        const rawAvgMovingTempC = tempWeightTotal > 0 ? (tempWeightedSum / tempWeightTotal) : null;
+        const dispAvgMovingTempC = rawAvgMovingTempC !== null ? Math.round((rawAvgMovingTempC + getTempOffset()) * 10) / 10 : null;
 
         // 8. Priemerný tep (počas pohybu)
         result.push({
@@ -5887,6 +6358,20 @@
             triggered: false
         });
 
+        // 12. Priemerná teplota (počas pohybu, s odfiltrovaním stojacich úsekov a teplotným limitom)
+        result.push({
+            id: summaryNextId++,
+            km: summaryTriggerKm,
+            name: `Priemerná teplota: ${hasTempData && dispAvgMovingTempC !== null ? dispAvgMovingTempC.toFixed(1) + ' °C' : '-- °C'}`,
+            icon: 'sun',
+            duration: 5.0,
+            enabled: true,
+            isAuto: true,
+            autoType: 'sum_avg_temp',
+            rawTempC: rawAvgMovingTempC,
+            triggered: false
+        });
+
         return result;
     }
 
@@ -5906,6 +6391,9 @@
             if (existing) {
                 existing.km = fresh.km;
                 existing.name = fresh.name;
+                if (typeof fresh.rawTempC === 'number') {
+                    existing.rawTempC = fresh.rawTempC;
+                }
                 changed = true;
             }
         }
@@ -6275,6 +6763,19 @@
             savePoisToStorage();
             renderPoiList();
         }
+        let updatedTempSummary = false;
+        for (let i = 0; i < summaryItems.length; i++) {
+            const s = summaryItems[i];
+            if (s.isAuto && s.autoType === 'sum_avg_temp' && typeof s.rawTempC === 'number' && !isNaN(s.rawTempC)) {
+                const adjAvg = (s.rawTempC + val).toFixed(1);
+                s.name = `Priemerná teplota: ${adjAvg} °C`;
+                updatedTempSummary = true;
+            }
+        }
+        if (updatedTempSummary) {
+            saveSummaryToStorage();
+            renderSummaryList();
+        }
     });
 
     // Aktualizácia farby, neónu, stopy čiary, popiskov posuvníkov a režimov rýchlosti
@@ -6398,9 +6899,9 @@
         }
     });
 
-    // Posuvník pre EXTREME_KEEP_BUFFER (4 až 18, predvolené 18)
+    // Posuvník pre EXTREME_KEEP_BUFFER (4 až 18, predvolené 8)
     document.getElementById('keep-buffer').addEventListener('input', e => {
-        const val = parseInt(e.target.value) || 18;
+        const val = parseInt(e.target.value) || 8;
         EXTREME_KEEP_BUFFER = Math.max(4, Math.min(18, val));
         document.getElementById('lbl-keep-buffer').innerText = EXTREME_KEEP_BUFFER;
         L.GridLayer.prototype.options.keepBuffer = EXTREME_KEEP_BUFFER;
@@ -6475,12 +6976,58 @@
     mapyLogoSizeSelect.addEventListener('change', applyMapyLogoSize);
     applyMapyLogoSize();
 
+    let lastAppliedMapStyle = null;
+
     function updateMapLayer() {
         if (currentTileLayer) {
             map.removeLayer(currentTileLayer);
             currentTileLayer = null;
         }
         const style = document.getElementById('map-style').value;
+        const isSolidOrChroma = (style === 'none' || style === 'green' || style === 'blue' || style === 'red');
+        const wasSolidOrChroma = (lastAppliedMapStyle === 'none' || lastAppliedMapStyle === 'green' || lastAppliedMapStyle === 'blue' || lastAppliedMapStyle === 'red');
+
+        const lineColorInput = document.getElementById('line-color');
+        const lineWidthInput = document.getElementById('line-width');
+        const lblWidthEl = document.getElementById('lbl-width');
+        const headSizeInput = document.getElementById('head-size');
+        const lblHeadSizeEl = document.getElementById('lbl-head-size');
+        const hudOpacityInput = document.getElementById('hud-opacity');
+        const lblHudOpacityEl = document.getElementById('lbl-hud-opacity');
+
+        if (lastAppliedMapStyle !== null && lastAppliedMapStyle !== style) {
+            if (isSolidOrChroma) {
+                if (lineColorInput) lineColorInput.value = '#ffffff';
+                if (lineWidthInput) lineWidthInput.value = '15';
+                if (lblWidthEl) lblWidthEl.innerText = '15';
+                if (headSizeInput) headSizeInput.value = '0';
+                if (lblHeadSizeEl) lblHeadSizeEl.innerText = '0';
+                if (hudOpacityInput) hudOpacityInput.value = '100';
+                if (lblHudOpacityEl) lblHudOpacityEl.innerText = '100';
+                document.documentElement.style.setProperty('--hud-bg-opacity', '1.00');
+                syncCanvasStyles();
+            } else if (wasSolidOrChroma) {
+                if (lineColorInput) lineColorInput.value = (style === 'mapy_outdoor') ? '#c800ff' : '#c8ff00';
+                if (lineWidthInput) lineWidthInput.value = '6';
+                if (lblWidthEl) lblWidthEl.innerText = '6';
+                if (headSizeInput) headSizeInput.value = '40';
+                if (lblHeadSizeEl) lblHeadSizeEl.innerText = '40';
+                if (hudOpacityInput) hudOpacityInput.value = '80';
+                if (lblHudOpacityEl) lblHudOpacityEl.innerText = '80';
+                document.documentElement.style.setProperty('--hud-bg-opacity', '0.80');
+                syncCanvasStyles();
+            } else if (lineColorInput) {
+                const curLineCol = (lineColorInput.value || '').toLowerCase();
+                if (style === 'mapy_outdoor' && curLineCol === '#c8ff00') {
+                    lineColorInput.value = '#c800ff';
+                    syncCanvasStyles();
+                } else if (style !== 'mapy_outdoor' && curLineCol === '#c800ff') {
+                    lineColorInput.value = '#c8ff00';
+                    syncCanvasStyles();
+                }
+            }
+        }
+        lastAppliedMapStyle = style;
         const mapDiv = document.getElementById('map');
         const mapyKeyGroup = document.getElementById('mapy-key-group');
         const needsMapyKey = style.startsWith('mapy_');
@@ -6908,6 +7455,7 @@
                 pwr: pt.pwr,
                 hr: pt.hr,
                 temp: pt.temp,
+                isTempMovingValid: pt.isTempMovingValid !== false,
                 cad: pt.cad,
                 cumDist: cumDist,
                 cumEle: cumEle
@@ -7197,6 +7745,11 @@
                         }
                     }
                 }
+            }
+
+            // Odfiltrovanie teplotných výkyvov zo slnka počas státia a aplikovanie teplotného limitu (Slew-Rate Limiter)
+            if (hasTempData) {
+                sanitizeTrackTemperatures(originalRawPoints);
             }
 
             if (originalRawPoints.length > 1) {
@@ -7986,7 +8539,7 @@
                 }
             }
 
-            // Výpočet a vyhladenie teploty (°C) - priestorové okno + EMA + korekcia posuvníkom + zaokrúhlenie na celé čísla
+            // Výpočet a vyhladenie teploty (°C) - odfiltrovanie stojacich úsekov + teplotný limit (Slew-Rate Limiter) + EMA + korekcia posuvníkom
             if (showTemp && hasTempData) {
                 const winBackDist = Math.max(0, interpDist - 0.08);
                 const winFwdDist = Math.min(totalDistKm, interpDist + 0.08);
@@ -8006,12 +8559,28 @@
                 let rawTempVal = (tempBack + tempMid + tempFwd) / 3;
                 rawTempVal = Math.max(-50, Math.min(70, rawTempVal));
 
+                // Kontrola, či je aktuálny úsek v reálnom pohybe (rýchlosť >= 3.5 km/h), aby sa počas státia na slnku hodnota uzamkla
+                let isMovingForTemp = true;
+                if (canUseRealTime) {
+                    const tB = (pB0.timeMs && pB1.timeMs) ? (pB0.timeMs + (pB1.timeMs - pB0.timeMs) * posBack.frac) : pB0.timeMs;
+                    const tF = (pF0.timeMs && pF1.timeMs) ? (pF0.timeMs + (pF1.timeMs - pF0.timeMs) * posFwd.frac) : pF0.timeMs;
+                    const dtH = (tF && tB && tF > tB) ? ((tF - tB) / 3600000) : 0;
+                    const curSpd = dtH > 1e-6 ? ((winFwdDist - winBackDist) / dtH) : 0;
+                    if (curSpd < TEMP_MIN_MOVING_SPEED_KMH) {
+                        isMovingForTemp = false;
+                    }
+                }
+
                 if (!emaTempInitialized) {
                     emaTempC = rawTempVal;
                     emaTempInitialized = true;
-                } else {
-                    const emaAlpha = 1 - Math.exp(-smoothedDt / 0.45);
-                    emaTempC += (rawTempVal - emaTempC) * emaAlpha;
+                } else if (isMovingForTemp) {
+                    // Pomalšia časová konštanta EMA filtra (~1.8 s) + Slew-Rate limit pre maximálnu plynulosť v HUD okne
+                    const emaAlpha = 1 - Math.exp(-smoothedDt / 1.8);
+                    const targetStep = (rawTempVal - emaTempC) * emaAlpha;
+                    const maxFrameDelta = 1.6 * smoothedDt;
+                    const clampedStep = Math.max(-maxFrameDelta, Math.min(maxFrameDelta, targetStep));
+                    emaTempC += clampedStep;
                 }
 
                 lastRawTempC = emaTempC;
@@ -8136,12 +8705,48 @@
     }
 
 
-    // Prepínanie vzhľadu ovládacieho panela (NORMAL / RETRO) tlačidlom Štýl
+    // Prepínanie vzhľadu ovládacieho panela (SKLO / NORMAL / RETRO) tlačidlom Štýl
     const btnStyle = document.getElementById('btn-style');
     const controlsEl = document.getElementById('controls');
-    btnStyle.addEventListener('click', () => {
-        controlsEl.classList.toggle('retro-theme');
+    const appContainerEl = document.getElementById('app-container');
+    let currentPanelStyle = 'glass';
+
+    function syncGlassModeLayout() {
+        const isGlass = controlsEl.classList.contains('glass-theme') && controlsEl.style.display !== 'none';
+        if (isGlass) {
+            document.documentElement.style.setProperty('--controls-height', (controlsEl.offsetHeight || 0) + 'px');
+            appContainerEl.classList.add('glass-mode');
+        } else {
+            document.documentElement.style.setProperty('--controls-height', '0px');
+            appContainerEl.classList.remove('glass-mode');
+        }
+        map.invalidateSize({ pan: false });
+        resizeRouteCanvas();
+    }
+
+    window.addEventListener('resize', () => {
+        if (controlsEl.classList.contains('glass-theme') && controlsEl.style.display !== 'none') {
+            document.documentElement.style.setProperty('--controls-height', (controlsEl.offsetHeight || 0) + 'px');
+        }
     });
+
+    btnStyle.addEventListener('click', () => {
+        if (currentPanelStyle === 'glass') {
+            currentPanelStyle = 'normal';
+            controlsEl.classList.remove('retro-theme', 'glass-theme');
+        } else if (currentPanelStyle === 'normal') {
+            currentPanelStyle = 'retro';
+            controlsEl.classList.remove('glass-theme');
+            controlsEl.classList.add('retro-theme');
+        } else {
+            currentPanelStyle = 'glass';
+            controlsEl.classList.remove('retro-theme');
+            controlsEl.classList.add('glass-theme');
+        }
+        syncGlassModeLayout();
+    });
+
+    syncGlassModeLayout();
 
     // Štandardné tlačidlo Spustiť (okamžite)
     document.getElementById('btn-play').addEventListener('click', () => {
