@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V3SOFT CartoLinka v1.045 (WebGL GPU Engine)</title>
+    <title>V3SOFT CartoLinka v1.047 (WebGL GPU Engine)</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
@@ -2156,7 +2156,7 @@
             display: flex;
         }
         .reset-modal-box {
-            width: 480px;
+            width: 540px;
             max-width: 94vw;
             background: #1b1b1b;
             border: 1px solid #484848;
@@ -2251,6 +2251,7 @@
         }
         .reset-modal-actions {
             display: flex;
+            flex-wrap: wrap;
             justify-content: flex-end;
             gap: 10px;
             margin-top: 4px;
@@ -2259,18 +2260,30 @@
             background: linear-gradient(180deg, #525252 0%, #383838 100%);
             border: 1px solid #666;
             color: #ffffff;
-            padding: 8px 18px;
+            padding: 8px 14px;
             height: 34px;
         }
         #btn-cancel-reset-cache:hover {
             background: linear-gradient(180deg, #616161 0%, #454545 100%);
+        }
+        #btn-reset-factory-settings {
+            background: linear-gradient(180deg, #ff8f00 0%, #e65100 100%);
+            border: 1px solid #ffb300;
+            border-bottom-color: #bf360c;
+            color: #ffffff;
+            padding: 8px 14px;
+            height: 34px;
+            box-shadow: 0 3px 8px rgba(255, 152, 0, 0.38);
+        }
+        #btn-reset-factory-settings:hover {
+            background: linear-gradient(180deg, #ffa000 0%, #ef6c00 100%);
         }
         #btn-confirm-reset-cache {
             background: linear-gradient(180deg, #f44336 0%, #c62828 100%);
             border: 1px solid #ef5350;
             border-bottom-color: #8e0000;
             color: #ffffff;
-            padding: 8px 18px;
+            padding: 8px 14px;
             height: 34px;
             box-shadow: 0 3px 8px rgba(229, 57, 53, 0.45);
         }
@@ -2310,7 +2323,7 @@
         <div class="controls-row">
             <div class="app-version-badge">
                 <span class="app-version-title">V3SOFT CartoLinka</span>
-                <span class="app-version-num">v1.045</span>
+                <span class="app-version-num">v1.047</span>
             </div>
             <button id="btn-info" type="button" title="Informácie o aplikácii">ℹ️ INFO</button>
             <button id="btn-help" type="button" title="Zobraziť podrobný návod a vysvetlenie všetkých nastavení aplikácie">❓ HELP</button>
@@ -2895,7 +2908,7 @@
 <div id="help-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="help-modal-title">
     <div class="help-modal-box">
         <div class="help-modal-header">
-            <span class="help-modal-title" id="help-modal-title">❓ Návod na používanie – V3SOFT CartoLinka v1.045</span>
+            <span class="help-modal-title" id="help-modal-title">❓ Návod na používanie – V3SOFT CartoLinka v1.047</span>
             <button type="button" id="btn-close-help" title="Zavrieť nápovedu (Esc)">✕ Zavrieť</button>
         </div>
         <div class="help-modal-body">
@@ -3100,7 +3113,7 @@
             <div class="info-line"><strong>Koncept a dizajn:</strong> Vlado Troják</div>
             <div class="info-line"><strong>Kód a vývoj:</strong> AI Gemini Argon</div>
             <div class="info-line"><strong>Rok výroby:</strong> 11/2026</div>
-            <div class="info-line"><strong>Verzia:</strong> v1.045</div>
+            <div class="info-line"><strong>Verzia:</strong> v1.047</div>
             <div class="info-freeware">Táto aplikácia je freeware.</div>
             <div class="info-yt-label">Tu môžeš sledovať moje videá:</div>
             <a href="https://www.youtube.com/@VladoTrojak" target="_blank" rel="noopener noreferrer" class="btn-yt-link">
@@ -3136,7 +3149,8 @@
             </div>
             <div class="reset-modal-actions">
                 <button type="button" id="btn-cancel-reset-cache">Zrušiť (Späť)</button>
-                <button type="button" id="btn-confirm-reset-cache">Potvrdiť a vymazať</button>
+                <button type="button" id="btn-reset-factory-settings" title="Vrátiť všetky nastavenia ovládacieho panela, čiary, kamery a štatistiky do továrenského nastavenia (uložené trasy, fotky a API kľúč zostanú zachované)">Továrenské nastavenia</button>
+                <button type="button" id="btn-confirm-reset-cache" title="Vymazať z pamäte všetky uložené trasy, body záujmu a fotografie">Potvrdiť a vymazať</button>
             </div>
         </div>
     </div>
@@ -8974,7 +8988,7 @@
                 const keysToRemove = [];
                 for (let i = 0; i < localStorage.length; i++) {
                     const key = localStorage.key(i);
-                    if (key && key !== 'mapy_com_api_key') {
+                    if (key && key !== 'mapy_com_api_key' && key !== 'cartolinka_user_settings') {
                         keysToRemove.push(key);
                     }
                 }
@@ -9037,6 +9051,430 @@
         }
     });
 
+
+    // =========================================================================
+    // TRVALÉ ULOŽENIE A OBNOVA VLASTNÝCH NASTAVENÍ UŽÍVATEĽA (LocalStorage)
+    // =========================================================================
+    const USER_SETTINGS_STORAGE_KEY = 'cartolinka_user_settings';
+    let isRestoringUserSettings = false;
+
+    const DEFAULT_USER_SETTINGS = {
+        panelStyle: 'glass',
+        trimStatsMode: 'zero',
+        mapStyle: 'satellite_hybrid',
+        mapyLogoSize: '50',
+        lineColor: '#c8ff00',
+        lineWidth: '6',
+        headSize: '40',
+        lineSmooth: '1',
+        neonEffect: 'off',
+        trailMode: 'full',
+        cometLength: '3',
+        cameraMode: 'follow',
+        cameraZoom: '14',
+        milestoneKm: '1',
+        milestoneFlashEffect: 'on',
+        milestoneFlashColor: '#ffffff',
+        speedMode: 'duration',
+        animSpeed: '1.0',
+        animDuration: '60',
+        animTimelapse: '10',
+        animPointsSpeed: '10',
+        profileEnabled: true,
+        hudEnabled: true,
+        hudMode: 'klasik',
+        showDist: true,
+        showEle: true,
+        showSpeed: true,
+        showPace: true,
+        showPwr: true,
+        showHr: true,
+        showTime: true,
+        showTemp: true,
+        tempOffset: '0',
+        hudScale: '70',
+        hudOpacity: '80',
+        hudFontSize: '40',
+        hudFontColor: '#ffffff',
+        keepBuffer: '8',
+        poiInputIcon: 'mountain',
+        poiInputDuration: '4.0',
+        summaryInputIcon: 'distance',
+        summaryInputDuration: '5.0'
+    };
+
+    function saveUserSettingsToStorage() {
+        if (isRestoringUserSettings) return;
+        try {
+            const settings = {
+                panelStyle: currentPanelStyle,
+                trimStatsMode: document.getElementById('trim-stats-mode').value,
+                mapStyle: document.getElementById('map-style').value,
+                mapyLogoSize: document.getElementById('mapy-logo-size').value,
+                lineColor: document.getElementById('line-color').value,
+                lineWidth: document.getElementById('line-width').value,
+                headSize: document.getElementById('head-size').value,
+                lineSmooth: document.getElementById('line-smooth').value,
+                neonEffect: document.getElementById('neon-effect').value,
+                trailMode: document.getElementById('trail-mode').value,
+                cometLength: document.getElementById('comet-length').value,
+                cameraMode: document.getElementById('camera-mode').value,
+                cameraZoom: document.getElementById('camera-zoom').value,
+                milestoneKm: document.getElementById('milestone-km').value,
+                milestoneFlashEffect: document.getElementById('milestone-flash-effect').value,
+                milestoneFlashColor: document.getElementById('milestone-flash-color').value,
+                speedMode: document.getElementById('speed-mode').value,
+                animSpeed: document.getElementById('anim-speed').value,
+                animDuration: document.getElementById('anim-duration').value,
+                animTimelapse: document.getElementById('anim-timelapse').value,
+                animPointsSpeed: document.getElementById('anim-points-speed').value,
+                profileEnabled: profileEnabled,
+                hudEnabled: hudEnabled,
+                hudMode: hudMode,
+                showDist: showDist,
+                showEle: showEle,
+                showSpeed: showSpeed,
+                showPace: showPace,
+                showPwr: showPwr,
+                showHr: showHr,
+                showTime: showTime,
+                showTemp: showTemp,
+                tempOffset: document.getElementById('temp-offset').value,
+                hudScale: document.getElementById('hud-scale').value,
+                hudOpacity: document.getElementById('hud-opacity').value,
+                hudFontSize: document.getElementById('hud-font-size').value,
+                hudFontColor: document.getElementById('hud-font-color').value,
+                keepBuffer: document.getElementById('keep-buffer').value,
+                poiInputIcon: document.getElementById('poi-input-icon').value,
+                poiInputDuration: document.getElementById('poi-input-duration').value,
+                summaryInputIcon: document.getElementById('summary-input-icon').value,
+                summaryInputDuration: document.getElementById('summary-input-duration').value
+            };
+            localStorage.setItem(USER_SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+            if (typeof updateStorageUsageBadge === 'function') updateStorageUsageBadge();
+        } catch (err) {
+            console.warn('LocalStorage nie je dostupné pre uloženie nastavení:', err);
+        }
+    }
+
+    function applyUserSettingsObject(s) {
+        if (!s || typeof s !== 'object') return;
+        isRestoringUserSettings = true;
+        try {
+            // 1. Štýl ovládacieho panela (SKLO / NORMAL / RETRO)
+            if (s.panelStyle === 'normal' || s.panelStyle === 'retro' || s.panelStyle === 'glass') {
+                currentPanelStyle = s.panelStyle;
+                controlsEl.classList.remove('retro-theme', 'glass-theme');
+                if (currentPanelStyle === 'retro') {
+                    controlsEl.classList.add('retro-theme');
+                } else if (currentPanelStyle === 'glass') {
+                    controlsEl.classList.add('glass-theme');
+                }
+                syncGlassModeLayout();
+            }
+
+            // 2. Hodnoty pri orezaní
+            if (s.trimStatsMode !== undefined) {
+                document.getElementById('trim-stats-mode').value = s.trimStatsMode;
+            }
+
+            // 3. Mapový podklad a veľkosť loga Mapy.com
+            if (s.mapyLogoSize !== undefined) {
+                mapyLogoSizeSelect.value = s.mapyLogoSize;
+                applyMapyLogoSize();
+            }
+            if (s.mapStyle !== undefined) {
+                const mapStyleEl = document.getElementById('map-style');
+                mapStyleEl.value = s.mapStyle;
+                // Nastavíme lastAppliedMapStyle na zvolený štýl pred volaním updateMapLayer(),
+                // aby automatická predvoľba neprepísala vlastnú farbu čiary, hrúbku, hlavičku a priehľadnosť užívateľa
+                lastAppliedMapStyle = s.mapStyle;
+                updateMapLayer();
+            }
+
+            // 4. Vzhľad čiary, hlavičky, vyhladenia, neónu a stopy
+            if (s.lineColor !== undefined) {
+                document.getElementById('line-color').value = s.lineColor;
+            }
+            if (s.lineWidth !== undefined) {
+                const lw = parseInt(s.lineWidth) || 6;
+                document.getElementById('line-width').value = lw;
+                document.getElementById('lbl-width').innerText = lw;
+            }
+            if (s.headSize !== undefined) {
+                const hs = parseInt(s.headSize);
+                if (!isNaN(hs)) {
+                    document.getElementById('head-size').value = hs;
+                    document.getElementById('lbl-head-size').innerText = hs;
+                }
+            }
+            if (s.lineSmooth !== undefined) {
+                document.getElementById('line-smooth').value = s.lineSmooth;
+            }
+            if (s.neonEffect !== undefined) {
+                document.getElementById('neon-effect').value = s.neonEffect;
+            }
+            if (s.cometLength !== undefined) {
+                document.getElementById('comet-length').value = s.cometLength;
+            }
+            if (s.trailMode !== undefined) {
+                const trailEl = document.getElementById('trail-mode');
+                trailEl.value = s.trailMode;
+                const isComet = (s.trailMode === 'comet');
+                document.getElementById('comet-length-group').classList.toggle('group-disabled', !isComet);
+                document.getElementById('comet-length').disabled = !isComet;
+            }
+            syncCanvasStyles();
+
+            // 5. Kamera, Zoom a Míľniky
+            if (s.cameraZoom !== undefined) {
+                const cz = parseInt(s.cameraZoom) || 14;
+                document.getElementById('camera-zoom').value = cz;
+                document.getElementById('lbl-zoom').innerText = cz;
+            }
+            if (s.cameraMode !== undefined) {
+                document.getElementById('camera-mode').value = s.cameraMode;
+                const isFollow = (s.cameraMode === 'follow');
+                document.getElementById('zoom-group').classList.toggle('group-disabled', !isFollow);
+                document.getElementById('camera-zoom').disabled = !isFollow;
+            }
+            if (s.milestoneKm !== undefined) {
+                document.getElementById('milestone-km').value = s.milestoneKm;
+            }
+            if (s.milestoneFlashColor !== undefined) {
+                document.getElementById('milestone-flash-color').value = s.milestoneFlashColor;
+                document.documentElement.style.setProperty('--milestone-glow-color', s.milestoneFlashColor);
+            }
+            if (s.milestoneFlashEffect !== undefined) {
+                document.getElementById('milestone-flash-effect').value = s.milestoneFlashEffect;
+                const isOn = (s.milestoneFlashEffect === 'on');
+                document.getElementById('milestone-color-group').classList.toggle('group-disabled', !isOn);
+                document.getElementById('milestone-flash-color').disabled = !isOn;
+            }
+
+            // 6. Režim rýchlosti a hodnoty posuvníkov rýchlosti
+            if (s.animSpeed !== undefined) {
+                const sp = parseFloat(s.animSpeed) || 1.0;
+                document.getElementById('anim-speed').value = sp;
+                document.getElementById('lbl-speed').innerText = sp.toFixed(1);
+            }
+            if (s.animDuration !== undefined) {
+                document.getElementById('anim-duration').value = s.animDuration;
+            }
+            if (s.animTimelapse !== undefined) {
+                const tl = parseInt(s.animTimelapse) || 10;
+                document.getElementById('anim-timelapse').value = tl;
+                document.getElementById('lbl-timelapse').innerText = tl;
+            }
+            if (s.animPointsSpeed !== undefined) {
+                const ps = parseInt(s.animPointsSpeed) || 10;
+                document.getElementById('anim-points-speed').value = ps;
+                document.getElementById('lbl-points-speed').innerText = ps;
+            }
+            if (s.speedMode !== undefined) {
+                const mode = s.speedMode;
+                document.getElementById('speed-mode').value = mode;
+                const isConst = (mode === 'constant');
+                const isDur = (mode === 'duration');
+                const isReal = (mode === 'realtime');
+                const isPts = (mode === 'points');
+
+                document.getElementById('speed-slider-group').classList.toggle('group-disabled', !isConst);
+                document.getElementById('anim-speed').disabled = !isConst;
+
+                document.getElementById('duration-group').classList.toggle('group-disabled', !isDur);
+                document.getElementById('anim-duration').disabled = !isDur;
+
+                document.getElementById('timelapse-group').classList.toggle('group-disabled', !isReal);
+                document.getElementById('anim-timelapse').disabled = !isReal;
+
+                document.getElementById('points-speed-group').classList.toggle('group-disabled', !isPts);
+                document.getElementById('anim-points-speed').disabled = !isPts;
+            }
+
+            // 7. Okno profilu, Okno štatistiky, Typ HUD a Zobrazené údaje
+            if (typeof s.profileEnabled === 'boolean') {
+                profileEnabled = s.profileEnabled;
+                btnToggleProfile.innerText = profileEnabled ? '⛰️ Profil: ZAP' : '⛰️ Profil: VYP';
+                btnToggleProfile.classList.toggle('inactive', !profileEnabled);
+            }
+            if (typeof s.hudEnabled === 'boolean') {
+                hudEnabled = s.hudEnabled;
+                btnToggleHud.innerText = hudEnabled ? '📊 Štatistika: ZAP' : '📊 Štatistika: VYP';
+                btnToggleHud.classList.toggle('inactive', !hudEnabled);
+                hudModeGroup.classList.toggle('group-disabled', !hudEnabled);
+                btnHudMode.disabled = !hudEnabled;
+            }
+            if (s.hudMode === 'klasik' || s.hudMode === 'mini') {
+                hudMode = s.hudMode;
+                btnHudMode.innerText = (hudMode === 'klasik') ? '🎛️ KLASIK HUD' : '🎛️ MINI HUD';
+            }
+            if (typeof s.showDist === 'boolean') {
+                showDist = s.showDist;
+                btnToggleDist.classList.toggle('inactive', !showDist);
+            }
+            if (typeof s.showEle === 'boolean') {
+                showEle = s.showEle;
+                btnToggleEle.classList.toggle('inactive', !showEle);
+            }
+            if (typeof s.showSpeed === 'boolean') {
+                showSpeed = s.showSpeed;
+                btnToggleSpeed.classList.toggle('inactive', !showSpeed);
+            }
+            if (typeof s.showPace === 'boolean') {
+                showPace = s.showPace;
+                btnTogglePace.classList.toggle('inactive', !showPace);
+            }
+            if (typeof s.showPwr === 'boolean') {
+                showPwr = s.showPwr;
+                btnTogglePwr.classList.toggle('inactive', !showPwr);
+            }
+            if (typeof s.showHr === 'boolean') {
+                showHr = s.showHr;
+                btnToggleHr.classList.toggle('inactive', !showHr);
+            }
+            if (typeof s.showTime === 'boolean') {
+                showTime = s.showTime;
+                btnToggleTime.classList.toggle('inactive', !showTime);
+            }
+            if (typeof s.showTemp === 'boolean') {
+                showTemp = s.showTemp;
+                btnToggleTemp.classList.toggle('inactive', !showTemp);
+            }
+
+            // 8. Korekcia teploty, Veľkosť okna, Priehľadnosť, Písmo, Farba písma a Buffer
+            if (s.tempOffset !== undefined) {
+                const toVal = parseInt(s.tempOffset) || 0;
+                document.getElementById('temp-offset').value = toVal;
+                document.getElementById('lbl-temp-offset').innerText = toVal > 0 ? `+${toVal}` : toVal;
+            }
+            if (s.hudScale !== undefined) {
+                const scVal = parseInt(s.hudScale) || 70;
+                document.getElementById('hud-scale').value = scVal;
+                document.getElementById('lbl-hud-scale').innerText = scVal;
+                document.documentElement.style.setProperty('--hud-scale', (scVal / 100).toFixed(2));
+            }
+            if (s.hudOpacity !== undefined) {
+                const opVal = parseInt(s.hudOpacity);
+                if (!isNaN(opVal)) {
+                    document.getElementById('hud-opacity').value = opVal;
+                    document.getElementById('lbl-hud-opacity').innerText = opVal;
+                    document.documentElement.style.setProperty('--hud-bg-opacity', (opVal / 100).toFixed(2));
+                }
+            }
+            if (s.hudFontSize !== undefined) {
+                const fsVal = parseInt(s.hudFontSize) || 40;
+                document.getElementById('hud-font-size').value = fsVal;
+                document.getElementById('lbl-font-size').innerText = fsVal;
+                document.documentElement.style.setProperty('--hud-font-size', fsVal + 'px');
+            }
+            if (s.hudFontColor !== undefined) {
+                document.getElementById('hud-font-color').value = s.hudFontColor;
+                document.documentElement.style.setProperty('--hud-font-color', s.hudFontColor);
+            }
+            if (s.keepBuffer !== undefined) {
+                const kbVal = Math.max(4, Math.min(18, parseInt(s.keepBuffer) || 8));
+                EXTREME_KEEP_BUFFER = kbVal;
+                document.getElementById('keep-buffer').value = kbVal;
+                document.getElementById('lbl-keep-buffer').innerText = kbVal;
+                L.GridLayer.prototype.options.keepBuffer = EXTREME_KEEP_BUFFER;
+                if (currentTileLayer) {
+                    currentTileLayer.options.keepBuffer = EXTREME_KEEP_BUFFER;
+                }
+            }
+            if (s.poiInputIcon !== undefined) {
+                document.getElementById('poi-input-icon').value = s.poiInputIcon;
+            }
+            if (s.poiInputDuration !== undefined) {
+                document.getElementById('poi-input-duration').value = s.poiInputDuration;
+            }
+            if (s.summaryInputIcon !== undefined) {
+                document.getElementById('summary-input-icon').value = s.summaryInputIcon;
+            }
+            if (s.summaryInputDuration !== undefined) {
+                document.getElementById('summary-input-duration').value = s.summaryInputDuration;
+            }
+
+            updateHudVisibility();
+        } finally {
+            isRestoringUserSettings = false;
+        }
+    }
+
+    function loadUserSettingsFromStorage() {
+        let raw = null;
+        try {
+            raw = localStorage.getItem(USER_SETTINGS_STORAGE_KEY);
+        } catch (err) {
+            return;
+        }
+        if (!raw) return;
+
+        let s = null;
+        try {
+            s = JSON.parse(raw);
+        } catch (err) {
+            return;
+        }
+        applyUserSettingsObject(s);
+    }
+
+    function resetUserSettingsToFactoryDefaults() {
+        try {
+            localStorage.removeItem(USER_SETTINGS_STORAGE_KEY);
+        } catch (err) {
+            console.warn('LocalStorage nie je dostupné:', err);
+        }
+        applyUserSettingsObject(DEFAULT_USER_SETTINGS);
+        if (!isAnimating && rawPoints && rawPoints.length > 1) {
+            if (typeof updatePoisOnTrim === 'function') updatePoisOnTrim();
+            renderTrimmedRoutePreview();
+            if (typeof updateAutoSummaryOnTrim === 'function') updateAutoSummaryOnTrim();
+        }
+        updateStorageUsageBadge();
+        closeResetCacheModal();
+    }
+
+    const btnResetFactorySettings = document.getElementById('btn-reset-factory-settings');
+    if (btnResetFactorySettings) {
+        btnResetFactorySettings.addEventListener('click', resetUserSettingsToFactoryDefaults);
+    }
+
+    function bindUserSettingsPersistence() {
+        const watchedControlIds = [
+            'trim-stats-mode', 'map-style', 'mapy-logo-size',
+            'line-color', 'line-width', 'head-size', 'line-smooth',
+            'neon-effect', 'trail-mode', 'comet-length', 'camera-mode',
+            'camera-zoom', 'milestone-km', 'milestone-flash-effect', 'milestone-flash-color',
+            'speed-mode', 'anim-speed', 'anim-duration', 'anim-timelapse', 'anim-points-speed',
+            'temp-offset', 'hud-scale', 'hud-opacity', 'hud-font-size', 'hud-font-color',
+            'keep-buffer', 'poi-input-icon', 'poi-input-duration',
+            'summary-input-icon', 'summary-input-duration'
+        ];
+        watchedControlIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', saveUserSettingsToStorage);
+                el.addEventListener('change', saveUserSettingsToStorage);
+            }
+        });
+
+        const watchedButtonIds = [
+            'btn-style', 'btn-toggle-profile', 'btn-toggle-hud', 'btn-hud-mode',
+            'toggle-item-dist', 'toggle-item-ele', 'toggle-item-speed', 'toggle-item-pace',
+            'toggle-item-pwr', 'toggle-item-hr', 'toggle-item-time', 'toggle-item-temp'
+        ];
+        watchedButtonIds.forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) {
+                btn.addEventListener('click', saveUserSettingsToStorage);
+            }
+        });
+    }
+
+    loadUserSettingsFromStorage();
+    bindUserSettingsPersistence();
+    updateStorageUsageBadge();
 </script>
 </body>
 </html>
