@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V3SOFT CartoLinka v1.048 (WebGL GPU Engine)</title>
+    <title>V3SOFT CartoLinka v1.062 (WebGL GPU Engine)</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
@@ -99,7 +99,280 @@
         #cg-trim { width: 175px; }
         #cg-width { width: 78px; }
         #cg-head-size { width: 88px; }
-        #zoom-group { width: 68px; }
+        #zoom-group { width: 62px; }
+        .api-key-input-row {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            height: 29px;
+        }
+        #btn-toggle-api-key {
+            width: 28px;
+            min-width: 28px;
+            max-width: 28px;
+            height: 28px;
+            padding: 0;
+            justify-content: center;
+            background: #37474f;
+            border: 1px solid #4f636d;
+            border-radius: 5px;
+            box-sizing: border-box;
+            flex-shrink: 0;
+        }
+        #btn-toggle-api-key:hover:not(:disabled) {
+            background: #455a64;
+        }
+        #btn-toggle-api-key svg {
+            width: 15px;
+            height: 15px;
+            fill: currentColor;
+            display: block;
+        }
+        #controls-row-2 {
+            gap: 8px;
+        }
+        #controls-row-2 select,
+        #controls-row-2 input[type="number"] {
+            padding: 5px 6px;
+            font-size: 11.5px;
+        }
+        #controls-row-2 input[type="color"] {
+            width: 36px;
+            height: 28px;
+        }
+        .gradient-palette-row {
+            display: flex;
+            gap: 3px;
+            align-items: center;
+            height: 28px;
+        }
+        .gradient-palette-row input[type="color"] {
+            width: 28px !important;
+            height: 28px !important;
+        }
+        #btn-grad-config {
+            background: linear-gradient(180deg, #8e24aa 0%, #6a1b9a 100%);
+            border: 1px solid #ba68c8;
+            border-bottom-color: #38006b;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35),
+                        0 3px 5px rgba(0, 0, 0, 0.5),
+                        0 0 10px rgba(171, 71, 188, 0.45);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+            height: 28px;
+            padding: 0 9px;
+            font-size: 11px;
+            justify-content: center;
+            transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+        }
+        #btn-grad-config:hover:not(:disabled) {
+            background: linear-gradient(180deg, #9c27b0 0%, #7b1fa2 100%);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45),
+                        0 3px 6px rgba(0, 0, 0, 0.55),
+                        0 0 14px rgba(186, 104, 200, 0.65);
+        }
+        #btn-grad-config.active {
+            background: linear-gradient(180deg, #ab47bc 0%, #8e24aa 100%);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5),
+                        0 3px 6px rgba(0, 0, 0, 0.55),
+                        0 0 16px rgba(206, 147, 216, 0.8);
+        }
+        #btn-grad-config:disabled,
+        #btn-grad-config.inactive {
+            background: linear-gradient(180deg, #525252 0%, #383838 100%);
+            color: #999;
+            border: 1px solid #555;
+            border-bottom-color: #242424;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12),
+                        0 2px 4px rgba(0, 0, 0, 0.55);
+            text-shadow: none;
+            opacity: 0.75;
+        }
+        #btn-grad-config:active:not(:disabled) {
+            transform: translateY(1px) scale(0.98);
+        }
+        #btn-activity-indicator {
+            background: linear-gradient(180deg, #00897b 0%, #00695c 100%);
+            border: 1px solid #26a69a;
+            border-bottom-color: #003d33;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35),
+                        0 3px 5px rgba(0, 0, 0, 0.5),
+                        0 0 10px rgba(0, 150, 136, 0.45);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+            width: 88px;
+            min-width: 88px;
+            max-width: 88px;
+            box-sizing: border-box;
+            height: 28px;
+            padding: 0 8px;
+            font-size: 11.5px;
+            gap: 5px;
+            justify-content: center;
+            transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+        }
+        #btn-activity-indicator:hover:not(:disabled) {
+            background: linear-gradient(180deg, #009688 0%, #00796b 100%);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45),
+                        0 3px 6px rgba(0, 0, 0, 0.55),
+                        0 0 14px rgba(38, 166, 154, 0.65);
+        }
+        #btn-activity-indicator.active {
+            background: linear-gradient(180deg, #26a69a 0%, #00897b 100%);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5),
+                        0 3px 6px rgba(0, 0, 0, 0.55),
+                        0 0 16px rgba(77, 182, 172, 0.8);
+        }
+        #btn-activity-indicator:disabled {
+            background: linear-gradient(180deg, #525252 0%, #383838 100%);
+            color: #999;
+            border: 1px solid #555;
+            border-bottom-color: #242424;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12),
+                        0 2px 4px rgba(0, 0, 0, 0.55);
+            text-shadow: none;
+            opacity: 0.75;
+        }
+        #btn-activity-indicator:active:not(:disabled) {
+            transform: translateY(1px) scale(0.98);
+        }
+        .act-ind-svg {
+            width: 15px;
+            height: 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .act-ind-svg svg {
+            width: 100%;
+            height: 100%;
+            fill: currentColor;
+            display: block;
+        }
+        #activity-menu-panel {
+            width: 215px;
+            padding: 10px;
+            gap: 8px;
+        }
+        .activity-options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .activity-opt-btn {
+            width: 100%;
+            height: 30px;
+            padding: 0 10px;
+            font-size: 11.5px;
+            font-weight: 700;
+            justify-content: space-between;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            color: #ddd;
+            border-radius: 6px;
+        }
+        .activity-opt-btn:hover:not(:disabled) {
+            background: #383838;
+            border-color: #666;
+            color: #fff;
+        }
+        .activity-opt-btn.selected {
+            background: linear-gradient(180deg, #2e7d32 0%, #1b5e20 100%);
+            border-color: #66bb6a;
+            color: #ffffff;
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
+        }
+        .activity-opt-left {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .activity-opt-badge {
+            font-size: 9.5px;
+            text-transform: uppercase;
+            opacity: 0.8;
+            letter-spacing: 0.4px;
+        }
+        #controls.retro-theme .activity-opt-btn.selected {
+            background: linear-gradient(180deg, #195e19 0%, #0d360d 100%);
+            border-color: #76ff03;
+            color: #76ff03;
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.55);
+        }
+        #controls.glass-theme .activity-opt-btn.selected {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.46) 0%, rgba(255, 255, 255, 0.22) 100%);
+            border-color: rgba(255, 255, 255, 0.85);
+            color: #ffffff;
+        }
+        .grad-config-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: #252525;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #383838;
+            transition: opacity 0.2s ease;
+        }
+        .grad-config-section.section-disabled {
+            opacity: 0.38;
+            pointer-events: none;
+        }
+        .grad-config-sec-title {
+            font-size: 11px;
+            font-weight: 800;
+            color: #9bff0a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #383838;
+            padding-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .grad-config-sec-stats {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: #00e5ff;
+            text-transform: none;
+            letter-spacing: 0.2px;
+            font-variant-numeric: tabular-nums;
+        }
+        .grad-config-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            align-items: end;
+        }
+        #controls.retro-theme .grad-config-section {
+            background: #061506;
+            border-color: #145214;
+        }
+        #controls.retro-theme .grad-config-sec-title {
+            color: #39ff14;
+            border-bottom-color: #145214;
+        }
+        #controls.retro-theme .grad-config-sec-stats {
+            color: #76ff03;
+        }
+        #controls.glass-theme #grad-config-panel {
+            background: rgba(18, 22, 28, 0.76);
+            backdrop-filter: blur(18px) saturate(140%);
+            -webkit-backdrop-filter: blur(18px) saturate(140%);
+        }
+        #controls.glass-theme .grad-config-section {
+            background: rgba(255, 255, 255, 0.14);
+            border-color: rgba(255, 255, 255, 0.28);
+        }
+        #controls.glass-theme .grad-config-sec-title {
+            color: #ffffff;
+            border-bottom-color: rgba(255, 255, 255, 0.22);
+        }
+        #controls.glass-theme .grad-config-sec-stats {
+            color: #9bff0a;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+        }
         #speed-slider-group { width: 112px; }
         #timelapse-group { width: 92px; }
         #points-speed-group { width: 76px; }
@@ -123,6 +396,7 @@
             width: 44px;
             cursor: pointer;
         }
+
         input[type="range"] {
             padding: 0;
             cursor: pointer;
@@ -901,9 +1175,9 @@
             display: block;
         }
 
-        /* Neon effect pre vlastný HTML5 Canvas */
+        /* True per-segment canvas neon glow */
         .neon-canvas {
-            filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.85)) drop-shadow(0 0 14px var(--neon-color));
+            filter: none;
         }
 
         /* Milestone animation class */
@@ -1731,12 +2005,20 @@
             height: calc(100% + var(--controls-height, 0px));
         }
         #controls.glass-theme {
-            background: rgba(18, 22, 28, 0.33);
-            backdrop-filter: blur(8px) saturate(130%);
-            -webkit-backdrop-filter: blur(8px) saturate(130%);
+            background: transparent;
             border-bottom: 1px solid rgba(255, 255, 255, 0.28);
             box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
             color: #ffffff;
+        }
+        #controls.glass-theme::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(18, 22, 28, 0.33);
+            backdrop-filter: blur(8px) saturate(130%);
+            -webkit-backdrop-filter: blur(8px) saturate(130%);
+            pointer-events: none;
+            z-index: -1;
         }
         #controls.glass-theme .app-version-badge {
             border-right-color: rgba(255, 255, 255, 0.25);
@@ -2323,7 +2605,7 @@
         <div class="controls-row">
             <div class="app-version-badge">
                 <span class="app-version-title">V3SOFT CartoLinka</span>
-                <span class="app-version-num">v1.048</span>
+                <span class="app-version-num">v1.062</span>
             </div>
             <button id="btn-info" type="button" title="Informácie o aplikácii">ℹ️ INFO</button>
             <button id="btn-help" type="button" title="Zobraziť podrobný návod a vysvetlenie všetkých nastavení aplikácie">❓ HELP</button>
@@ -2340,14 +2622,14 @@
             </div>
             <div class="control-group">
                 <label>Hodnoty pri orezaní</label>
-                <select id="trim-stats-mode" title="Spôsob výpočtu kilometrov a výškových metrov po orezaní začiatku GPX / TCX trasy">
+                <select id="trim-stats-mode" style="width: 170px;" title="Spôsob výpočtu kilometrov a výškových metrov po orezaní začiatku GPX / TCX trasy">
                     <option value="zero" selected>Od nuly (0 km / 0 m)</option>
                     <option value="preserve">Pôvodné hodnoty (nenulovať)</option>
                 </select>
             </div>
             <div class="control-group">
                 <label>Podklad mapy</label>
-                <select id="map-style">
+                <select id="map-style" style="width: 196px;">
                     <option value="none">Čierne pozadie (bez mapy)</option>
                     <option value="green">Zelené plátno (Chroma Key)</option>
                     <option value="blue">Modré plátno (Chroma Key)</option>
@@ -2363,7 +2645,12 @@
             </div>
             <div class="control-group group-disabled" id="mapy-key-group">
                 <label>Mapy.com API Kľúč</label>
-                <input type="text" id="mapy-api-key" placeholder="Vlož API kľúč" style="width: 135px;" disabled>
+                <div class="api-key-input-row">
+                    <input type="password" id="mapy-api-key" placeholder="Vlož API kľúč" style="width: 125px;" autocomplete="off" spellcheck="false" disabled>
+                    <button type="button" id="btn-toggle-api-key" title="Zobraziť / skryť Mapy.com API kľúč" disabled>
+                        <svg id="icon-api-key-eye" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                    </button>
+                </div>
             </div>
             <div class="control-group group-disabled" id="mapy-logo-size-group">
                 <label>Logo Mapy.com</label>
@@ -2376,22 +2663,212 @@
         </div>
 
         <!-- 2. RIADOK -->
-        <div class="controls-row">
+        <div class="controls-row" id="controls-row-2">
+            <div class="control-group poi-dropdown-wrapper group-disabled" id="activity-type-group">
+                <label>Aktivita</label>
+                <button id="btn-activity-indicator" type="button" title="Indikátor aktivity (automatická detekcia zo súboru). Kliknutím môžete ručne nastaviť aktivitu (Turistika / Beh / MTB / Road / Moto)." disabled>
+                    <span class="act-ind-svg" id="activity-indicator-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 2c1.93 0 3.68.69 5.05 1.83L12.88 10c-.27-.11-.57-.18-.88-.18s-.61.07-.88.18L6.95 5.83C8.32 4.69 10.07 4 12 4zm-7.93 7h5.95c.05.34.17.66.35.95l-4.21 4.21C4.88 14.99 4.19 13.57 4.07 11zm7.93 9c-1.93 0-3.68-.69-5.05-1.83l4.17-4.17c.27.11.57.18.88.18s.61-.07.88-.18l4.17 4.17C15.68 19.31 13.93 20 12 20zm5.86-3.84l-4.21-4.21c.18-.29.3-.61.35-.95h5.95c-.12 2.57-.81 3.99-2.09 5.16zm.12-7.16h-5.95c-.05-.34-.17-.66-.35-.95l4.21-4.21C19.12 7.01 19.81 8.43 19.98 10zM6.14 5.84l4.21 4.21c-.18.29-.3.61-.35.95H4.05c.17-1.57.86-2.99 2.09-4.16z"/></svg></span>
+                    <span id="activity-indicator-label">MTB</span>
+                </button>
+                <div id="activity-menu-panel" class="poi-editor-popover">
+                    <div class="poi-editor-header">
+                        <span class="poi-editor-title">🏅 Typ aktivity</span>
+                        <div class="poi-editor-actions">
+                            <button type="button" id="btn-auto-activity" class="btn-poi-small" title="Znova automaticky rozpoznať aktivitu z pôvodnej trasy">↺ Auto</button>
+                            <button type="button" id="btn-close-activity-menu" class="btn-poi-small" title="Zavrieť výber">✕</button>
+                        </div>
+                    </div>
+                    <div class="activity-options-list">
+                        <button type="button" class="activity-opt-btn" data-act="turistika">
+                            <span class="activity-opt-left"><span class="act-ind-svg"><svg viewBox="0 0 24 24"><path d="M19.5 16h-2l-3.2-3.5L13 8V5H6v11c0 1.66 1.34 3 3 3h11.5c.83 0 1.5-.67 1.5-1.5S20.83 16 19.5 16zM8 7h3v2H8V7zm0 4h3.5l1.2 1.5H8V11zm11 6H9c-.55 0-1-.45-1-1v-1h11v2z"/></svg></span><span>Turistika</span></span>
+                            <span class="activity-opt-badge">Topánka</span>
+                        </button>
+                        <button type="button" class="activity-opt-btn" data-act="beh">
+                            <span class="activity-opt-left"><span class="act-ind-svg"><svg viewBox="0 0 24 24"><path d="M19.5 16h-2l-3.2-3.5L13 8V5H6v11c0 1.66 1.34 3 3 3h11.5c.83 0 1.5-.67 1.5-1.5S20.83 16 19.5 16zM8 7h3v2H8V7zm0 4h3.5l1.2 1.5H8V11zm11 6H9c-.55 0-1-.45-1-1v-1h11v2z"/></svg></span><span>Beh</span></span>
+                            <span class="activity-opt-badge">Topánka</span>
+                        </button>
+                        <button type="button" class="activity-opt-btn selected" data-act="mtb">
+                            <span class="activity-opt-left"><span class="act-ind-svg"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 2c1.93 0 3.68.69 5.05 1.83L12.88 10c-.27-.11-.57-.18-.88-.18s-.61.07-.88.18L6.95 5.83C8.32 4.69 10.07 4 12 4zm-7.93 7h5.95c.05.34.17.66.35.95l-4.21 4.21C4.88 14.99 4.19 13.57 4.07 11zm7.93 9c-1.93 0-3.68-.69-5.05-1.83l4.17-4.17c.27.11.57.18.88.18s.61-.07.88-.18l4.17 4.17C15.68 19.31 13.93 20 12 20zm5.86-3.84l-4.21-4.21c.18-.29.3-.61.35-.95h5.95c-.12 2.57-.81 3.99-2.09 5.16zm.12-7.16h-5.95c-.05-.34-.17-.66-.35-.95l4.21-4.21C19.12 7.01 19.81 8.43 19.98 10zM6.14 5.84l4.21 4.21c-.18.29-.3.61-.35.95H4.05c.17-1.57.86-2.99 2.09-4.16z"/></svg></span><span>MTB</span></span>
+                            <span class="activity-opt-badge">Koleso</span>
+                        </button>
+                        <button type="button" class="activity-opt-btn" data-act="road">
+                            <span class="activity-opt-left"><span class="act-ind-svg"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 2c1.93 0 3.68.69 5.05 1.83L12.88 10c-.27-.11-.57-.18-.88-.18s-.61.07-.88.18L6.95 5.83C8.32 4.69 10.07 4 12 4zm-7.93 7h5.95c.05.34.17.66.35.95l-4.21 4.21C4.88 14.99 4.19 13.57 4.07 11zm7.93 9c-1.93 0-3.68-.69-5.05-1.83l4.17-4.17c.27.11.57.18.88.18s.61-.07.88-.18l4.17 4.17C15.68 19.31 13.93 20 12 20zm5.86-3.84l-4.21-4.21c.18-.29.3-.61.35-.95h5.95c-.12 2.57-.81 3.99-2.09 5.16zm.12-7.16h-5.95c-.05-.34-.17-.66-.35-.95l4.21-4.21C19.12 7.01 19.81 8.43 19.98 10zM6.14 5.84l4.21 4.21c-.18.29-.3.61-.35.95H4.05c.17-1.57.86-2.99 2.09-4.16z"/></svg></span><span>Road</span></span>
+                            <span class="activity-opt-badge">Koleso</span>
+                        </button>
+                        <button type="button" class="activity-opt-btn" data-act="moto">
+                            <span class="activity-opt-left"><span class="act-ind-svg"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 2c1.93 0 3.68.69 5.05 1.83L12.88 10c-.27-.11-.57-.18-.88-.18s-.61.07-.88.18L6.95 5.83C8.32 4.69 10.07 4 12 4zm-7.93 7h5.95c.05.34.17.66.35.95l-4.21 4.21C4.88 14.99 4.19 13.57 4.07 11zm7.93 9c-1.93 0-3.68-.69-5.05-1.83l4.17-4.17c.27.11.57.18.88.18s.61-.07.88-.18l4.17 4.17C15.68 19.31 13.93 20 12 20zm5.86-3.84l-4.21-4.21c.18-.29.3-.61.35-.95h5.95c-.12 2.57-.81 3.99-2.09 5.16zm.12-7.16h-5.95c-.05-.34-.17-.66-.35-.95l4.21-4.21C19.12 7.01 19.81 8.43 19.98 10zM6.14 5.84l4.21 4.21c-.18.29-.3.61-.35.95H4.05c.17-1.57.86-2.99 2.09-4.16z"/></svg></span><span>Moto</span></span>
+                            <span class="activity-opt-badge">Koleso</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
             <div class="control-group">
-                <label>Farba čiary</label>
-                <input type="color" id="line-color" value="#c8ff00">
+                <label>Farbenie</label>
+                <select id="line-color-mode" style="width: 108px;" title="Prepínať medzi jednofarebnou čiarou a dynamickým farebným prechodom podľa sklonu (%), rýchlosti (km/h), tempa (min/km), tepu (hr/min) alebo výkonu (W)">
+                    <option value="solid" selected>Jednofarebná</option>
+                    <option value="slope">Sklon (%)</option>
+                    <option value="speed">Rýchlosť (km/h)</option>
+                    <option value="pace">Tempo (min/km)</option>
+                    <option value="hr">Tep (hr/min)</option>
+                    <option value="power">Výkon (W)</option>
+                </select>
+            </div>
+            <div class="control-group" id="line-solid-color-group">
+                <label>Farba</label>
+                <input type="color" id="line-color" value="#c8ff00" title="Pevná farba celej trasy v jednofarebnom režime">
+            </div>
+            <div class="control-group group-disabled" id="line-gradient-palette-group">
+                <label>Min / Mid / Max</label>
+                <div class="gradient-palette-row">
+                    <input type="color" id="slope-color-min" value="#00e5ff" title="Min: farba pre klesania alebo nízku rýchlosť" disabled>
+                    <input type="color" id="slope-color-mid" value="#ffff00" title="Mid: farba pre rovinu alebo strednú rýchlosť" disabled>
+                    <input type="color" id="slope-color-max" value="#ff1744" title="Max: farba pre stúpania alebo vysokú rýchlosť" disabled>
+                </div>
+            </div>
+            <div class="control-group poi-dropdown-wrapper group-disabled" id="grad-config-group">
+                <label>Pásma</label>
+                <button id="btn-grad-config" type="button" title="Nastaviť vlastné rozpätie MID a hraničné body plnej sýtosti pre Sklon (%), Rýchlosť (km/h), Tempo (min/km), Tep (hr/min) a Výkon (W)" disabled>⚙️ Config</button>
+                <div id="grad-config-panel" class="poi-editor-popover" style="width: 565px;">
+                    <div class="poi-editor-header">
+                        <span class="poi-editor-title">⚙️ Konfigurácia farebných pásiem (Sklon, Rýchlosť, Tempo, Tep & Výkon)</span>
+                        <div class="poi-editor-actions">
+                            <button type="button" id="btn-reset-grad-config" class="btn-poi-small" title="Obnoviť predvolené hodnoty pásiem">↺ Predvolené</button>
+                            <button type="button" id="btn-close-grad-config" class="btn-poi-small" title="Zavrieť okno">✕ Zavrieť</button>
+                        </div>
+                    </div>
+                    <div class="grad-config-section">
+                        <div class="grad-config-sec-title">
+                            <span>⛰️ Sklon (%) – rozpätie MID a hraničné body</span>
+                            <span class="grad-config-sec-stats" id="cfg-slope-measured-stats">Min: -- | Max: -- %</span>
+                        </div>
+                        <div class="grad-config-grid">
+                            <div class="poi-field-col">
+                                <label>Hranica MIN (%)</label>
+                                <input type="number" id="cfg-slope-min-sat" step="0.5" min="-50" max="0" value="-8" title="Hodnota klesania v %, pri ktorej farba dosiahne plnú sýtosť MIN (napr. -7 % alebo -8 %)">
+                            </div>
+                            <div class="poi-field-col">
+                                <label>MID od (%)</label>
+                                <input type="number" id="cfg-slope-mid-low" step="0.5" min="-30" max="10" value="-2" title="Spodná hranica pásma MID pre sklon v % (napr. -3 % alebo -2 %)">
+                            </div>
+                            <div class="poi-field-col">
+                                <label>MID do (%)</label>
+                                <input type="number" id="cfg-slope-mid-high" step="0.5" min="-10" max="30" value="2" title="Horná hranica pásma MID pre sklon v % (napr. +2 % alebo +4 %)">
+                            </div>
+                            <div class="poi-field-col">
+                                <label>Hranica MAX (%)</label>
+                                <input type="number" id="cfg-slope-max-sat" step="0.5" min="0" max="50" value="8" title="Hodnota stúpania v %, pri ktorej farba dosiahne plnú sýtosť MAX (napr. +8 % alebo +9 %)">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grad-config-section" id="grad-sec-speed">
+                        <div class="grad-config-sec-title">
+                            <span>⏱️ Rýchlosť (km/h) – rozpätie MID a hraničné body</span>
+                            <span class="grad-config-sec-stats" id="cfg-speed-measured-stats">Min: -- | Priemer: -- | Max: -- km/h</span>
+                        </div>
+                        <div class="grad-config-grid">
+                            <div class="poi-field-col">
+                                <label>Hranica MIN (km/h)</label>
+                                <input type="number" id="cfg-speed-min-sat" step="1" min="0" max="100" value="12" title="Rýchlosť v km/h, pod ktorou farba dosiahne plnú sýtosť MIN (až po 0 km/h)">
+                            </div>
+                            <div class="poi-field-col">
+                                <label>MID od (km/h)</label>
+                                <input type="number" id="cfg-speed-mid-low" step="1" min="0" max="120" value="20" title="Spodná hranica pásma MID pre rýchlosť v km/h (napr. 20 km/h)">
+                            </div>
+                            <div class="poi-field-col">
+                                <label>MID do (km/h)</label>
+                                <input type="number" id="cfg-speed-mid-high" step="1" min="0" max="120" value="25" title="Horná hranica pásma MID pre rýchlosť v km/h (napr. 25 km/h)">
+                            </div>
+                            <div class="poi-field-col">
+                                <label>Hranica MAX (km/h)</label>
+                                <input type="number" id="cfg-speed-max-sat" step="1" min="1" max="150" value="33" title="Rýchlosť v km/h, nad ktorou farba dosiahne plnú sýtosť MAX (až po max. rýchlosť jazdy)">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grad-config-section" id="grad-sec-pace">
+                        <div class="grad-config-sec-title">
+                            <span>🏃 Tempo (min/km) – rozpätie MID a hranice</span>
+                            <span class="grad-config-sec-stats" id="cfg-pace-measured-stats">Min: --:-- | Priemer: --:-- | Max: --:-- /km</span>
+                        </div>
+                        <div class="grad-config-grid">
+                            <div class="poi-field-col">
+                                <label>Hranica MIN (min/km)</label>
+                                <input type="text" id="cfg-pace-min-sat" value="04:00" placeholder="04:00" title="Nižšie číslo / rýchlejší pohyb v min/km (napr. 04:00 alebo 4.0), pod ktorým farba dosiahne plnú sýtosť MIN">
+                            </div>
+                            <div class="poi-field-col">
+                                <label>MID od (min/km)</label>
+                                <input type="text" id="cfg-pace-mid-low" value="06:00" placeholder="06:00" title="Spodná hranica pásma MID pre tempo v min/km (napr. 06:00 alebo 6.0)">
+                            </div>
+                            <div class="poi-field-col">
+                                <label>MID do (min/km)</label>
+                                <input type="text" id="cfg-pace-mid-high" value="09:00" placeholder="09:00" title="Horná hranica pásma MID pre tempo v min/km (napr. 09:00 alebo 9.0)">
+                            </div>
+                            <div class="poi-field-col">
+                                <label>Hranica MAX (min/km)</label>
+                                <input type="text" id="cfg-pace-max-sat" value="14:00" placeholder="14:00" title="Vyššie číslo / pomalší pohyb do kopca v min/km (napr. 14:00 alebo 14.0), nad ktorým farba dosiahne plnú sýtosť MAX">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grad-config-section" id="grad-sec-hr">
+                        <div class="grad-config-sec-title">
+                            <span>❤️ Tep (hr/min) – rozpätie MID a hraničné body</span>
+                            <span class="grad-config-sec-stats" id="cfg-hr-measured-stats">Min: -- | Priemer: -- | Max: -- bpm</span>
+                        </div>
+                        <div class="grad-config-grid">
+                            <div class="poi-field-col">
+                                <label>Hranica MIN (hr/min)</label>
+                                <input type="number" id="cfg-hr-min-sat" step="1" min="30" max="220" value="110" title="Srdcový tep v hr/min (bpm), pod ktorým farba dosiahne plnú sýtosť MIN">
+                            </div>
+                            <div class="poi-field-col">
+                                <label>MID od (hr/min)</label>
+                                <input type="number" id="cfg-hr-mid-low" step="1" min="40" max="220" value="130" title="Spodná hranica pásma MID pre srdcový tep v hr/min (napr. 130)">
+                            </div>
+                            <div class="poi-field-col">
+                                <label>MID do (hr/min)</label>
+                                <input type="number" id="cfg-hr-mid-high" step="1" min="40" max="230" value="150" title="Horná hranica pásma MID pre srdcový tep v hr/min (napr. 150)">
+                            </div>
+                            <div class="poi-field-col">
+                                <label>Hranica MAX (hr/min)</label>
+                                <input type="number" id="cfg-hr-max-sat" step="1" min="50" max="250" value="170" title="Srdcový tep v hr/min (bpm), nad ktorým farba dosiahne plnú sýtosť MAX">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grad-config-section" id="grad-sec-pwr">
+                        <div class="grad-config-sec-title">
+                            <span>⚡ Výkon (W) – rozpätie MID a hraničné body</span>
+                            <span class="grad-config-sec-stats" id="cfg-pwr-measured-stats">Min: -- | Priemer: -- | Max: -- W</span>
+                        </div>
+                        <div class="grad-config-grid">
+                            <div class="poi-field-col">
+                                <label>Hranica MIN (W)</label>
+                                <input type="number" id="cfg-pwr-min-sat" step="5" min="0" max="1500" value="100" title="Výkon vo wattoch (W), pod ktorým farba dosiahne plnú sýtosť MIN (až po 0 W)">
+                            </div>
+                            <div class="poi-field-col">
+                                <label>MID od (W)</label>
+                                <input type="number" id="cfg-pwr-mid-low" step="5" min="0" max="1500" value="160" title="Spodná hranica pásma MID pre výkon vo wattoch (napr. 160 W)">
+                            </div>
+                            <div class="poi-field-col">
+                                <label>MID do (W)</label>
+                                <input type="number" id="cfg-pwr-mid-high" step="5" min="0" max="1500" value="220" title="Horná hranica pásma MID pre výkon vo wattoch (napr. 220 W)">
+                            </div>
+                            <div class="poi-field-col">
+                                <label>Hranica MAX (W)</label>
+                                <input type="number" id="cfg-pwr-max-sat" step="5" min="10" max="2500" value="300" title="Výkon vo wattoch (W), nad ktorým farba dosiahne plnú sýtosť MAX">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="control-group" id="cg-width">
                 <label>Hrúbka (<span id="lbl-width">6</span>px)</label>
-                <input type="range" id="line-width" min="1" max="15" value="6" style="width: 65px;">
+                <input type="range" id="line-width" min="1" max="15" value="6" style="width: 58px;">
             </div>
             <div class="control-group" id="cg-head-size">
                 <label>Hlavička (<span id="lbl-head-size">40</span>%)</label>
-                <input type="range" id="head-size" min="0" max="100" step="5" value="40" style="width: 65px;" title="Veľkosť vodiacej hlavičky v percentách (40% = predvolená veľkosť)">
+                <input type="range" id="head-size" min="0" max="100" step="5" value="40" style="width: 58px;" title="Veľkosť vodiacej hlavičky v percentách (40% = predvolená veľkosť)">
             </div>
             <div class="control-group">
                 <label>Vyhladenie</label>
-                <select id="line-smooth">
+                <select id="line-smooth" style="width: 86px;">
                     <option value="0">Presné (0)</option>
                     <option value="1" selected>Jemné (1)</option>
                     <option value="2">Stredné (2)</option>
@@ -2400,21 +2877,21 @@
             </div>
             <div class="control-group">
                 <label>Neón</label>
-                <select id="neon-effect">
+                <select id="neon-effect" style="width: 52px;">
                     <option value="off" selected>Vyp</option>
                     <option value="on">Zap</option>
                 </select>
             </div>
             <div class="control-group">
                 <label>Stopa čiary</label>
-                <select id="trail-mode">
+                <select id="trail-mode" style="width: 100px;">
                     <option value="full" selected>Celá trasa</option>
                     <option value="comet">Kometí chvost</option>
                 </select>
             </div>
             <div class="control-group group-disabled" id="comet-length-group">
-                <label>Dĺžka stopy kometí chvost</label>
-                <select id="comet-length" disabled>
+                <label>Dĺžka kométy</label>
+                <select id="comet-length" style="width: 58px;" disabled>
                     <option value="1">1 km</option>
                     <option value="2">2 km</option>
                     <option value="3" selected>3 km</option>
@@ -2424,28 +2901,28 @@
             </div>
             <div class="control-group">
                 <label>Kamera</label>
-                <select id="camera-mode">
+                <select id="camera-mode" style="width: 106px;">
                     <option value="follow" selected>Sledovať čiaru</option>
-                    <option value="static">Celá trasa (Statická)</option>
+                    <option value="static">Celá trasa</option>
                 </select>
             </div>
             <div class="control-group" id="zoom-group">
                 <label>Zoom (<span id="lbl-zoom">14</span>)</label>
-                <input type="range" id="camera-zoom" min="10" max="18" value="14" style="width: 65px;">
+                <input type="range" id="camera-zoom" min="10" max="18" value="14" style="width: 56px;">
             </div>
             <div class="control-group">
                 <label>Míľnik (km)</label>
-                <input type="number" id="milestone-km" value="1" min="0.1" max="100" step="0.5" style="width: 46px;">
+                <input type="number" id="milestone-km" value="1" min="0.1" max="100" step="0.5" style="width: 42px;">
             </div>
             <div class="control-group">
-                <label>Bliknutie míľnika</label>
-                <select id="milestone-flash-effect" title="Zapnúť alebo vypnúť efekt bliknutia pri dosiahnutí míľnika">
+                <label>Bliknutie</label>
+                <select id="milestone-flash-effect" style="width: 52px;" title="Zapnúť alebo vypnúť efekt bliknutia pri dosiahnutí míľnika">
                     <option value="on" selected>Zap</option>
                     <option value="off">Vyp</option>
                 </select>
             </div>
             <div class="control-group" id="milestone-color-group">
-                <label>Farba bliknutia</label>
+                <label>Farba míľnika</label>
                 <input type="color" id="milestone-flash-color" value="#ffffff" title="Výber farby pre efekt bliknutia míľnika">
             </div>
         </div>
@@ -2908,7 +3385,7 @@
 <div id="help-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="help-modal-title">
     <div class="help-modal-box">
         <div class="help-modal-header">
-            <span class="help-modal-title" id="help-modal-title">❓ Návod na používanie – V3SOFT CartoLinka v1.048</span>
+            <span class="help-modal-title" id="help-modal-title">❓ Návod na používanie – V3SOFT CartoLinka v1.062</span>
             <button type="button" id="btn-close-help" title="Zavrieť nápovedu (Esc)">✕ Zavrieť</button>
         </div>
         <div class="help-modal-body">
@@ -2965,8 +3442,34 @@
             <div class="help-section">
                 <h3>3. Vzhľad čiary a efekt stopy</h3>
                 <div class="help-item">
-                    <span class="help-item-title">Farba čiary:</span>
-                    Výber farby vykresľovanej trasy a obrysu vodiacej hlavičky (bodky na čele trasy).
+                    <span class="help-item-title">Aktivita (Indikátor Topánka / Koleso):</span>
+                    Nachádza sa na začiatku druhého riadku a po nahratí GPX / TCX súboru automaticky rozpozná typ aktivity (ikona <strong>Topánka</strong> pre <em>Turistika / Beh</em> alebo ikona <strong>Koleso</strong> pre <em>MTB / Road / Moto</em>). Po kliknutí na tlačidlo môžete aktivitu kedykoľvek ručne prepnúť – aplikácia si zvolené zaradenie trasy zapamätá v pamäti prehliadača a pri orezaní trasy posuvníkmi zostáva zaradenie aktivity nemenné.
+                </div>
+                <div class="help-item">
+                    <span class="help-item-title">Farbenie & Farba / Min / Mid / Max:</span>
+                    Prepína medzi šiestimi režimami farbenia trasy:
+                    <br>• <em>Jednofarebná:</em> Štandardný režim s pevnou farbou celej trasy zvolenou v poli <strong>Farba</strong>.
+                    <br>• <em>Sklon (%):</em> Sprístupní trojicu výberov farieb <strong>Min / Mid / Max</strong>, ktoré definujú plynulý farebný gradient podľa vyhladeného sklonu trasy:
+                    <br>&nbsp;&nbsp;– <strong>Mid</strong> (stredný výber, predvolene krikľavo žltá): farba pre rovinu a mierny sklon v pásme <strong>od -2 % do +2 %</strong>.
+                    <br>&nbsp;&nbsp;– <strong>Min</strong> (ľavý výber, predvolene tyrkysová): farba pre klesania. Od hranice <em>-2 %</em> sa plynulo mieša zo strednej farby a plnú sýtosť minima dosiahne pri <strong>-8 % a strmších klesaniach</strong> (až po minimálny sklon trasy).
+                    <br>&nbsp;&nbsp;– <strong>Max</strong> (pravý výber, predvolene krikľavo červená): farba pre stúpania. Od hranice <em>+2 %</em> sa plynulo mieša zo strednej farby a plnú sýtosť maxima dosiahne pri <strong>+8 % a prudších stúpaniach</strong> (až po maximálny sklon trasy).
+                    <br>• <em>Rýchlosť (km/h):</em> Využíva trojicu výberov farieb <strong>Min / Mid / Max</strong> pre plynulý farebný prechod podľa okamžitej rýchlosti jazdy (<em>MIN = 0 km/h</em>, <em>MAX = maximálna dosiahnutá rýchlosť konkrétnej jazdy</em>):
+                    <br>&nbsp;&nbsp;– <strong>Mid</strong> (stredný výber): farba pre strednú cestovnú rýchlosť v pásme <strong>od 20 km/h do 25 km/h</strong>.
+                    <br>&nbsp;&nbsp;– <strong>Min</strong> (ľavý výber): farba pre pomalú jazdu. Od hranice <em>20 km/h</em> sa plynulo mieša zo strednej farby a plnú sýtosť minima dosiahne pri <strong>12 km/h</strong> (a drží ju až po minimum <strong>0 km/h</strong>).
+                    <br>&nbsp;&nbsp;– <strong>Max</strong> (pravý výber): farba pre rýchlu jazdu. Od hranice <em>25 km/h</em> sa plynulo mieša zo strednej farby a plnú sýtosť maxima dosiahne pri <strong>33 km/h</strong> (a drží ju až po maximálnu dosiahnutú rýchlosť konkrétnej jazdy).
+                    <br>• <em>Tempo (min/km):</em> Rovnaký princíp plynulého trojfarebného prechodu podľa okamžitého tempa pohybu v min/km (ideálne pre turistiku a beh):
+                    <br>&nbsp;&nbsp;– <strong>Mid</strong> (stredný výber): farba pre stredné tempo v pásme <strong>od 06:00 do 09:00 min/km</strong>.
+                    <br>&nbsp;&nbsp;– <strong>Min</strong> (ľavý výber): farba pre nižšie hodnoty min/km (rýchlejší pohyb / zostup). Od hranice <em>06:00 min/km</em> sa plynulo mieša zo strednej farby a plnú sýtosť minima dosiahne pri <strong>04:00 min/km</strong>.
+                    <br>&nbsp;&nbsp;– <strong>Max</strong> (pravý výber): farba pre vyššie hodnoty min/km (pomalší výstup do kopca). Od hranice <em>09:00 min/km</em> sa plynulo mieša zo strednej farby a plnú sýtosť maxima dosiahne pri <strong>14:00 min/km</strong>.
+                    <br>• <em>Tep (hr/min):</em> Plynulý trojfarebný prechod podľa okamžitej srdcovej frekvencie v úderoch za minútu (bpm):
+                    <br>&nbsp;&nbsp;– <strong>Mid</strong> (stredný výber): farba pre stredné aeróbne pásmo tepu <strong>od 130 do 150 hr/min</strong>.
+                    <br>&nbsp;&nbsp;– <strong>Min</strong> (ľavý výber): farba pre nízku záťaž / zjazd. Od hranice <em>130 hr/min</em> sa plynulo mieša zo strednej farby a plnú sýtosť minima dosiahne pri <strong>110 hr/min</strong> (a nižšie).
+                    <br>&nbsp;&nbsp;– <strong>Max</strong> (pravý výber): farba pre vysoké nasadenie / výšľap. Od hranice <em>150 hr/min</em> sa plynulo mieša zo strednej farby a plnú sýtosť maxima dosiahne pri <strong>170 hr/min</strong> (a vyššie).
+                    <br>• <em>Výkon (W):</em> Plynulý trojfarebný prechod podľa okamžitého výkonu z wattmetra vo wattoch (W):
+                    <br>&nbsp;&nbsp;– <strong>Mid</strong> (stredný výber): farba pre stredné tempové pásmo výkonu <strong>od 160 W do 220 W</strong>.
+                    <br>&nbsp;&nbsp;– <strong>Min</strong> (ľavý výber): farba pre voľnú jazdu / zjazd. Od hranice <em>160 W</em> sa plynulo mieša zo strednej farby a plnú sýtosť minima dosiahne pri <strong>100 W</strong> (až po 0 W).
+                    <br>&nbsp;&nbsp;– <strong>Max</strong> (pravý výber): farba pre silový záber do kopca / špurt. Od hranice <em>220 W</em> sa plynulo mieša zo strednej farby a plnú sýtosť maxima dosiahne pri <strong>300 W</strong> (a vyššie).
+                    <br>• <em>Tlačidlo ⚙️ Config (Pásma):</em> Nachádza sa hneď za výberom farieb <strong>Min / Mid / Max</strong> a otvára samostatné konfiguračné okno, v ktorom si môžete ľubovoľne upraviť rozpätie pásma <strong>MID (od – do)</strong> aj <strong>hraničné body plnej sýtosti MIN a MAX</strong> zvlášť pre <em>Sklon (%)</em>, <em>Rýchlosť (km/h)</em>, <em>Tempo (min/km)</em>, <em>Tep (hr/min)</em> a <em>Výkon (W)</em>.
                 </div>
                 <div class="help-item">
                     <span class="help-item-title">Hrúbka (1px – 15px):</span>
@@ -2974,7 +3477,7 @@
                 </div>
                 <div class="help-item">
                     <span class="help-item-title">Hlavička (0% – 100%):</span>
-                    Nastavuje veľkosť vodiacej hlavičky (bodky na čele vykresľovanej trasy) v percentách, a to aj plynulo počas bežiacej animácie. Predvolená hodnota <em>40%</em> zodpovedá štandardnej veľkosti, hodnota <em>0%</em> hlavičku úplne skryje a vyššie hodnoty ju proporcionálne zväčšia až na 2,5-násobok pri <em>100%</em>.
+                    Nastavuje veľkosť vodiacej hlavičky (bodky na čele vykresľovanej trasy) v percentách, a to aj plynulo počas bežiacej animácie. Predvolená hodnota <em>40%</em> zodpovedá štandardnej veľkosti, hodnota <em>0%</em> hlavičku úplne skryje a vyššie hodnoty ju proporcionálne zväčšia až na 2,5-násobok pri <em>100%</em>. V režimoch <em>Sklon (%)</em>, <em>Rýchlosť (km/h)</em>, <em>Tempo (min/km)</em>, <em>Tep (hr/min)</em> a <em>Výkon (W)</em> sa obrys hlavičky dynamicky zafarbuje podľa aktuálnej hodnoty v danom bode.
                 </div>
                 <div class="help-item">
                     <span class="help-item-title">Vyhladenie:</span>
@@ -2984,17 +3487,13 @@
                 </div>
                 <div class="help-item">
                     <span class="help-item-title">Neón (Vyp / Zap):</span>
-                    Zapína svetelnú žiaru (glow efekt) okolo čiary trasy vo zvolenej farbe čiary. Vynikne najmä na tmavých a satelitných podkladoch.
+                    Zapína svetelnú žiaru (glow efekt) vykresľovanú priamo okolo každého segmentu trasy. V jednofarebnom režime žiari vo zvolenej farbe čiary, v režimoch <em>Sklon (%)</em>, <em>Rýchlosť (km/h)</em>, <em>Tempo (min/km)</em>, <em>Tep (hr/min)</em> a <em>Výkon (W)</em> každý úsek trasy svieti presne tou farbou gradientu, akú má samotná čiara v danom mieste.
                 </div>
                 <div class="help-item">
-                    <span class="help-item-title">Stopa čiary:</span>
+                    <span class="help-item-title">Stopa čiary & Dĺžka kométy (1 km – 5 km):</span>
                     Určuje spôsob vykresľovania prejdenej trasy:
                     <br>• <em>Celá trasa:</em> Čiara zostáva vykreslená od štartu až po aktuálnu polohu.
-                    <br>• <em>Kometí chvost:</em> Za vodiacou bodkou sa vykresľuje len postupne miznúca a zužujúca sa stopa zvolenej dĺžky.
-                </div>
-                <div class="help-item">
-                    <span class="help-item-title">Dĺžka stopy kometí chvost (1 km – 5 km):</span>
-                    Nastavuje dĺžku viditeľného chvosta v kilometroch (aktívne len pri zapnutom režime <em>Kometí chvost</em>).
+                    <br>• <em>Kometí chvost:</em> Za vodiacou bodkou sa vykresľuje len postupne miznúca a zužujúca sa stopa zvolenej dĺžky (<em>1 km až 5 km</em>), a to bez viditeľných bodiek v spojoch segmentov v jednofarebnom aj trojfarebnom režime.
                 </div>
             </div>
 
@@ -3116,7 +3615,7 @@
             <div class="info-line"><strong>Koncept a dizajn:</strong> Vlado Troják</div>
             <div class="info-line"><strong>Kód a vývoj:</strong> AI Gemini Argon</div>
             <div class="info-line"><strong>Rok výroby:</strong> 11/2026</div>
-            <div class="info-line"><strong>Verzia:</strong> v1.048</div>
+            <div class="info-line"><strong>Verzia:</strong> v1.062</div>
             <div class="info-freeware">Táto aplikácia je freeware.</div>
             <div class="info-yt-label">Tu môžeš sledovať moje videá:</div>
             <a href="https://www.youtube.com/@VladoTrojak" target="_blank" rel="noopener noreferrer" class="btn-yt-link">
@@ -3232,6 +3731,8 @@
     // Stav pre kometí chvost a živý náhľad orezania trasy
     let isPreviewMode = false;
     let currentRenderHeadDist = 0;
+    let currentRenderHeadSlope = 0;
+    let currentRenderHeadSpeed = 0;
     let currentRenderHeadIntIndex = 0;
     let currentRenderHeadMercX = 0;
     let currentRenderHeadMercY = 0;
@@ -3242,8 +3743,41 @@
     let lastRenderZoom = 11;
     let hasCustomSubPixelOrigin = false;
 
+    let currentLineColorMode = 'solid'; // 'solid' | 'slope' | 'speed'
     let currentLineColor = '#c8ff00';
     let currentLineRgb = [200 / 255, 1.0, 0.0];
+    let currentSlopeColorMin = '#00e5ff';
+    let currentSlopeColorMid = '#ffff00';
+    let currentSlopeColorMax = '#ff1744';
+    let currentSlopeMinRgb = [0.0, 229 / 255, 1.0];
+    let currentSlopeMidRgb = [1.0, 1.0, 0.0];
+    let currentSlopeMaxRgb = [1.0, 23 / 255, 68 / 255];
+    let slopeMinSatPct = -8.0;       // Hraničný bod plnej sýtosti MIN pre sklon (%)
+    let slopeMidLowPct = -2.0;       // Spodná hranica MID pásma pre sklon (%)
+    let slopeMidHighPct = 2.0;       // Horná hranica MID pásma pre sklon (%)
+    let slopeMaxSatPct = 8.0;        // Hraničný bod plnej sýtosti MAX pre sklon (%)
+    let routeMinSlopePct = -15.0;    // Dynamicky prispôsobené min. klesaniu trasy (napr. -15%)
+    let routeMaxSlopePct = 18.0;     // Dynamicky prispôsobené max. stúpaniu trasy (napr. +20%)
+    let speedMinSatKmh = 12.0;       // Hraničný bod plnej sýtosti MIN farby v km/h (až po 0 km/h)
+    let speedMidLowKmh = 20.0;       // Spodná hranica MID pásma rýchlosti (km/h)
+    let speedMidHighKmh = 25.0;      // Horná hranica MID pásma rýchlosti (km/h)
+    let speedMaxSatKmh = 33.0;       // Hraničný bod plnej sýtosti MAX farby v km/h (až po max. rýchlosť jazdy)
+    let routeMaxSpeedKmh = 33.0;     // Maximálna dosiahnutá rýchlosť konkrétnej jazdy
+    let paceMinSatMinKm = 4.0;       // Hraničný bod plnej sýtosti MIN pre tempo v min/km (04:00 min/km)
+    let paceMidLowMinKm = 6.0;       // Spodná hranica MID pásma tempa v min/km (06:00 min/km)
+    let paceMidHighMinKm = 9.0;      // Horná hranica MID pásma tempa v min/km (09:00 min/km)
+    let paceMaxSatMinKm = 14.0;      // Hraničný bod plnej sýtosti MAX pre tempo v min/km (14:00 min/km)
+    let currentRenderHeadPace = 7.5; // Okamžité tempo vodiacej hlavičky v min/km
+    let hrMinSatBpm = 110.0;         // Hraničný bod plnej sýtosti MIN pre tep v hr/min
+    let hrMidLowBpm = 130.0;         // Spodná hranica MID pásma tepu v hr/min
+    let hrMidHighBpm = 150.0;        // Horná hranica MID pásma tepu v hr/min
+    let hrMaxSatBpm = 170.0;         // Hraničný bod plnej sýtosti MAX pre tep v hr/min
+    let currentRenderHeadHr = 140.0; // Okamžitý tep vodiacej hlavičky v hr/min
+    let pwrMinSatWatts = 100.0;      // Hraničný bod plnej sýtosti MIN pre výkon vo W
+    let pwrMidLowWatts = 160.0;      // Spodná hranica MID pásma výkonu vo W
+    let pwrMidHighWatts = 220.0;     // Horná hranica MID pásma výkonu vo W
+    let pwrMaxSatWatts = 300.0;      // Hraničný bod plnej sýtosti MAX pre výkon vo W
+    let currentRenderHeadPwr = 180.0;// Okamžitý výkon vodiacej hlavičky vo W
     let currentLineWeight = 6;
     let currentHeadSizePercent = 40;
     const START_MARKER_FILL_RGB = [155 / 255, 255 / 255, 10 / 255];
@@ -3262,6 +3796,225 @@
             ((num >> 8) & 255) / 255,
             (num & 255) / 255
         ];
+    }
+
+    function getSlopeGradientRgbFloat(slopePct) {
+        const s = (typeof slopePct === 'number' && !isNaN(slopePct)) ? slopePct : 0.0;
+        if (s < slopeMidLowPct) {
+            const span = Math.max(0.5, slopeMidLowPct - slopeMinSatPct);
+            const u = Math.max(0.0, Math.min(1.0, (slopeMidLowPct - s) / span));
+            const smoothU = u * u * (3.0 - 2.0 * u);
+            const t = 0.5 * u + 0.5 * smoothU;
+            return [
+                currentSlopeMidRgb[0] + (currentSlopeMinRgb[0] - currentSlopeMidRgb[0]) * t,
+                currentSlopeMidRgb[1] + (currentSlopeMinRgb[1] - currentSlopeMidRgb[1]) * t,
+                currentSlopeMidRgb[2] + (currentSlopeMinRgb[2] - currentSlopeMidRgb[2]) * t
+            ];
+        } else if (s > slopeMidHighPct) {
+            const span = Math.max(0.5, slopeMaxSatPct - slopeMidHighPct);
+            const u = Math.max(0.0, Math.min(1.0, (s - slopeMidHighPct) / span));
+            const smoothU = u * u * (3.0 - 2.0 * u);
+            const t = 0.5 * u + 0.5 * smoothU;
+            return [
+                currentSlopeMidRgb[0] + (currentSlopeMaxRgb[0] - currentSlopeMidRgb[0]) * t,
+                currentSlopeMidRgb[1] + (currentSlopeMaxRgb[1] - currentSlopeMidRgb[1]) * t,
+                currentSlopeMidRgb[2] + (currentSlopeMaxRgb[2] - currentSlopeMidRgb[2]) * t
+            ];
+        }
+        return [currentSlopeMidRgb[0], currentSlopeMidRgb[1], currentSlopeMidRgb[2]];
+    }
+
+    function getSlopeGradientCssColor(slopePct) {
+        const rgb = getSlopeGradientRgbFloat(slopePct);
+        const r = Math.round(Math.max(0, Math.min(255, rgb[0] * 255)));
+        const g = Math.round(Math.max(0, Math.min(255, rgb[1] * 255)));
+        const b = Math.round(Math.max(0, Math.min(255, rgb[2] * 255)));
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    function getSpeedGradientRgbFloat(speedKmh) {
+        const v = (typeof speedKmh === 'number' && !isNaN(speedKmh)) ? Math.max(0.0, speedKmh) : 0.0;
+        if (v < speedMidLowKmh) {
+            const span = Math.max(0.5, speedMidLowKmh - speedMinSatKmh);
+            const u = Math.max(0.0, Math.min(1.0, (speedMidLowKmh - v) / span));
+            const smoothU = u * u * (3.0 - 2.0 * u);
+            const t = 0.5 * u + 0.5 * smoothU;
+            return [
+                currentSlopeMidRgb[0] + (currentSlopeMinRgb[0] - currentSlopeMidRgb[0]) * t,
+                currentSlopeMidRgb[1] + (currentSlopeMinRgb[1] - currentSlopeMidRgb[1]) * t,
+                currentSlopeMidRgb[2] + (currentSlopeMinRgb[2] - currentSlopeMidRgb[2]) * t
+            ];
+        } else if (v > speedMidHighKmh) {
+            const span = Math.max(0.5, speedMaxSatKmh - speedMidHighKmh);
+            const u = Math.max(0.0, Math.min(1.0, (v - speedMidHighKmh) / span));
+            const smoothU = u * u * (3.0 - 2.0 * u);
+            const t = 0.5 * u + 0.5 * smoothU;
+            return [
+                currentSlopeMidRgb[0] + (currentSlopeMaxRgb[0] - currentSlopeMidRgb[0]) * t,
+                currentSlopeMidRgb[1] + (currentSlopeMaxRgb[1] - currentSlopeMidRgb[1]) * t,
+                currentSlopeMidRgb[2] + (currentSlopeMaxRgb[2] - currentSlopeMidRgb[2]) * t
+            ];
+        }
+        return [currentSlopeMidRgb[0], currentSlopeMidRgb[1], currentSlopeMidRgb[2]];
+    }
+
+    function getSpeedGradientCssColor(speedKmh) {
+        const rgb = getSpeedGradientRgbFloat(speedKmh);
+        const r = Math.round(Math.max(0, Math.min(255, rgb[0] * 255)));
+        const g = Math.round(Math.max(0, Math.min(255, rgb[1] * 255)));
+        const b = Math.round(Math.max(0, Math.min(255, rgb[2] * 255)));
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    function parsePaceConfigToMinutes(rawStr, fallbackMin) {
+        if (typeof rawStr === 'number' && !isNaN(rawStr)) return Math.max(0.1, rawStr);
+        const s = String(rawStr || '').trim().replace(',', '.');
+        if (!s) return fallbackMin;
+        if (s.includes(':')) {
+            const parts = s.split(':');
+            const m = parseFloat(parts[0]);
+            const sec = parseFloat(parts[1] || '0');
+            if (!isNaN(m) && !isNaN(sec)) {
+                return Math.max(0.1, m + sec / 60.0);
+            }
+        }
+        const num = parseFloat(s);
+        return (!isNaN(num) && num > 0) ? num : fallbackMin;
+    }
+
+    function getPaceGradientRgbFloat(paceMinKm) {
+        const p = (typeof paceMinKm === 'number' && !isNaN(paceMinKm)) ? Math.max(0.0, paceMinKm) : paceMidLowMinKm;
+        if (p < paceMidLowMinKm) {
+            const span = Math.max(0.2, paceMidLowMinKm - paceMinSatMinKm);
+            const u = Math.max(0.0, Math.min(1.0, (paceMidLowMinKm - p) / span));
+            const smoothU = u * u * (3.0 - 2.0 * u);
+            const t = 0.5 * u + 0.5 * smoothU;
+            return [
+                currentSlopeMidRgb[0] + (currentSlopeMinRgb[0] - currentSlopeMidRgb[0]) * t,
+                currentSlopeMidRgb[1] + (currentSlopeMinRgb[1] - currentSlopeMidRgb[1]) * t,
+                currentSlopeMidRgb[2] + (currentSlopeMinRgb[2] - currentSlopeMidRgb[2]) * t
+            ];
+        } else if (p > paceMidHighMinKm) {
+            const span = Math.max(0.2, paceMaxSatMinKm - paceMidHighMinKm);
+            const u = Math.max(0.0, Math.min(1.0, (p - paceMidHighMinKm) / span));
+            const smoothU = u * u * (3.0 - 2.0 * u);
+            const t = 0.5 * u + 0.5 * smoothU;
+            return [
+                currentSlopeMidRgb[0] + (currentSlopeMaxRgb[0] - currentSlopeMidRgb[0]) * t,
+                currentSlopeMidRgb[1] + (currentSlopeMaxRgb[1] - currentSlopeMidRgb[1]) * t,
+                currentSlopeMidRgb[2] + (currentSlopeMaxRgb[2] - currentSlopeMidRgb[2]) * t
+            ];
+        }
+        return [currentSlopeMidRgb[0], currentSlopeMidRgb[1], currentSlopeMidRgb[2]];
+    }
+
+    function getPaceGradientCssColor(paceMinKm) {
+        const rgb = getPaceGradientRgbFloat(paceMinKm);
+        const r = Math.round(Math.max(0, Math.min(255, rgb[0] * 255)));
+        const g = Math.round(Math.max(0, Math.min(255, rgb[1] * 255)));
+        const b = Math.round(Math.max(0, Math.min(255, rgb[2] * 255)));
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    function getHrGradientRgbFloat(hrBpm) {
+        const h = (typeof hrBpm === 'number' && !isNaN(hrBpm)) ? Math.max(0.0, hrBpm) : hrMidLowBpm;
+        if (h < hrMidLowBpm) {
+            const span = Math.max(1.0, hrMidLowBpm - hrMinSatBpm);
+            const u = Math.max(0.0, Math.min(1.0, (hrMidLowBpm - h) / span));
+            const smoothU = u * u * (3.0 - 2.0 * u);
+            const t = 0.5 * u + 0.5 * smoothU;
+            return [
+                currentSlopeMidRgb[0] + (currentSlopeMinRgb[0] - currentSlopeMidRgb[0]) * t,
+                currentSlopeMidRgb[1] + (currentSlopeMinRgb[1] - currentSlopeMidRgb[1]) * t,
+                currentSlopeMidRgb[2] + (currentSlopeMinRgb[2] - currentSlopeMidRgb[2]) * t
+            ];
+        } else if (h > hrMidHighBpm) {
+            const span = Math.max(1.0, hrMaxSatBpm - hrMidHighBpm);
+            const u = Math.max(0.0, Math.min(1.0, (h - hrMidHighBpm) / span));
+            const smoothU = u * u * (3.0 - 2.0 * u);
+            const t = 0.5 * u + 0.5 * smoothU;
+            return [
+                currentSlopeMidRgb[0] + (currentSlopeMaxRgb[0] - currentSlopeMidRgb[0]) * t,
+                currentSlopeMidRgb[1] + (currentSlopeMaxRgb[1] - currentSlopeMidRgb[1]) * t,
+                currentSlopeMidRgb[2] + (currentSlopeMaxRgb[2] - currentSlopeMidRgb[2]) * t
+            ];
+        }
+        return [currentSlopeMidRgb[0], currentSlopeMidRgb[1], currentSlopeMidRgb[2]];
+    }
+
+    function getHrGradientCssColor(hrBpm) {
+        const rgb = getHrGradientRgbFloat(hrBpm);
+        const r = Math.round(Math.max(0, Math.min(255, rgb[0] * 255)));
+        const g = Math.round(Math.max(0, Math.min(255, rgb[1] * 255)));
+        const b = Math.round(Math.max(0, Math.min(255, rgb[2] * 255)));
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    function getPwrGradientRgbFloat(pwrWatts) {
+        const w = (typeof pwrWatts === 'number' && !isNaN(pwrWatts)) ? Math.max(0.0, pwrWatts) : pwrMidLowWatts;
+        if (w < pwrMidLowWatts) {
+            const span = Math.max(1.0, pwrMidLowWatts - pwrMinSatWatts);
+            const u = Math.max(0.0, Math.min(1.0, (pwrMidLowWatts - w) / span));
+            const smoothU = u * u * (3.0 - 2.0 * u);
+            const t = 0.5 * u + 0.5 * smoothU;
+            return [
+                currentSlopeMidRgb[0] + (currentSlopeMinRgb[0] - currentSlopeMidRgb[0]) * t,
+                currentSlopeMidRgb[1] + (currentSlopeMinRgb[1] - currentSlopeMidRgb[1]) * t,
+                currentSlopeMidRgb[2] + (currentSlopeMinRgb[2] - currentSlopeMidRgb[2]) * t
+            ];
+        } else if (w > pwrMidHighWatts) {
+            const span = Math.max(1.0, pwrMaxSatWatts - pwrMidHighWatts);
+            const u = Math.max(0.0, Math.min(1.0, (w - pwrMidHighWatts) / span));
+            const smoothU = u * u * (3.0 - 2.0 * u);
+            const t = 0.5 * u + 0.5 * smoothU;
+            return [
+                currentSlopeMidRgb[0] + (currentSlopeMaxRgb[0] - currentSlopeMidRgb[0]) * t,
+                currentSlopeMidRgb[1] + (currentSlopeMaxRgb[1] - currentSlopeMidRgb[1]) * t,
+                currentSlopeMidRgb[2] + (currentSlopeMaxRgb[2] - currentSlopeMidRgb[2]) * t
+            ];
+        }
+        return [currentSlopeMidRgb[0], currentSlopeMidRgb[1], currentSlopeMidRgb[2]];
+    }
+
+    function getPwrGradientCssColor(pwrWatts) {
+        const rgb = getPwrGradientRgbFloat(pwrWatts);
+        const r = Math.round(Math.max(0, Math.min(255, rgb[0] * 255)));
+        const g = Math.round(Math.max(0, Math.min(255, rgb[1] * 255)));
+        const b = Math.round(Math.max(0, Math.min(255, rgb[2] * 255)));
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    function getActiveMetricPointVal(pt) {
+        if (!pt) return 0.0;
+        if (currentLineColorMode === 'speed') return pt.speedKmh || 0.0;
+        if (currentLineColorMode === 'pace') return pt.paceMinKm || 0.0;
+        if (currentLineColorMode === 'hr') return pt.hrBpm || 0.0;
+        if (currentLineColorMode === 'power') return pt.pwrWatts || 0.0;
+        return pt.slopePct || 0.0;
+    }
+
+    function getActiveHeadMetricVal() {
+        if (currentLineColorMode === 'speed') return currentRenderHeadSpeed;
+        if (currentLineColorMode === 'pace') return currentRenderHeadPace;
+        if (currentLineColorMode === 'hr') return currentRenderHeadHr;
+        if (currentLineColorMode === 'power') return currentRenderHeadPwr;
+        return currentRenderHeadSlope;
+    }
+
+    function getActiveGradientRgbFloat(metricVal) {
+        if (currentLineColorMode === 'speed') return getSpeedGradientRgbFloat(metricVal);
+        if (currentLineColorMode === 'pace') return getPaceGradientRgbFloat(metricVal);
+        if (currentLineColorMode === 'hr') return getHrGradientRgbFloat(metricVal);
+        if (currentLineColorMode === 'power') return getPwrGradientRgbFloat(metricVal);
+        return getSlopeGradientRgbFloat(metricVal);
+    }
+
+    function getActiveGradientCssColor(metricVal) {
+        if (currentLineColorMode === 'speed') return getSpeedGradientCssColor(metricVal);
+        if (currentLineColorMode === 'pace') return getPaceGradientCssColor(metricVal);
+        if (currentLineColorMode === 'hr') return getHrGradientCssColor(metricVal);
+        if (currentLineColorMode === 'power') return getPwrGradientCssColor(metricVal);
+        return getSlopeGradientCssColor(metricVal);
     }
 
     let currentTileLayer = null;
@@ -3341,8 +4094,8 @@
         precision highp float;
 
         attribute vec2 a_quadPos;
-        attribute vec3 a_p0;
-        attribute vec3 a_p1;
+        attribute vec4 a_p0;
+        attribute vec4 a_p1;
 
         uniform vec2 u_resolution;
         uniform vec2 u_anchorScreen;
@@ -3352,17 +4105,22 @@
         uniform float u_isComet;
         uniform float u_headDist;
         uniform float u_cometLength;
+        uniform float u_isNeon;
 
         varying vec2 v_localPos;
         varying float v_segLen;
         varying float v_d0;
         varying float v_d1;
+        varying float v_s0;
+        varying float v_s1;
 
         void main() {
             vec2 p0 = a_p0.xy;
             float d0 = a_p0.z;
+            float s0_val = a_p0.w;
             vec2 p1 = a_p1.xy;
             float d1 = a_p1.z;
+            float s1_val = a_p1.w;
 
             if (u_isComet > 0.5) {
                 float tailStartDist = max(0.0, u_headDist - u_cometLength);
@@ -3374,6 +4132,7 @@
                     float cutFrac = clamp((tailStartDist - d0) / max(1e-6, d1 - d0), 0.0, 1.0);
                     p0 = mix(p0, p1, cutFrac);
                     d0 = tailStartDist;
+                    s0_val = mix(s0_val, s1_val, cutFrac);
                 }
             }
 
@@ -3384,7 +4143,8 @@
             vec2 dir = (segLen > 1e-4) ? (diff / segLen) : vec2(1.0, 0.0);
             vec2 normal = vec2(-dir.y, dir.x);
 
-            float halfSpan = 0.5 * u_lineWidth + u_aaWidth * 2.0;
+            float neonExtra = (u_isNeon > 0.5) ? (u_lineWidth * 1.6 + 10.0) : 0.0;
+            float halfSpan = 0.5 * u_lineWidth + neonExtra + u_aaWidth * 2.0;
             float localX = (a_quadPos.x < 0.0) ? (-halfSpan) : (segLen + halfSpan);
             float localY = a_quadPos.y * halfSpan;
 
@@ -3398,6 +4158,8 @@
             v_segLen = segLen;
             v_d0 = d0;
             v_d1 = d1;
+            v_s0 = s0_val;
+            v_s1 = s1_val;
             gl_Position = vec4(clipPos, 0.0, 1.0);
         }
     `;
@@ -3408,14 +4170,132 @@
         uniform float u_lineWidth;
         uniform float u_aaWidth;
         uniform vec3 u_lineColor;
+        uniform float u_colorMode;
+        uniform vec3 u_colorMin;
+        uniform vec3 u_colorMid;
+        uniform vec3 u_colorMax;
+        uniform float u_minSlope;
+        uniform float u_maxSlope;
+        uniform float u_slopeMinSat;
+        uniform float u_slopeMidLow;
+        uniform float u_slopeMidHigh;
+        uniform float u_slopeMaxSat;
+        uniform float u_speedMinSat;
+        uniform float u_speedMidLow;
+        uniform float u_speedMidHigh;
+        uniform float u_speedMaxSat;
+        uniform float u_paceMinSat;
+        uniform float u_paceMidLow;
+        uniform float u_paceMidHigh;
+        uniform float u_paceMaxSat;
+        uniform float u_hrMinSat;
+        uniform float u_hrMidLow;
+        uniform float u_hrMidHigh;
+        uniform float u_hrMaxSat;
+        uniform float u_pwrMinSat;
+        uniform float u_pwrMidLow;
+        uniform float u_pwrMidHigh;
+        uniform float u_pwrMaxSat;
         uniform float u_isComet;
         uniform float u_headDist;
         uniform float u_cometLength;
+        uniform float u_isNeon;
 
         varying vec2 v_localPos;
         varying float v_segLen;
         varying float v_d0;
         varying float v_d1;
+        varying float v_s0;
+        varying float v_s1;
+
+        vec3 evalSlopeGradientColor(float slopePct) {
+            if (slopePct < u_slopeMidLow) {
+                float span = max(0.5, u_slopeMidLow - u_slopeMinSat);
+                float u = clamp((u_slopeMidLow - slopePct) / span, 0.0, 1.0);
+                float smoothU = u * u * (3.0 - 2.0 * u);
+                float t = mix(u, smoothU, 0.5);
+                return mix(u_colorMid, u_colorMin, t);
+            } else if (slopePct > u_slopeMidHigh) {
+                float span = max(0.5, u_slopeMaxSat - u_slopeMidHigh);
+                float u = clamp((slopePct - u_slopeMidHigh) / span, 0.0, 1.0);
+                float smoothU = u * u * (3.0 - 2.0 * u);
+                float t = mix(u, smoothU, 0.5);
+                return mix(u_colorMid, u_colorMax, t);
+            }
+            return u_colorMid;
+        }
+
+        vec3 evalSpeedGradientColor(float speedKmh) {
+            float v = max(0.0, speedKmh);
+            if (v < u_speedMidLow) {
+                float span = max(0.5, u_speedMidLow - u_speedMinSat);
+                float u = clamp((u_speedMidLow - v) / span, 0.0, 1.0);
+                float smoothU = u * u * (3.0 - 2.0 * u);
+                float t = mix(u, smoothU, 0.5);
+                return mix(u_colorMid, u_colorMin, t);
+            } else if (v > u_speedMidHigh) {
+                float span = max(0.5, u_speedMaxSat - u_speedMidHigh);
+                float u = clamp((v - u_speedMidHigh) / span, 0.0, 1.0);
+                float smoothU = u * u * (3.0 - 2.0 * u);
+                float t = mix(u, smoothU, 0.5);
+                return mix(u_colorMid, u_colorMax, t);
+            }
+            return u_colorMid;
+        }
+
+        vec3 evalPaceGradientColor(float paceMinKm) {
+            float p = max(0.0, paceMinKm);
+            if (p < u_paceMidLow) {
+                float span = max(0.2, u_paceMidLow - u_paceMinSat);
+                float u = clamp((u_paceMidLow - p) / span, 0.0, 1.0);
+                float smoothU = u * u * (3.0 - 2.0 * u);
+                float t = mix(u, smoothU, 0.5);
+                return mix(u_colorMid, u_colorMin, t);
+            } else if (p > u_paceMidHigh) {
+                float span = max(0.2, u_paceMaxSat - u_paceMidHigh);
+                float u = clamp((p - u_paceMidHigh) / span, 0.0, 1.0);
+                float smoothU = u * u * (3.0 - 2.0 * u);
+                float t = mix(u, smoothU, 0.5);
+                return mix(u_colorMid, u_colorMax, t);
+            }
+            return u_colorMid;
+        }
+
+        vec3 evalHrGradientColor(float hrBpm) {
+            float h = max(0.0, hrBpm);
+            if (h < u_hrMidLow) {
+                float span = max(1.0, u_hrMidLow - u_hrMinSat);
+                float u = clamp((u_hrMidLow - h) / span, 0.0, 1.0);
+                float smoothU = u * u * (3.0 - 2.0 * u);
+                float t = mix(u, smoothU, 0.5);
+                return mix(u_colorMid, u_colorMin, t);
+            } else if (h > u_hrMidHigh) {
+                float span = max(1.0, u_hrMaxSat - u_hrMidHigh);
+                float u = clamp((h - u_hrMidHigh) / span, 0.0, 1.0);
+                float smoothU = u * u * (3.0 - 2.0 * u);
+                float t = mix(u, smoothU, 0.5);
+                return mix(u_colorMid, u_colorMax, t);
+            }
+            return u_colorMid;
+        }
+
+        vec3 evalPwrGradientColor(float pwrWatts) {
+            float w = max(0.0, pwrWatts);
+            if (w < u_pwrMidLow) {
+                float span = max(1.0, u_pwrMidLow - u_pwrMinSat);
+                float u = clamp((u_pwrMidLow - w) / span, 0.0, 1.0);
+                float smoothU = u * u * (3.0 - 2.0 * u);
+                float t = mix(u, smoothU, 0.5);
+                return mix(u_colorMid, u_colorMin, t);
+            } else if (w > u_pwrMidHigh) {
+                float span = max(1.0, u_pwrMaxSat - u_pwrMidHigh);
+                float u = clamp((w - u_pwrMidHigh) / span, 0.0, 1.0);
+                float smoothU = u * u * (3.0 - 2.0 * u);
+                float t = mix(u, smoothU, 0.5);
+                return mix(u_colorMid, u_colorMax, t);
+            }
+            return u_colorMid;
+        }
 
         void main() {
             float clampedX = clamp(v_localPos.x, 0.0, v_segLen);
@@ -3423,21 +4303,57 @@
             float t = (v_segLen > 1e-4) ? (clampedX / v_segLen) : 0.0;
             float routeDist = mix(v_d0, v_d1, t);
 
-            float targetRadius = 0.5 * u_lineWidth;
-            float baseAlpha = 1.0;
+            float coreRadius = 0.5 * u_lineWidth;
+            float cometFactor = 1.0;
 
             if (u_isComet > 0.5) {
                 float tailProgress = clamp(1.0 - (u_headDist - routeDist) / max(1e-5, u_cometLength), 0.0, 1.0);
-                targetRadius = 0.5 * u_lineWidth * (0.32 + 0.68 * tailProgress);
-                baseAlpha = 0.96 * pow(tailProgress, 1.25);
+                coreRadius = 0.5 * u_lineWidth * (0.32 + 0.68 * tailProgress);
+                cometFactor = pow(tailProgress, 1.25);
             }
 
-            float edgeAlpha = 1.0 - smoothstep(targetRadius - u_aaWidth, targetRadius + u_aaWidth, distToAxis);
+            vec3 segColor = u_lineColor;
+            if (u_colorMode > 4.5) {
+                float pwrVal = mix(v_s0, v_s1, t);
+                segColor = evalPwrGradientColor(pwrVal);
+            } else if (u_colorMode > 3.5) {
+                float hrVal = mix(v_s0, v_s1, t);
+                segColor = evalHrGradientColor(hrVal);
+            } else if (u_colorMode > 2.5) {
+                float paceVal = mix(v_s0, v_s1, t);
+                segColor = evalPaceGradientColor(paceVal);
+            } else if (u_colorMode > 1.5) {
+                float speedVal = mix(v_s0, v_s1, t);
+                segColor = evalSpeedGradientColor(speedVal);
+            } else if (u_colorMode > 0.5) {
+                float slopePct = mix(v_s0, v_s1, t);
+                segColor = evalSlopeGradientColor(slopePct);
+            }
+
+            if (u_isNeon > 0.5) {
+                float glowSpan = u_lineWidth * 1.5 + 9.0;
+                float normDist = max(0.0, distToAxis - coreRadius * 0.65) / max(1.0, glowSpan);
+                if (normDist >= 1.0) {
+                    discard;
+                }
+                float glowFalloff = pow(1.0 - normDist, 2.2);
+                float innerBoost = pow(max(0.0, 1.0 - distToAxis / max(1.0, coreRadius + 4.5)), 2.0) * 0.35;
+                vec3 glowCol = mix(segColor, vec3(1.0), innerBoost);
+                float alpha = clamp(glowFalloff * 0.68 * cometFactor, 0.0, 0.88);
+                if (alpha <= 1e-4) {
+                    discard;
+                }
+                gl_FragColor = vec4(glowCol * alpha, alpha);
+                return;
+            }
+
+            float baseAlpha = (u_isComet > 0.5) ? (0.96 * cometFactor) : 1.0;
+            float edgeAlpha = 1.0 - smoothstep(coreRadius - u_aaWidth, coreRadius + u_aaWidth, distToAxis);
             float alpha = baseAlpha * edgeAlpha;
             if (alpha <= 1e-4) {
                 discard;
             }
-            gl_FragColor = vec4(u_lineColor * alpha, alpha);
+            gl_FragColor = vec4(segColor * alpha, alpha);
         }
     `;
 
@@ -3539,9 +4455,36 @@
             u_lineWidth: gl.getUniformLocation(glLineProgram, 'u_lineWidth'),
             u_aaWidth: gl.getUniformLocation(glLineProgram, 'u_aaWidth'),
             u_lineColor: gl.getUniformLocation(glLineProgram, 'u_lineColor'),
+            u_colorMode: gl.getUniformLocation(glLineProgram, 'u_colorMode'),
+            u_colorMin: gl.getUniformLocation(glLineProgram, 'u_colorMin'),
+            u_colorMid: gl.getUniformLocation(glLineProgram, 'u_colorMid'),
+            u_colorMax: gl.getUniformLocation(glLineProgram, 'u_colorMax'),
+            u_minSlope: gl.getUniformLocation(glLineProgram, 'u_minSlope'),
+            u_maxSlope: gl.getUniformLocation(glLineProgram, 'u_maxSlope'),
+            u_slopeMinSat: gl.getUniformLocation(glLineProgram, 'u_slopeMinSat'),
+            u_slopeMidLow: gl.getUniformLocation(glLineProgram, 'u_slopeMidLow'),
+            u_slopeMidHigh: gl.getUniformLocation(glLineProgram, 'u_slopeMidHigh'),
+            u_slopeMaxSat: gl.getUniformLocation(glLineProgram, 'u_slopeMaxSat'),
+            u_speedMinSat: gl.getUniformLocation(glLineProgram, 'u_speedMinSat'),
+            u_speedMidLow: gl.getUniformLocation(glLineProgram, 'u_speedMidLow'),
+            u_speedMidHigh: gl.getUniformLocation(glLineProgram, 'u_speedMidHigh'),
+            u_speedMaxSat: gl.getUniformLocation(glLineProgram, 'u_speedMaxSat'),
+            u_paceMinSat: gl.getUniformLocation(glLineProgram, 'u_paceMinSat'),
+            u_paceMidLow: gl.getUniformLocation(glLineProgram, 'u_paceMidLow'),
+            u_paceMidHigh: gl.getUniformLocation(glLineProgram, 'u_paceMidHigh'),
+            u_paceMaxSat: gl.getUniformLocation(glLineProgram, 'u_paceMaxSat'),
+            u_hrMinSat: gl.getUniformLocation(glLineProgram, 'u_hrMinSat'),
+            u_hrMidLow: gl.getUniformLocation(glLineProgram, 'u_hrMidLow'),
+            u_hrMidHigh: gl.getUniformLocation(glLineProgram, 'u_hrMidHigh'),
+            u_hrMaxSat: gl.getUniformLocation(glLineProgram, 'u_hrMaxSat'),
+            u_pwrMinSat: gl.getUniformLocation(glLineProgram, 'u_pwrMinSat'),
+            u_pwrMidLow: gl.getUniformLocation(glLineProgram, 'u_pwrMidLow'),
+            u_pwrMidHigh: gl.getUniformLocation(glLineProgram, 'u_pwrMidHigh'),
+            u_pwrMaxSat: gl.getUniformLocation(glLineProgram, 'u_pwrMaxSat'),
             u_isComet: gl.getUniformLocation(glLineProgram, 'u_isComet'),
             u_headDist: gl.getUniformLocation(glLineProgram, 'u_headDist'),
-            u_cometLength: gl.getUniformLocation(glLineProgram, 'u_cometLength')
+            u_cometLength: gl.getUniformLocation(glLineProgram, 'u_cometLength'),
+            u_isNeon: gl.getUniformLocation(glLineProgram, 'u_isNeon')
         };
 
         glCircleLocs = {
@@ -3568,7 +4511,7 @@
         gl.bufferData(gl.ARRAY_BUFFER, quadVerts, gl.STATIC_DRAW);
 
         glRouteVbo = gl.createBuffer();
-        glPointBufferCapacityFloats = 4096 * 3;
+        glPointBufferCapacityFloats = 4096 * 4;
         if (glPointBufferData.length < glPointBufferCapacityFloats) {
             glPointBufferData = new Float32Array(glPointBufferCapacityFloats);
         }
@@ -3673,7 +4616,7 @@
         glCometTailSearchIdx = 0;
         if (!gl) return;
 
-        const neededFloats = Math.max(4096 * 3, (pointCount + 16) * 3);
+        const neededFloats = Math.max(4096 * 4, (pointCount + 16) * 4);
         if (glPointBufferData.length < neededFloats) {
             glPointBufferData = new Float32Array(neededFloats);
         }
@@ -3687,7 +4630,7 @@
     function syncGlRouteBuffer() {
         if (!gl || totalRenderPointsCount < 1) return;
 
-        const neededFloats = (totalRenderPointsCount + 16) * 3;
+        const neededFloats = (totalRenderPointsCount + 16) * 4;
         if (glPointBufferData.length < neededFloats || glPointBufferCapacityFloats < neededFloats) {
             resetGlRouteBuffer(totalRenderPointsCount + 64);
         }
@@ -3700,30 +4643,32 @@
 
         for (let i = startSyncIdx; i < fixedEndIdx; i++) {
             const mIdx = i * 2;
-            const vIdx = i * 3;
+            const vIdx = i * 4;
             glPointBufferData[vIdx]     = activeMercCoords[mIdx]     - glAnchorMercX;
             glPointBufferData[vIdx + 1] = activeMercCoords[mIdx + 1] - glAnchorMercY;
             glPointBufferData[vIdx + 2] = activePoints[i].cumDist;
+            glPointBufferData[vIdx + 3] = getActiveMetricPointVal(activePoints[i]);
         }
 
         if (totalRenderPointsCount > fixedEndIdx) {
             const h = fixedEndIdx;
             const mIdx = h * 2;
-            const vIdx = h * 3;
+            const vIdx = h * 4;
             glPointBufferData[vIdx]     = drawnMercBuffer[mIdx]     - glAnchorMercX;
             glPointBufferData[vIdx + 1] = drawnMercBuffer[mIdx + 1] - glAnchorMercY;
             glPointBufferData[vIdx + 2] = currentRenderHeadDist;
+            glPointBufferData[vIdx + 3] = getActiveHeadMetricVal();
         }
 
         const endSyncIdx = totalRenderPointsCount;
-        const floatCount = (endSyncIdx - startSyncIdx) * 3;
+        const floatCount = (endSyncIdx - startSyncIdx) * 4;
         if (floatCount > 0) {
             gl.bindBuffer(gl.ARRAY_BUFFER, glRouteVbo);
-            const byteOffset = startSyncIdx * 3 * 4;
+            const byteOffset = startSyncIdx * 4 * 4;
             if (isWebGL2) {
-                gl.bufferSubData(gl.ARRAY_BUFFER, byteOffset, glPointBufferData, startSyncIdx * 3, floatCount);
+                gl.bufferSubData(gl.ARRAY_BUFFER, byteOffset, glPointBufferData, startSyncIdx * 4, floatCount);
             } else {
-                gl.bufferSubData(gl.ARRAY_BUFFER, byteOffset, glPointBufferData.subarray(startSyncIdx * 3, endSyncIdx * 3));
+                gl.bufferSubData(gl.ARRAY_BUFFER, byteOffset, glPointBufferData.subarray(startSyncIdx * 4, endSyncIdx * 4));
             }
         }
 
@@ -3787,6 +4732,8 @@
         const ctx = ctx2dFallback;
         if (!ctx) return;
         ctx.clearRect(0, 0, canvasCssWidth, canvasCssHeight);
+        const isGradientMode = (currentLineColorMode === 'slope' || currentLineColorMode === 'speed' || currentLineColorMode === 'pace' || currentLineColorMode === 'hr' || currentLineColorMode === 'power');
+        const headMetricVal = getActiveHeadMetricVal();
 
         if (isCometMode) {
             const cometKm = parseFloat(document.getElementById('comet-length').value) || 3;
@@ -3796,61 +4743,131 @@
             const headScreenY = currentRenderHeadMercY * zoomScale - originY;
 
             if (headDist > 1e-5 && activePoints.length >= 2) {
-                const LAYERS = 24;
-                let searchIdx = 0;
-                ctx.strokeStyle = currentLineColor;
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
 
-                for (let k = 0; k < LAYERS; k++) {
-                    const rawStartDist = headDist - cometKm * (1 - k / LAYERS);
-                    const nextRawStartDist = headDist - cometKm * (1 - (k + 1) / LAYERS);
-                    if (nextRawStartDist <= 0 && k < LAYERS - 1) continue;
-
-                    const segStartDist = Math.max(0, rawStartDist);
-                    if (segStartDist >= headDist) continue;
-
-                    while (searchIdx < headIntIdx && activePoints[searchIdx + 1].cumDist <= segStartDist) {
-                        searchIdx++;
+                if (isGradientMode) {
+                    const tailStartDist = Math.max(0, headDist - cometKm);
+                    let startIdx = 0;
+                    while (startIdx < headIntIdx && activePoints[startIdx + 1].cumDist <= tailStartDist) {
+                        startIdx++;
                     }
+                    const fixedEnd = Math.min(drawnPointsCount, activePoints.length);
+                    for (let i = startIdx; i < totalRenderPointsCount - 1; i++) {
+                        let d0 = (i < fixedEnd) ? activePoints[i].cumDist : headDist;
+                        let d1 = (i + 1 < fixedEnd) ? activePoints[i + 1].cumDist : headDist;
+                        if (d1 <= tailStartDist) continue;
 
-                    const d0 = activePoints[searchIdx].cumDist;
-                    const nextPtIdx = Math.min(activePoints.length - 1, searchIdx + 1);
-                    const d1 = activePoints[nextPtIdx].cumDist;
-                    const frac = (d1 > d0) ? Math.max(0, Math.min(1, (segStartDist - d0) / (d1 - d0))) : 0;
+                        const s0 = (i < fixedEnd) ? getActiveMetricPointVal(activePoints[i]) : headMetricVal;
+                        const s1 = (i + 1 < fixedEnd) ? getActiveMetricPointVal(activePoints[i + 1]) : headMetricVal;
+                        const midDist = 0.5 * (Math.max(tailStartDist, d0) + d1);
+                        const tailProgress = Math.max(0, Math.min(1, 1.0 - (headDist - midDist) / Math.max(1e-5, cometKm)));
 
-                    const m0Idx = searchIdx * 2;
-                    const m1Idx = nextPtIdx * 2;
-                    const startMercX = activeMercCoords[m0Idx] + (activeMercCoords[m1Idx] - activeMercCoords[m0Idx]) * frac;
-                    const startMercY = activeMercCoords[m0Idx + 1] + (activeMercCoords[m1Idx + 1] - activeMercCoords[m0Idx + 1]) * frac;
+                        const idx0 = i * 2;
+                        const idx1 = (i + 1) * 2;
+                        let x0 = drawnMercBuffer[idx0] * zoomScale - originX;
+                        let y0 = drawnMercBuffer[idx0 + 1] * zoomScale - originY;
+                        const x1 = drawnMercBuffer[idx1] * zoomScale - originX;
+                        const y1 = drawnMercBuffer[idx1 + 1] * zoomScale - originY;
 
+                        if (d0 < tailStartDist && d1 > d0) {
+                            const f = (tailStartDist - d0) / (d1 - d0);
+                            x0 = x0 + (x1 - x0) * f;
+                            y0 = y0 + (y1 - y0) * f;
+                        }
+
+                        ctx.beginPath();
+                        ctx.lineCap = (i === totalRenderPointsCount - 2) ? 'round' : 'butt';
+                        ctx.moveTo(x0, y0);
+                        ctx.lineTo(x1, y1);
+                        ctx.strokeStyle = getActiveGradientCssColor(0.5 * (s0 + s1));
+                        ctx.globalAlpha = 0.96 * Math.pow(tailProgress, 1.25);
+                        ctx.lineWidth = currentLineWeight * (0.32 + 0.68 * tailProgress);
+                        ctx.stroke();
+                    }
+                    ctx.globalAlpha = 1.0;
+                } else {
+                    const LAYERS = 24;
+                    let searchIdx = 0;
+                    ctx.strokeStyle = currentLineColor;
+
+                    for (let k = 0; k < LAYERS; k++) {
+                        const rawStartDist = headDist - cometKm * (1 - k / LAYERS);
+                        const nextRawStartDist = headDist - cometKm * (1 - (k + 1) / LAYERS);
+                        if (nextRawStartDist <= 0 && k < LAYERS - 1) continue;
+
+                        const segStartDist = Math.max(0, rawStartDist);
+                        if (segStartDist >= headDist) continue;
+
+                        while (searchIdx < headIntIdx && activePoints[searchIdx + 1].cumDist <= segStartDist) {
+                            searchIdx++;
+                        }
+
+                        const d0 = activePoints[searchIdx].cumDist;
+                        const nextPtIdx = Math.min(activePoints.length - 1, searchIdx + 1);
+                        const d1 = activePoints[nextPtIdx].cumDist;
+                        const frac = (d1 > d0) ? Math.max(0, Math.min(1, (segStartDist - d0) / (d1 - d0))) : 0;
+
+                        const m0Idx = searchIdx * 2;
+                        const m1Idx = nextPtIdx * 2;
+                        const startMercX = activeMercCoords[m0Idx] + (activeMercCoords[m1Idx] - activeMercCoords[m0Idx]) * frac;
+                        const startMercY = activeMercCoords[m0Idx + 1] + (activeMercCoords[m1Idx + 1] - activeMercCoords[m0Idx + 1]) * frac;
+
+                        ctx.beginPath();
+                        ctx.moveTo(startMercX * zoomScale - originX, startMercY * zoomScale - originY);
+                        for (let idx = searchIdx + 1; idx <= headIntIdx; idx++) {
+                            const vIdx = idx * 2;
+                            ctx.lineTo(activeMercCoords[vIdx] * zoomScale - originX, activeMercCoords[vIdx + 1] * zoomScale - originY);
+                        }
+                        ctx.lineTo(headScreenX, headScreenY);
+
+                        const layerProgress = (k + 1) / LAYERS;
+                        ctx.globalAlpha = (k === LAYERS - 1) ? 0.92 : 0.16;
+                        ctx.lineWidth = currentLineWeight * (0.32 + 0.68 * layerProgress);
+                        ctx.stroke();
+                    }
+                    ctx.globalAlpha = 1.0;
+                }
+            }
+        } else if (totalRenderPointsCount >= 2) {
+            const isNeonOn = document.getElementById('neon-effect').value === 'on';
+
+            // Helper to draw segments
+            const drawSegments = (widthMultiplier, alphaVal, useGradient) => {
+                ctx.lineWidth = currentLineWeight * widthMultiplier;
+                ctx.globalAlpha = alphaVal;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                if (useGradient) {
+                    const fixedEnd = Math.min(drawnPointsCount, activePoints.length);
+                    for (let i = 0; i < totalRenderPointsCount - 1; i++) {
+                        const idx0 = i * 2;
+                        const idx1 = (i + 1) * 2;
+                        const s0 = (i < fixedEnd) ? getActiveMetricPointVal(activePoints[i]) : headMetricVal;
+                        const s1 = (i + 1 < fixedEnd) ? getActiveMetricPointVal(activePoints[i + 1]) : headMetricVal;
+                        ctx.beginPath();
+                        ctx.moveTo(drawnMercBuffer[idx0] * zoomScale - originX, drawnMercBuffer[idx0 + 1] * zoomScale - originY);
+                        ctx.lineTo(drawnMercBuffer[idx1] * zoomScale - originX, drawnMercBuffer[idx1 + 1] * zoomScale - originY);
+                        ctx.strokeStyle = getActiveGradientCssColor(0.5 * (s0 + s1));
+                        ctx.stroke();
+                    }
+                } else {
                     ctx.beginPath();
-                    ctx.moveTo(startMercX * zoomScale - originX, startMercY * zoomScale - originY);
-                    for (let idx = searchIdx + 1; idx <= headIntIdx; idx++) {
-                        const vIdx = idx * 2;
-                        ctx.lineTo(activeMercCoords[vIdx] * zoomScale - originX, activeMercCoords[vIdx + 1] * zoomScale - originY);
+                    ctx.moveTo(drawnMercBuffer[0] * zoomScale - originX, drawnMercBuffer[1] * zoomScale - originY);
+                    for (let i = 1; i < totalRenderPointsCount; i++) {
+                        const idx = i * 2;
+                        ctx.lineTo(drawnMercBuffer[idx] * zoomScale - originX, drawnMercBuffer[idx + 1] * zoomScale - originY);
                     }
-                    ctx.lineTo(headScreenX, headScreenY);
-
-                    const layerProgress = (k + 1) / LAYERS;
-                    ctx.globalAlpha = (k === LAYERS - 1) ? 0.92 : 0.16;
-                    ctx.lineWidth = currentLineWeight * (0.32 + 0.68 * layerProgress);
+                    ctx.strokeStyle = currentLineColor;
                     ctx.stroke();
                 }
                 ctx.globalAlpha = 1.0;
+            };
+
+            if (isNeonOn) {
+                drawSegments(2.2, 0.42, isGradientMode);
             }
-        } else if (totalRenderPointsCount >= 2) {
-            ctx.beginPath();
-            ctx.moveTo(drawnMercBuffer[0] * zoomScale - originX, drawnMercBuffer[1] * zoomScale - originY);
-            for (let i = 1; i < totalRenderPointsCount; i++) {
-                const idx = i * 2;
-                ctx.lineTo(drawnMercBuffer[idx] * zoomScale - originX, drawnMercBuffer[idx + 1] * zoomScale - originY);
-            }
-            ctx.strokeStyle = currentLineColor;
-            ctx.lineWidth = currentLineWeight;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.stroke();
+            drawSegments(1.0, 1.0, isGradientMode);
         }
 
         if (isPreviewMode && totalRenderPointsCount >= 2) {
@@ -3877,7 +4894,7 @@
             ctx.fillStyle = '#ffffff';
             ctx.fill();
             ctx.lineWidth = Math.max(1, 2 * headScale);
-            ctx.strokeStyle = currentLineColor;
+            ctx.strokeStyle = isGradientMode ? getActiveGradientCssColor(headMetricVal) : currentLineColor;
             ctx.stroke();
         }
     }
@@ -3891,6 +4908,12 @@
         const originY = lastTopLeftGlobalY;
         const trailMode = document.getElementById('trail-mode').value;
         const isCometMode = (trailMode === 'comet' && !isPreviewMode);
+        const isSlopeMode = (currentLineColorMode === 'slope');
+        const isSpeedMode = (currentLineColorMode === 'speed');
+        const isPaceMode = (currentLineColorMode === 'pace');
+        const isHrMode = (currentLineColorMode === 'hr');
+        const isPwrMode = (currentLineColorMode === 'power');
+        const isGradientMode = (isSlopeMode || isSpeedMode || isPaceMode || isHrMode || isPwrMode);
 
         if (!gl) {
             renderFallback2DCanvas(zoomScale, originX, originY, isCometMode);
@@ -3910,7 +4933,7 @@
         const anchorScreenY = glAnchorMercY * zoomScale - originY;
         const cometKm = parseFloat(document.getElementById('comet-length').value) || 3.0;
 
-        // 1. Vykreslenie trasy (Celá trasa alebo Kometí chvost) cez instanced SDF kapsuly a MAX blending (nulové artefakty v spojoch)
+        // 1. Vykreslenie trasy (Celá trasa alebo Kometí chvost) cez instanced SDF kapsuly
         if (totalRenderPointsCount >= 2 && (!isCometMode || currentRenderHeadDist > 1e-5)) {
             let firstSegIdx = 0;
             if (isCometMode && activePoints.length >= 2) {
@@ -3928,24 +4951,23 @@
 
             const instanceCount = (totalRenderPointsCount - 1) - firstSegIdx;
             if (instanceCount > 0) {
-                gl.useProgram(glLineProgram);
-                gl.blendFunc(gl.ONE, gl.ONE);
-                gl.blendEquation(glBlendMaxConstant);
+                const isNeonOn = document.getElementById('neon-effect').value === 'on';
 
+                gl.useProgram(glLineProgram);
                 gl.bindBuffer(gl.ARRAY_BUFFER, glQuadVbo);
                 gl.enableVertexAttribArray(glLineLocs.a_quadPos);
                 gl.vertexAttribPointer(glLineLocs.a_quadPos, 2, gl.FLOAT, false, 0, 0);
                 setGlAttribDivisor(glLineLocs.a_quadPos, 0);
 
-                const baseByteOffset = firstSegIdx * 12;
+                const baseByteOffset = firstSegIdx * 16;
                 gl.bindBuffer(gl.ARRAY_BUFFER, glRouteVbo);
 
                 gl.enableVertexAttribArray(glLineLocs.a_p0);
-                gl.vertexAttribPointer(glLineLocs.a_p0, 3, gl.FLOAT, false, 12, baseByteOffset);
+                gl.vertexAttribPointer(glLineLocs.a_p0, 4, gl.FLOAT, false, 16, baseByteOffset);
                 setGlAttribDivisor(glLineLocs.a_p0, 1);
 
                 gl.enableVertexAttribArray(glLineLocs.a_p1);
-                gl.vertexAttribPointer(glLineLocs.a_p1, 3, gl.FLOAT, false, 12, baseByteOffset + 12);
+                gl.vertexAttribPointer(glLineLocs.a_p1, 4, gl.FLOAT, false, 16, baseByteOffset + 16);
                 setGlAttribDivisor(glLineLocs.a_p1, 1);
 
                 gl.uniform2f(glLineLocs.u_resolution, canvasCssWidth, canvasCssHeight);
@@ -3954,10 +4976,49 @@
                 gl.uniform1f(glLineLocs.u_lineWidth, currentLineWeight);
                 gl.uniform1f(glLineLocs.u_aaWidth, aaWidth);
                 gl.uniform3f(glLineLocs.u_lineColor, currentLineRgb[0], currentLineRgb[1], currentLineRgb[2]);
+                gl.uniform1f(glLineLocs.u_colorMode, isPwrMode ? 5.0 : (isHrMode ? 4.0 : (isPaceMode ? 3.0 : (isSpeedMode ? 2.0 : (isSlopeMode ? 1.0 : 0.0)))));
+                gl.uniform3f(glLineLocs.u_colorMin, currentSlopeMinRgb[0], currentSlopeMinRgb[1], currentSlopeMinRgb[2]);
+                gl.uniform3f(glLineLocs.u_colorMid, currentSlopeMidRgb[0], currentSlopeMidRgb[1], currentSlopeMidRgb[2]);
+                gl.uniform3f(glLineLocs.u_colorMax, currentSlopeMaxRgb[0], currentSlopeMaxRgb[1], currentSlopeMaxRgb[2]);
+                gl.uniform1f(glLineLocs.u_minSlope, routeMinSlopePct);
+                gl.uniform1f(glLineLocs.u_maxSlope, routeMaxSlopePct);
+                gl.uniform1f(glLineLocs.u_slopeMinSat, slopeMinSatPct);
+                gl.uniform1f(glLineLocs.u_slopeMidLow, slopeMidLowPct);
+                gl.uniform1f(glLineLocs.u_slopeMidHigh, slopeMidHighPct);
+                gl.uniform1f(glLineLocs.u_slopeMaxSat, slopeMaxSatPct);
+                gl.uniform1f(glLineLocs.u_speedMinSat, speedMinSatKmh);
+                gl.uniform1f(glLineLocs.u_speedMidLow, speedMidLowKmh);
+                gl.uniform1f(glLineLocs.u_speedMidHigh, speedMidHighKmh);
+                gl.uniform1f(glLineLocs.u_speedMaxSat, speedMaxSatKmh);
+                gl.uniform1f(glLineLocs.u_paceMinSat, paceMinSatMinKm);
+                gl.uniform1f(glLineLocs.u_paceMidLow, paceMidLowMinKm);
+                gl.uniform1f(glLineLocs.u_paceMidHigh, paceMidHighMinKm);
+                gl.uniform1f(glLineLocs.u_paceMaxSat, paceMaxSatMinKm);
+                gl.uniform1f(glLineLocs.u_hrMinSat, hrMinSatBpm);
+                gl.uniform1f(glLineLocs.u_hrMidLow, hrMidLowBpm);
+                gl.uniform1f(glLineLocs.u_hrMidHigh, hrMidHighBpm);
+                gl.uniform1f(glLineLocs.u_hrMaxSat, hrMaxSatBpm);
+                gl.uniform1f(glLineLocs.u_pwrMinSat, pwrMinSatWatts);
+                gl.uniform1f(glLineLocs.u_pwrMidLow, pwrMidLowWatts);
+                gl.uniform1f(glLineLocs.u_pwrMidHigh, pwrMidHighWatts);
+                gl.uniform1f(glLineLocs.u_pwrMaxSat, pwrMaxSatWatts);
                 gl.uniform1f(glLineLocs.u_isComet, isCometMode ? 1.0 : 0.0);
                 gl.uniform1f(glLineLocs.u_headDist, currentRenderHeadDist);
                 gl.uniform1f(glLineLocs.u_cometLength, cometKm);
 
+                // Pass 1: Neon glow pass (if enabled) – MAX blending zabraňuje sčítavaniu žiary v spojoch segmentov
+                if (isNeonOn) {
+                    gl.blendFunc(gl.ONE, gl.ONE);
+                    gl.blendEquation(glBlendMaxConstant);
+                    gl.uniform1f(glLineLocs.u_isNeon, 1.0);
+                    drawGlArraysInstanced(gl.TRIANGLES, 0, 6, instanceCount);
+                }
+
+                // Pass 2: Main crisp line pass – MAX blending (v jednofarebnom aj gradientovom režime)
+                // eliminuje prekrývanie polkruhových spojov kapsúl (bodky v chvoste kométy) pri nulovej extra záťaži
+                gl.blendFunc(gl.ONE, gl.ONE);
+                gl.blendEquation(glBlendMaxConstant);
+                gl.uniform1f(glLineLocs.u_isNeon, 0.0);
                 drawGlArraysInstanced(gl.TRIANGLES, 0, 6, instanceCount);
 
                 setGlAttribDivisor(glLineLocs.a_p0, 0);
@@ -3983,7 +5044,8 @@
             const headY = drawnMercBuffer[headIdx + 1] * zoomScale - originY;
             const headRadius = Math.max(4, currentLineWeight * 0.9) * headScale;
             const headStroke = Math.max(1, 2 * headScale);
-            drawGlCircle(headX, headY, headRadius, headStroke, HEAD_MARKER_FILL_RGB, currentLineRgb, aaWidth);
+            const headStrokeRgb = isGradientMode ? getActiveGradientRgbFloat(getActiveHeadMetricVal()) : currentLineRgb;
+            drawGlCircle(headX, headY, headRadius, headStroke, HEAD_MARKER_FILL_RGB, headStrokeRgb, aaWidth);
         }
     }
 
@@ -3996,24 +5058,168 @@
     });
     window.addEventListener('resize', resizeRouteCanvas);
 
-    // Uložený Mapy.com API kľúč v localStorage
+    // Uložený Mapy.com API kľúč v localStorage + prepínač viditeľnosti (oko)
     const mapyKeyInput = document.getElementById('mapy-api-key');
+    const btnToggleApiKey = document.getElementById('btn-toggle-api-key');
+    const iconApiKeyEye = document.getElementById('icon-api-key-eye');
+    const EYE_OPEN_SVG_PATH = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
+    const EYE_CLOSED_SVG_PATH = '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>';
+
     let savedKey = null;
     try { savedKey = localStorage.getItem('mapy_com_api_key'); }
     catch (err) { console.warn('LocalStorage nie je dostupné:', err); }
     if (savedKey && mapyKeyInput) {
         mapyKeyInput.value = savedKey;
     }
+    if (btnToggleApiKey && mapyKeyInput) {
+        btnToggleApiKey.addEventListener('click', () => {
+            const isHidden = mapyKeyInput.type === 'password';
+            mapyKeyInput.type = isHidden ? 'text' : 'password';
+            if (iconApiKeyEye) {
+                iconApiKeyEye.innerHTML = isHidden ? EYE_CLOSED_SVG_PATH : EYE_OPEN_SVG_PATH;
+            }
+            btnToggleApiKey.title = isHidden ? 'Skryť Mapy.com API kľúč' : 'Zobraziť Mapy.com API kľúč';
+        });
+    }
 
-    // Pomocná funkcia pre aplikovanie neónového efektu priamo na vlastný HTML5 Canvas element
+    // Pomocná funkcia pre aplikovanie režimu farbenia čiary, palety gradientu a neónového efektu
     function syncCanvasStyles() {
-        currentLineColor = document.getElementById('line-color').value;
+        const modeSelect = document.getElementById('line-color-mode');
+        const prevMode = currentLineColorMode;
+        currentLineColorMode = modeSelect ? modeSelect.value : 'solid';
+        if (prevMode !== currentLineColorMode) {
+            glSyncedFixedCount = 0;
+        }
+        const isGradientMode = (currentLineColorMode === 'slope' || currentLineColorMode === 'speed' || currentLineColorMode === 'pace' || currentLineColorMode === 'hr' || currentLineColorMode === 'power');
+
+        const solidGroup = document.getElementById('line-solid-color-group');
+        const lineColorInput = document.getElementById('line-color');
+        const paletteGroup = document.getElementById('line-gradient-palette-group');
+        const minInput = document.getElementById('slope-color-min');
+        const midInput = document.getElementById('slope-color-mid');
+        const maxInput = document.getElementById('slope-color-max');
+        const gradConfigGroup = document.getElementById('grad-config-group');
+        const btnGradConfig = document.getElementById('btn-grad-config');
+        const gradConfigPanel = document.getElementById('grad-config-panel');
+
+        if (solidGroup && lineColorInput) {
+            solidGroup.classList.toggle('group-disabled', isGradientMode);
+            lineColorInput.disabled = isGradientMode;
+        }
+        if (paletteGroup && minInput && midInput && maxInput) {
+            paletteGroup.classList.toggle('group-disabled', !isGradientMode);
+            minInput.disabled = !isGradientMode;
+            midInput.disabled = !isGradientMode;
+            maxInput.disabled = !isGradientMode;
+        }
+        if (gradConfigGroup && btnGradConfig) {
+            gradConfigGroup.classList.toggle('group-disabled', !isGradientMode);
+            btnGradConfig.disabled = !isGradientMode;
+            if (!isGradientMode && gradConfigPanel && gradConfigPanel.classList.contains('open')) {
+                gradConfigPanel.classList.remove('open');
+                btnGradConfig.classList.remove('active');
+                if (typeof resetEditorPopoverPosition === 'function') resetEditorPopoverPosition(gradConfigPanel);
+            }
+        }
+
+        // Načítanie a validácia hraničných bodov pre Sklon (%) a Rýchlosť (km/h) z okna Config
+        const elSlopeMinSat = document.getElementById('cfg-slope-min-sat');
+        const elSlopeMidLow = document.getElementById('cfg-slope-mid-low');
+        const elSlopeMidHigh = document.getElementById('cfg-slope-mid-high');
+        const elSlopeMaxSat = document.getElementById('cfg-slope-max-sat');
+        if (elSlopeMinSat && elSlopeMidLow && elSlopeMidHigh && elSlopeMaxSat) {
+            const sMidLow = isNaN(parseFloat(elSlopeMidLow.value)) ? -2.0 : parseFloat(elSlopeMidLow.value);
+            const sMidHigh = isNaN(parseFloat(elSlopeMidHigh.value)) ? 2.0 : Math.max(sMidLow, parseFloat(elSlopeMidHigh.value));
+            const sMinSat = isNaN(parseFloat(elSlopeMinSat.value)) ? -8.0 : Math.min(sMidLow - 0.5, parseFloat(elSlopeMinSat.value));
+            const sMaxSat = isNaN(parseFloat(elSlopeMaxSat.value)) ? 8.0 : Math.max(sMidHigh + 0.5, parseFloat(elSlopeMaxSat.value));
+            slopeMidLowPct = sMidLow;
+            slopeMidHighPct = sMidHigh;
+            slopeMinSatPct = sMinSat;
+            slopeMaxSatPct = sMaxSat;
+        }
+
+        const elSpeedMinSat = document.getElementById('cfg-speed-min-sat');
+        const elSpeedMidLow = document.getElementById('cfg-speed-mid-low');
+        const elSpeedMidHigh = document.getElementById('cfg-speed-mid-high');
+        const elSpeedMaxSat = document.getElementById('cfg-speed-max-sat');
+        if (elSpeedMinSat && elSpeedMidLow && elSpeedMidHigh && elSpeedMaxSat) {
+            const vMidLow = isNaN(parseFloat(elSpeedMidLow.value)) ? 20.0 : Math.max(0.5, parseFloat(elSpeedMidLow.value));
+            const vMidHigh = isNaN(parseFloat(elSpeedMidHigh.value)) ? 25.0 : Math.max(vMidLow, parseFloat(elSpeedMidHigh.value));
+            const vMinSat = isNaN(parseFloat(elSpeedMinSat.value)) ? 12.0 : Math.max(0.0, Math.min(vMidLow - 0.5, parseFloat(elSpeedMinSat.value)));
+            const vMaxSat = isNaN(parseFloat(elSpeedMaxSat.value)) ? 33.0 : Math.max(vMidHigh + 0.5, parseFloat(elSpeedMaxSat.value));
+            speedMidLowKmh = vMidLow;
+            speedMidHighKmh = vMidHigh;
+            speedMinSatKmh = vMinSat;
+            speedMaxSatKmh = vMaxSat;
+        }
+
+        const elPaceMinSat = document.getElementById('cfg-pace-min-sat');
+        const elPaceMidLow = document.getElementById('cfg-pace-mid-low');
+        const elPaceMidHigh = document.getElementById('cfg-pace-mid-high');
+        const elPaceMaxSat = document.getElementById('cfg-pace-max-sat');
+        if (elPaceMinSat && elPaceMidLow && elPaceMidHigh && elPaceMaxSat) {
+            const pMidLow = Math.max(0.2, parsePaceConfigToMinutes(elPaceMidLow.value, 6.0));
+            const pMidHigh = Math.max(pMidLow, parsePaceConfigToMinutes(elPaceMidHigh.value, 9.0));
+            const pMinSat = Math.max(0.1, Math.min(pMidLow - 0.1, parsePaceConfigToMinutes(elPaceMinSat.value, 4.0)));
+            const pMaxSat = Math.max(pMidHigh + 0.1, parsePaceConfigToMinutes(elPaceMaxSat.value, 14.0));
+            paceMidLowMinKm = pMidLow;
+            paceMidHighMinKm = pMidHigh;
+            paceMinSatMinKm = pMinSat;
+            paceMaxSatMinKm = pMaxSat;
+        }
+
+        const elHrMinSat = document.getElementById('cfg-hr-min-sat');
+        const elHrMidLow = document.getElementById('cfg-hr-mid-low');
+        const elHrMidHigh = document.getElementById('cfg-hr-mid-high');
+        const elHrMaxSat = document.getElementById('cfg-hr-max-sat');
+        if (elHrMinSat && elHrMidLow && elHrMidHigh && elHrMaxSat) {
+            const hMidLow = isNaN(parseFloat(elHrMidLow.value)) ? 130.0 : Math.max(30.0, parseFloat(elHrMidLow.value));
+            const hMidHigh = isNaN(parseFloat(elHrMidHigh.value)) ? 150.0 : Math.max(hMidLow, parseFloat(elHrMidHigh.value));
+            const hMinSat = isNaN(parseFloat(elHrMinSat.value)) ? 110.0 : Math.max(20.0, Math.min(hMidLow - 1.0, parseFloat(elHrMinSat.value)));
+            const hMaxSat = isNaN(parseFloat(elHrMaxSat.value)) ? 170.0 : Math.max(hMidHigh + 1.0, parseFloat(elHrMaxSat.value));
+            hrMidLowBpm = hMidLow;
+            hrMidHighBpm = hMidHigh;
+            hrMinSatBpm = hMinSat;
+            hrMaxSatBpm = hMaxSat;
+        }
+
+        const elPwrMinSat = document.getElementById('cfg-pwr-min-sat');
+        const elPwrMidLow = document.getElementById('cfg-pwr-mid-low');
+        const elPwrMidHigh = document.getElementById('cfg-pwr-mid-high');
+        const elPwrMaxSat = document.getElementById('cfg-pwr-max-sat');
+        if (elPwrMinSat && elPwrMidLow && elPwrMidHigh && elPwrMaxSat) {
+            const wMidLow = isNaN(parseFloat(elPwrMidLow.value)) ? 160.0 : Math.max(1.0, parseFloat(elPwrMidLow.value));
+            const wMidHigh = isNaN(parseFloat(elPwrMidHigh.value)) ? 220.0 : Math.max(wMidLow, parseFloat(elPwrMidHigh.value));
+            const wMinSat = isNaN(parseFloat(elPwrMinSat.value)) ? 100.0 : Math.max(0.0, Math.min(wMidLow - 1.0, parseFloat(elPwrMinSat.value)));
+            const wMaxSat = isNaN(parseFloat(elPwrMaxSat.value)) ? 300.0 : Math.max(wMidHigh + 1.0, parseFloat(elPwrMaxSat.value));
+            pwrMidLowWatts = wMidLow;
+            pwrMidHighWatts = wMidHigh;
+            pwrMinSatWatts = wMinSat;
+            pwrMaxSatWatts = wMaxSat;
+        }
+
+        currentLineColor = lineColorInput ? lineColorInput.value : '#c8ff00';
         currentLineRgb = hexToRgbFloat(currentLineColor);
+
+        if (minInput) {
+            currentSlopeColorMin = minInput.value;
+            currentSlopeMinRgb = hexToRgbFloat(currentSlopeColorMin);
+        }
+        if (midInput) {
+            currentSlopeColorMid = midInput.value;
+            currentSlopeMidRgb = hexToRgbFloat(currentSlopeColorMid);
+        }
+        if (maxInput) {
+            currentSlopeColorMax = maxInput.value;
+            currentSlopeMaxRgb = hexToRgbFloat(currentSlopeColorMax);
+        }
+
         currentLineWeight = parseInt(document.getElementById('line-width').value) || 6;
         const headSizeEl = document.getElementById('head-size');
         currentHeadSizePercent = headSizeEl ? parseFloat(headSizeEl.value) : 40;
         const neon = document.getElementById('neon-effect').value === 'on';
-        document.documentElement.style.setProperty('--neon-color', currentLineColor);
+        const neonColor = isGradientMode ? getActiveGradientCssColor(getActiveHeadMetricVal()) : currentLineColor;
+        document.documentElement.style.setProperty('--neon-color', neonColor);
         if (neon) {
             routeCanvas.classList.add('neon-canvas');
         } else {
@@ -4824,6 +6030,7 @@
             }
 
             if (maxSpeedIdx !== -1 && maxSpeedKmh > 0.5) {
+                const isFootAct = (typeof currentTrackActivity !== 'undefined') && (currentTrackActivity === 'turistika' || currentTrackActivity === 'beh');
                 result.push({
                     id: poiNextId++,
                     ...toPoiKm(ptRelDist(points[maxSpeedIdx])),
@@ -4831,7 +6038,7 @@
                     icon: 'speedometer',
                     duration: 4.0,
                     photoData: null,
-                    enabled: true,
+                    enabled: !isFootAct,
                     isAuto: true,
                     autoType: 'max_speed',
                     triggered: false
@@ -5699,6 +6906,18 @@
             btnSummaryEditor.classList.remove('active');
             resetEditorPopoverPosition(summaryEditorPanel);
         }
+        const gPanel = document.getElementById('grad-config-panel');
+        const gBtn = document.getElementById('btn-grad-config');
+        if (gPanel) {
+            gPanel.classList.remove('open');
+            if (gBtn) gBtn.classList.remove('active');
+            resetEditorPopoverPosition(gPanel);
+        }
+        if (typeof activityMenuPanelEl !== 'undefined' && activityMenuPanelEl) {
+            activityMenuPanelEl.classList.remove('open');
+            if (btnActivityIndicatorEl) btnActivityIndicatorEl.classList.remove('active');
+            resetEditorPopoverPosition(activityMenuPanelEl);
+        }
         const isOpen = poiEditorPanel.classList.toggle('open');
         resetEditorPopoverPosition(poiEditorPanel);
         btnPoiEditor.classList.toggle('active', isOpen);
@@ -5748,6 +6967,480 @@
 
     // Načítanie uložených predvolených POI pri štarte
     loadPoisFromStorage('gpx_pois_default');
+
+    // =========================================================================
+    // AUTOMATICKÁ DETEKCIA A RUČNÉ NASTAVENIE AKTIVITY (TURISTIKA / BEH / MTB / ROAD / MOTO)
+    // =========================================================================
+    const ACTIVITY_SHOE_SVG = '<svg viewBox="0 0 24 24"><path d="M19.5 16h-2l-3.2-3.5L13 8V5H6v11c0 1.66 1.34 3 3 3h11.5c.83 0 1.5-.67 1.5-1.5S20.83 16 19.5 16zM8 7h3v2H8V7zm0 4h3.5l1.2 1.5H8V11zm11 6H9c-.55 0-1-.45-1-1v-1h11v2z"/></svg>';
+    const ACTIVITY_WHEEL_SVG = '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 2c1.93 0 3.68.69 5.05 1.83L12.88 10c-.27-.11-.57-.18-.88-.18s-.61.07-.88.18L6.95 5.83C8.32 4.69 10.07 4 12 4zm-7.93 7h5.95c.05.34.17.66.35.95l-4.21 4.21C4.88 14.99 4.19 13.57 4.07 11zm7.93 9c-1.93 0-3.68-.69-5.05-1.83l4.17-4.17c.27.11.57.18.88.18s.61-.07.88-.18l4.17 4.17C15.68 19.31 13.93 20 12 20zm5.86-3.84l-4.21-4.21c.18-.29.3-.61.35-.95h5.95c-.12 2.57-.81 3.99-2.09 5.16zm.12-7.16h-5.95c-.05-.34-.17-.66-.35-.95l4.21-4.21C19.12 7.01 19.81 8.43 19.98 10zM6.14 5.84l4.21 4.21c-.18.29-.3.61-.35.95H4.05c.17-1.57.86-2.99 2.09-4.16z"/></svg>';
+
+    const ACTIVITY_META = {
+        turistika: { label: 'Turistika', isShoe: true },
+        beh:       { label: 'Beh',       isShoe: true },
+        mtb:       { label: 'MTB',       isShoe: false },
+        road:      { label: 'Road',      isShoe: false },
+        moto:      { label: 'Moto',      isShoe: false }
+    };
+
+    let currentTrackActivity = 'mtb';
+    let currentActivityIsManual = false;
+    let currentActivityStorageKey = 'gpx_activity_default';
+    let lastLoadedXmlDoc = null;
+
+    const activityTypeGroupEl = document.getElementById('activity-type-group');
+    const btnActivityIndicatorEl = document.getElementById('btn-activity-indicator');
+    const activityIndicatorIconEl = document.getElementById('activity-indicator-icon');
+    const activityIndicatorLabelEl = document.getElementById('activity-indicator-label');
+    const activityMenuPanelEl = document.getElementById('activity-menu-panel');
+    const btnCloseActivityMenuEl = document.getElementById('btn-close-activity-menu');
+    const btnAutoActivityEl = document.getElementById('btn-auto-activity');
+    const activityOptButtons = Array.from(document.querySelectorAll('.activity-opt-btn'));
+
+    function updateActivityIndicatorUI() {
+        const meta = ACTIVITY_META[currentTrackActivity] || ACTIVITY_META.mtb;
+        if (activityIndicatorIconEl) {
+            activityIndicatorIconEl.innerHTML = meta.isShoe ? ACTIVITY_SHOE_SVG : ACTIVITY_WHEEL_SVG;
+        }
+        if (activityIndicatorLabelEl) {
+            activityIndicatorLabelEl.innerText = meta.label;
+        }
+        if (btnActivityIndicatorEl) {
+            const modeTxt = currentActivityIsManual ? 'ručne nastavená' : 'automaticky rozpoznaná';
+            btnActivityIndicatorEl.title = `Aktivita: ${meta.label} (${ meta.isShoe ? 'Topánka' : 'Koleso' } – ${modeTxt}). Kliknutím zmeníte aktivitu.`;
+        }
+        activityOptButtons.forEach(btn => {
+            btn.classList.toggle('selected', btn.getAttribute('data-act') === currentTrackActivity);
+        });
+    }
+
+    // Aplikovanie podmienok podľa typu aktivity (chodecká: Turistika/Beh vs. kolesová: MTB/Road/Moto) a prítomnosti záznamu výkonu (hasPwrData)
+    function applyActivityAndSensorRules(applyDefaults = true) {
+        const isFootActivity = (currentTrackActivity === 'turistika' || currentTrackActivity === 'beh');
+        const hasLoadedTrack = (originalRawPoints && originalRawPoints.length > 1);
+        const allowPower = !isFootActivity && (!hasLoadedTrack || hasPwrData);
+        const allowSpeed = !isFootActivity;
+
+        // 1. Farbenie (#line-color-mode) a sekcie v okne ⚙️ Config (#grad-config-panel)
+        const modeSelect = document.getElementById('line-color-mode');
+        if (modeSelect) {
+            const optSpeed = modeSelect.querySelector('option[value="speed"]');
+            const optPace  = modeSelect.querySelector('option[value="pace"]');
+            const optPower = modeSelect.querySelector('option[value="power"]');
+
+            if (optSpeed) {
+                optSpeed.disabled = !allowSpeed;
+                optSpeed.hidden = !allowSpeed;
+            }
+            if (optPower) {
+                optPower.disabled = !allowPower;
+                optPower.hidden = !allowPower;
+            }
+            if (optPace) {
+                optPace.disabled = false;
+                optPace.hidden = false;
+            }
+
+            // Ak je aktuálne zvolený režim farbenia zakázaný pre danú aktivitu / chýbajúci výkon, prepneme ho:
+            if (isFootActivity && (modeSelect.value === 'speed' || modeSelect.value === 'power')) {
+                modeSelect.value = 'pace';
+            } else if (!isFootActivity && !allowPower && modeSelect.value === 'power') {
+                modeSelect.value = 'solid';
+            } else if (!isFootActivity && applyDefaults && modeSelect.value === 'pace') {
+                modeSelect.value = 'speed';
+            }
+        }
+
+        // Sprístupnenie / stmavenie príslušných sekcií v okne ⚙️ Config
+        const secSpeed = document.getElementById('grad-sec-speed');
+        const secPwr   = document.getElementById('grad-sec-pwr');
+        if (secSpeed) {
+            secSpeed.classList.toggle('section-disabled', !allowSpeed);
+            secSpeed.querySelectorAll('input').forEach(inp => { inp.disabled = !allowSpeed; });
+        }
+        if (secPwr) {
+            secPwr.classList.toggle('section-disabled', !allowPower);
+            secPwr.querySelectorAll('input').forEach(inp => { inp.disabled = !allowPower; });
+        }
+
+        // 2. Nastavenie prepínačov Zobrazené údaje pre obe okná HUD (KLASIK HUD aj MINI HUD)
+        const btnSpdEl  = document.getElementById('toggle-item-speed');
+        const btnPaceEl = document.getElementById('toggle-item-pace');
+        const btnPwrEl  = document.getElementById('toggle-item-pwr');
+
+        if (isFootActivity) {
+            // Chodecká aktivita (Turistika / Beh): defaultne vypnuté rýchlosť aj výkon, zapnuté tempo
+            showSpeed = false;
+            showPwr = false;
+            if (applyDefaults) {
+                showPace = true;
+            }
+        } else {
+            // Kolesová aktivita (MTB / Road / Moto): ak nie je zaznamenaný výkon, vypnúť výkon; pri prepnutí zapnúť rýchlosť a vypnúť tempo
+            if (!allowPower) {
+                showPwr = false;
+            } else if (applyDefaults) {
+                showPwr = true;
+            }
+            if (applyDefaults) {
+                showSpeed = true;
+                showPace = false;
+            }
+        }
+
+        if (btnSpdEl) {
+            btnSpdEl.classList.toggle('inactive', !showSpeed);
+        }
+        if (btnPaceEl) {
+            btnPaceEl.classList.toggle('inactive', !showPace);
+        }
+        if (btnPwrEl) {
+            btnPwrEl.disabled = !allowPower;
+            btnPwrEl.classList.toggle('inactive', !showPwr || !allowPower);
+        }
+
+        // 3. Nastavenie okna POI Editor (automatický bod Max. rýchlosť + možnosť výberu ikony Tachometer vo formulári)
+        if (poiInputIcon) {
+            const optPoiSpd = poiInputIcon.querySelector('option[value="speedometer"]');
+            if (optPoiSpd) {
+                optPoiSpd.disabled = isFootActivity;
+                optPoiSpd.hidden = isFootActivity;
+            }
+            if (isFootActivity && poiInputIcon.value === 'speedometer') {
+                poiInputIcon.value = 'mountain';
+            }
+        }
+        if (applyDefaults && poiItems && poiItems.length > 0) {
+            let poiChanged = false;
+            for (let i = 0; i < poiItems.length; i++) {
+                const p = poiItems[i];
+                if (p.isAuto && (p.autoType === 'max_speed' || p.icon === 'speedometer')) {
+                    const targetEnabled = !isFootActivity;
+                    if (p.enabled !== targetEnabled) {
+                        p.enabled = targetEnabled;
+                        poiChanged = true;
+                    }
+                }
+            }
+            if (poiChanged) {
+                savePoisToStorage();
+                renderPoiList();
+            }
+        }
+
+        // 4. Nastavenie okna SÚHRN (Priemerná rýchlosť, Maximálna rýchlosť, Priemerný výkon, Priemerné tempo pohybu + formulár)
+        if (summaryInputIcon) {
+            const optSumSpd = summaryInputIcon.querySelector('option[value="speedometer"]');
+            const optSumPwr = summaryInputIcon.querySelector('option[value="power"]');
+            if (optSumSpd) {
+                optSumSpd.disabled = isFootActivity;
+                optSumSpd.hidden = isFootActivity;
+            }
+            if (optSumPwr) {
+                optSumPwr.disabled = !allowPower;
+                optSumPwr.hidden = !allowPower;
+            }
+            if ((isFootActivity && summaryInputIcon.value === 'speedometer') || (!allowPower && summaryInputIcon.value === 'power')) {
+                summaryInputIcon.value = isFootActivity ? 'stopwatch' : 'distance';
+            }
+        }
+        if (summaryItems && summaryItems.length > 0) {
+            let sumChanged = false;
+            for (let i = 0; i < summaryItems.length; i++) {
+                const s = summaryItems[i];
+                if (s.isAuto) {
+                    if (s.autoType === 'sum_avg_pwr' || s.icon === 'power') {
+                        const targetPwrEnabled = allowPower ? (applyDefaults ? true : s.enabled) : false;
+                        if (s.enabled !== targetPwrEnabled) {
+                            s.enabled = targetPwrEnabled;
+                            sumChanged = true;
+                        }
+                    } else if (applyDefaults && (s.autoType === 'sum_avg_speed' || s.autoType === 'sum_max_speed')) {
+                        const targetSpdEnabled = !isFootActivity;
+                        if (s.enabled !== targetSpdEnabled) {
+                            s.enabled = targetSpdEnabled;
+                            sumChanged = true;
+                        }
+                    } else if (applyDefaults && s.autoType === 'sum_avg_pace') {
+                        const targetPaceEnabled = isFootActivity;
+                        if (s.enabled !== targetPaceEnabled) {
+                            s.enabled = targetPaceEnabled;
+                            sumChanged = true;
+                        }
+                    }
+                }
+            }
+            if (sumChanged) {
+                saveSummaryToStorage();
+                renderSummaryList();
+            }
+        }
+
+        syncCanvasStyles();
+        updateHudVisibility();
+        if (typeof saveUserSettingsToStorage === 'function') {
+            saveUserSettingsToStorage();
+        }
+    }
+
+    function saveActivityToStorage() {
+        try {
+            const payload = {
+                activity: currentTrackActivity,
+                isManual: Boolean(currentActivityIsManual)
+            };
+            localStorage.setItem(currentActivityStorageKey, JSON.stringify(payload));
+            if (typeof updateStorageUsageBadge === 'function') updateStorageUsageBadge();
+        } catch (err) {
+            console.warn('Chyba pri ukladaní aktivity do LocalStorage:', err);
+        }
+    }
+
+    function loadActivityFromStorage(storageKey) {
+        currentActivityStorageKey = storageKey || 'gpx_activity_default';
+        try {
+            const raw = localStorage.getItem(currentActivityStorageKey);
+            if (!raw) return false;
+            const parsed = JSON.parse(raw);
+            if (parsed && ACTIVITY_META[parsed.activity]) {
+                currentTrackActivity = parsed.activity;
+                currentActivityIsManual = Boolean(parsed.isManual);
+                updateActivityIndicatorUI();
+                return true;
+            }
+            return false;
+        } catch (err) {
+            return false;
+        }
+    }
+
+    // Automatická detekcia aktivity zo súboru (XML metadáta + senzory + 95. percentil a priemerná rýchlosť z originalRawPoints)
+    function detectTrackActivityFromData(xmlDoc, origPoints) {
+        if (!origPoints || origPoints.length < 2) return 'mtb';
+
+        // 1. Prečítanie metadát zo súboru (Sport atribút v TCX, <type> a creator v GPX)
+        let metaSportStr = '';
+        let creatorStr = '';
+        if (xmlDoc) {
+            const rootEl = xmlDoc.documentElement;
+            if (rootEl) {
+                creatorStr = (rootEl.getAttribute('creator') || '').toLowerCase();
+            }
+            const actNodes = xmlDoc.getElementsByTagName('Activity');
+            for (let i = 0; i < actNodes.length; i++) {
+                const sp = actNodes[i].getAttribute('Sport');
+                if (sp) metaSportStr += ' ' + sp.toLowerCase();
+            }
+            const typeNodes = xmlDoc.getElementsByTagName('type');
+            for (let i = 0; i < Math.min(typeNodes.length, 5); i++) {
+                if (typeNodes[i].textContent) {
+                    metaSportStr += ' ' + typeNodes[i].textContent.trim().toLowerCase();
+                }
+            }
+        }
+
+        // 2. Výpočet rýchlostného profilu, priemernej rýchlosti v pohybe, 95. percentilu rýchlosti a kadencie z celej pôvodnej trasy
+        const totalDistKm = origPoints[origPoints.length - 1].origCumDist || 0;
+        const totalEleGain = origPoints[origPoints.length - 1].origCumEle || 0;
+        const elevPerKm = totalDistKm > 0.2 ? (totalEleGain / totalDistKm) : 0;
+
+        const windowSpeeds = [];
+        let movingDistKm = 0;
+        let movingTimeHours = 0;
+        let cadSum = 0;
+        let cadCount = 0;
+
+        if (hasTimeData) {
+            let backIdx = 0;
+            let fwdIdx = 0;
+            for (let i = 0; i < origPoints.length; i++) {
+                if (hasCadData && origPoints[i].cad !== null && !isNaN(origPoints[i].cad) && origPoints[i].cad > 5) {
+                    cadSum += origPoints[i].cad;
+                    cadCount++;
+                }
+                if (i > 0) {
+                    const p0 = origPoints[i - 1];
+                    const p1 = origPoints[i];
+                    if (p0.timeMs && p1.timeMs && p1.timeMs > p0.timeMs) {
+                        const dtH = (p1.timeMs - p0.timeMs) / 3600000;
+                        const dKm = Math.max(0, (p1.origCumDist || 0) - (p0.origCumDist || 0));
+                        if (dtH > 0 && dtH <= 0.05) {
+                            const stepSpd = dKm / dtH;
+                            if (stepSpd >= 1.2 && stepSpd <= 180) {
+                                movingDistKm += dKm;
+                                movingTimeHours += dtH;
+                            }
+                        }
+                    }
+                }
+
+                const d = origPoints[i].origCumDist || 0;
+                const winBack = Math.max(0, d - 0.06);
+                const winFwd = Math.min(totalDistKm, d + 0.06);
+                while (backIdx < i && (origPoints[backIdx + 1].origCumDist || 0) <= winBack) backIdx++;
+                if (fwdIdx < i) fwdIdx = i;
+                while (fwdIdx < origPoints.length - 1 && (origPoints[fwdIdx].origCumDist || 0) < winFwd) fwdIdx++;
+
+                const pB = origPoints[backIdx];
+                const pF = origPoints[fwdIdx];
+                if (pB.timeMs && pF.timeMs && pF.timeMs > pB.timeMs) {
+                    const dtH = (pF.timeMs - pB.timeMs) / 3600000;
+                    const distW = (pF.origCumDist || 0) - (pB.origCumDist || 0);
+                    if (dtH > 1e-5 && distW >= 0.015) {
+                        const spd = distW / dtH;
+                        if (spd >= 1.0 && spd <= 180) {
+                            windowSpeeds.push(spd);
+                        }
+                    }
+                }
+            }
+        }
+
+        windowSpeeds.sort((a, b) => a - b);
+        const v95 = windowSpeeds.length > 0
+            ? windowSpeeds[Math.min(windowSpeeds.length - 1, Math.floor(windowSpeeds.length * 0.95))]
+            : 0;
+        const vMax = windowSpeeds.length > 0
+            ? windowSpeeds[Math.min(windowSpeeds.length - 1, Math.floor(windowSpeeds.length * 0.99))]
+            : 0;
+        const vAvg = movingTimeHours > 1e-4 ? (movingDistKm / movingTimeHours) : 0;
+        const avgCad = cadCount > 10 ? (cadSum / cadCount) : 0;
+
+        // 3. Rozhodovací strom (Heuristika)
+        // A) Explicitné XML tagy pre chôdzu / turistiku / beh
+        if (metaSportStr.includes('walk') || metaSportStr.includes('hik') || metaSportStr.includes('trek') || metaSportStr.includes('mountaineer')) {
+            return 'turistika';
+        }
+        if (metaSportStr.includes('run') || metaSportStr.includes('jog') || metaSportStr.includes('trail_running')) {
+            return (vAvg > 0 && vAvg < 6.2 && v95 < 9.5) ? 'turistika' : 'beh';
+        }
+        if (metaSportStr.includes('moto') || metaSportStr.includes('auto') || metaSportStr.includes('driving')) {
+            return 'moto';
+        }
+        if (metaSportStr.includes('road_biking') || metaSportStr.includes('road_cycling')) {
+            return 'road';
+        }
+        if (metaSportStr.includes('mountain_biking') || metaSportStr.includes('mtb') || metaSportStr.includes('gravel')) {
+            return 'mtb';
+        }
+
+        const isExplicitCyclingMeta = metaSportStr.includes('bik') || metaSportStr.includes('cycl') || creatorStr.includes('edge');
+
+        // B) Detekcia podľa rýchlosti a senzorov, ak nie je jednoznačný podtyp
+        if (!hasTimeData || windowSpeeds.length === 0) {
+            if (isExplicitCyclingMeta || hasPwrData) return 'mtb';
+            return 'turistika';
+        }
+
+        // Moto: veľmi vysoká priemerná aj 95-percentilová rýchlosť bez cyklistického wattmetra
+        if (!hasPwrData && !isExplicitCyclingMeta && (v95 >= 62.0 || (vAvg >= 38.0 && vMax >= 55.0))) {
+            return 'moto';
+        }
+
+        // Ak nemáme explicitne cyklistiku ani wattmeter, otestujeme Turistiku a Beh
+        if (!isExplicitCyclingMeta && !hasPwrData) {
+            // Turistika / Chôdza: pomalý pohyb a nízka max. rýchlosť aj dole kopcom
+            if (vAvg < 6.8 && v95 < 12.5 && vMax < 16.5) {
+                return 'turistika';
+            }
+            // Beh: priemerná rýchlosť 6.8 – 16.5 km/h a 95. percentil pod ~21 km/h (alebo vysoká bežecká kadencia > 135 spm)
+            if ((vAvg >= 6.8 && vAvg <= 16.5 && v95 < 21.5) || (avgCad >= 135 && v95 < 24.0)) {
+                return 'beh';
+            }
+            // Pomalšia horská turistika s občasným pobehnutím dole kopcom
+            if (vAvg < 6.2 && v95 < 15.0) {
+                return 'turistika';
+            }
+        }
+
+        // Rozlíšenie medzi MTB a Cestným bicyklom (Road)
+        if (vAvg >= 23.5 || (vAvg >= 20.5 && elevPerKm < 14.0 && v95 >= 36.0)) {
+            return 'road';
+        }
+        return 'mtb';
+    }
+
+    if (activityMenuPanelEl) {
+        makeEditorPopoverDraggable(activityMenuPanelEl);
+        activityMenuPanelEl.addEventListener('click', e => {
+            e.stopPropagation();
+        });
+    }
+
+    if (btnActivityIndicatorEl && activityMenuPanelEl) {
+        btnActivityIndicatorEl.addEventListener('click', e => {
+            e.stopPropagation();
+            if (poiEditorPanel) {
+                poiEditorPanel.classList.remove('open');
+                btnPoiEditor.classList.remove('active');
+                resetEditorPopoverPosition(poiEditorPanel);
+            }
+            if (summaryEditorPanel) {
+                summaryEditorPanel.classList.remove('open');
+                btnSummaryEditor.classList.remove('active');
+                resetEditorPopoverPosition(summaryEditorPanel);
+            }
+            const gPanel = document.getElementById('grad-config-panel');
+            const gBtn = document.getElementById('btn-grad-config');
+            if (gPanel) {
+                gPanel.classList.remove('open');
+                if (gBtn) gBtn.classList.remove('active');
+                resetEditorPopoverPosition(gPanel);
+            }
+            const isOpen = activityMenuPanelEl.classList.toggle('open');
+            resetEditorPopoverPosition(activityMenuPanelEl);
+            btnActivityIndicatorEl.classList.toggle('active', isOpen);
+        });
+    }
+
+    if (btnCloseActivityMenuEl && activityMenuPanelEl && btnActivityIndicatorEl) {
+        btnCloseActivityMenuEl.addEventListener('click', () => {
+            activityMenuPanelEl.classList.remove('open');
+            btnActivityIndicatorEl.classList.remove('active');
+            resetEditorPopoverPosition(activityMenuPanelEl);
+        });
+    }
+
+    activityOptButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const chosen = btn.getAttribute('data-act');
+            if (chosen && ACTIVITY_META[chosen]) {
+                currentTrackActivity = chosen;
+                currentActivityIsManual = true;
+                updateActivityIndicatorUI();
+                saveActivityToStorage();
+                applyActivityAndSensorRules(true);
+                if (activityMenuPanelEl && btnActivityIndicatorEl) {
+                    activityMenuPanelEl.classList.remove('open');
+                    btnActivityIndicatorEl.classList.remove('active');
+                    resetEditorPopoverPosition(activityMenuPanelEl);
+                }
+            }
+        });
+    });
+
+    if (btnAutoActivityEl) {
+        btnAutoActivityEl.addEventListener('click', () => {
+            if (originalRawPoints && originalRawPoints.length > 1) {
+                currentTrackActivity = detectTrackActivityFromData(lastLoadedXmlDoc, originalRawPoints);
+                currentActivityIsManual = false;
+                updateActivityIndicatorUI();
+                saveActivityToStorage();
+                applyActivityAndSensorRules(true);
+            }
+        });
+    }
+
+    document.addEventListener('click', e => {
+        if (activityMenuPanelEl && activityMenuPanelEl.classList.contains('open')) {
+            const wrapper = document.getElementById('activity-type-group');
+            if (wrapper && !wrapper.contains(e.target)) {
+                activityMenuPanelEl.classList.remove('open');
+                if (btnActivityIndicatorEl) btnActivityIndicatorEl.classList.remove('active');
+                resetEditorPopoverPosition(activityMenuPanelEl);
+            }
+        }
+    });
+
 
     // =========================================================================
     // EDITOR SÚHRNU JAZDY (SÚHRN) – ROVNAKÝ ŠTÝL A FUNKCIA AKO POI EDITOR (BEZ FOTIEK)
@@ -6135,6 +7828,8 @@
             triggered: false
         });
 
+        const isFootActivitySum = (typeof currentTrackActivity !== 'undefined') && (currentTrackActivity === 'turistika' || currentTrackActivity === 'beh');
+
         // 5. Priemerná rýchlosť (vypočítaná z čistého času)
         result.push({
             id: summaryNextId++,
@@ -6142,7 +7837,7 @@
             name: `Priemerná rýchlosť: ${hasTimeData ? avgMovingSpeedKmh.toFixed(1) + ' km/h' : '-- km/h'}`,
             icon: 'speedometer',
             duration: 5.0,
-            enabled: true,
+            enabled: !isFootActivitySum,
             isAuto: true,
             autoType: 'sum_avg_speed',
             triggered: false
@@ -6155,7 +7850,7 @@
             name: `Maximálna rýchlosť: ${hasTimeData ? Math.round(maxSpeedKmh) + ' km/h' : '-- km/h'}`,
             icon: 'speedometer',
             duration: 5.0,
-            enabled: true,
+            enabled: !isFootActivitySum,
             isAuto: true,
             autoType: 'sum_max_speed',
             triggered: false
@@ -6168,7 +7863,7 @@
             name: `Priemerné tempo pohybu: ${hasTimeData && avgMovingSpeedKmh >= 0.3 ? formatPaceMinSec(avgMovingSpeedKmh) + ' /km' : '--:-- /km'}`,
             icon: 'stopwatch',
             duration: 5.0,
-            enabled: true,
+            enabled: isFootActivitySum,
             isAuto: true,
             autoType: 'sum_avg_pace',
             triggered: false
@@ -6337,13 +8032,14 @@
         });
 
         // 9. Priemerný výkon (počas pohybu a mimo nulových hodnôt)
+        const allowPwrInSum = !isFootActivitySum && hasPwrData && avgMovingPwr !== null;
         result.push({
             id: summaryNextId++,
             km: summaryTriggerKm,
             name: `Priemerný výkon: ${hasPwrData && avgMovingPwr !== null ? avgMovingPwr + ' W' : '-- W'}`,
             icon: 'power',
             duration: 5.0,
-            enabled: true,
+            enabled: Boolean(allowPwrInSum),
             isAuto: true,
             autoType: 'sum_avg_pwr',
             triggered: false
@@ -6356,7 +8052,7 @@
             name: `Priemerná kadencia: ${hasCadData && avgMovingCad !== null ? avgMovingCad + ' rpm' : '-- rpm'}`,
             icon: 'cadence',
             duration: 5.0,
-            enabled: true,
+            enabled: Boolean(hasCadData && avgMovingCad !== null),
             isAuto: true,
             autoType: 'sum_avg_cad',
             triggered: false
@@ -6369,7 +8065,7 @@
             name: `Celkový počet otáčok: ${hasCadData && totalRevRounded !== null ? totalRevRounded : '--'}`,
             icon: 'revolutions',
             duration: 5.0,
-            enabled: true,
+            enabled: Boolean(hasCadData && totalRevRounded !== null),
             isAuto: true,
             autoType: 'sum_total_rev',
             triggered: false
@@ -6548,6 +8244,18 @@
         poiEditorPanel.classList.remove('open');
         btnPoiEditor.classList.remove('active');
         resetEditorPopoverPosition(poiEditorPanel);
+        const gPanel = document.getElementById('grad-config-panel');
+        const gBtn = document.getElementById('btn-grad-config');
+        if (gPanel) {
+            gPanel.classList.remove('open');
+            if (gBtn) gBtn.classList.remove('active');
+            resetEditorPopoverPosition(gPanel);
+        }
+        if (typeof activityMenuPanelEl !== 'undefined' && activityMenuPanelEl) {
+            activityMenuPanelEl.classList.remove('open');
+            if (btnActivityIndicatorEl) btnActivityIndicatorEl.classList.remove('active');
+            resetEditorPopoverPosition(activityMenuPanelEl);
+        }
         const isOpen = summaryEditorPanel.classList.toggle('open');
         resetEditorPopoverPosition(summaryEditorPanel);
         btnSummaryEditor.classList.toggle('active', isOpen);
@@ -6650,11 +8358,14 @@
         const miniTimeItem = document.getElementById('mini-hud-time-item');
         const miniTempItem = document.getElementById('mini-hud-temp-item');
 
+        const isFootActHud = (typeof currentTrackActivity !== 'undefined') && (currentTrackActivity === 'turistika' || currentTrackActivity === 'beh');
+        const canShowPwrHud = showPwr && hasPwrData && !isFootActHud;
+
         distRow.style.display = showDist ? 'block' : 'none';
         eleRow.style.display = showEle ? 'block' : 'none';
         speedRow.style.display = showSpeed ? 'block' : 'none';
         paceRow.style.display = showPace ? 'block' : 'none';
-        pwrRow.style.display = (showPwr && hasPwrData) ? 'block' : 'none';
+        pwrRow.style.display = canShowPwrHud ? 'block' : 'none';
         hrRow.style.display = (showHr && hasHrData) ? 'block' : 'none';
         timeRow.style.display = (showTime && hasTimeData) ? 'block' : 'none';
         tempRow.style.display = (showTemp && hasTempData) ? 'block' : 'none';
@@ -6663,12 +8374,12 @@
         miniEleItem.style.display = showEle ? 'flex' : 'none';
         miniSpeedItem.style.display = showSpeed ? 'flex' : 'none';
         miniPaceItem.style.display = showPace ? 'flex' : 'none';
-        miniPwrItem.style.display = (showPwr && hasPwrData) ? 'flex' : 'none';
+        miniPwrItem.style.display = canShowPwrHud ? 'flex' : 'none';
         miniHrItem.style.display = (showHr && hasHrData) ? 'flex' : 'none';
         miniTimeItem.style.display = (showTime && hasTimeData) ? 'flex' : 'none';
         miniTempItem.style.display = (showTemp && hasTempData) ? 'flex' : 'none';
 
-        const anyRowVisible = showDist || showEle || showSpeed || showPace || (showPwr && hasPwrData) || (showHr && hasHrData) || (showTime && hasTimeData) || (showTemp && hasTempData);
+        const anyRowVisible = showDist || showEle || showSpeed || showPace || canShowPwrHud || (showHr && hasHrData) || (showTime && hasTimeData) || (showTemp && hasTempData);
         if (hudEnabled && rawPoints.length > 0 && anyRowVisible) {
             if (hudMode === 'klasik') {
                 hud.style.display = 'block';
@@ -6795,9 +8506,406 @@
         }
     });
 
-    // Aktualizácia farby, neónu, stopy čiary, popiskov posuvníkov a režimov rýchlosti
+    // Aktualizácia režimu farbenia, farby čiary, palety gradientu, neónu, stopy čiary, popiskov posuvníkov a režimov rýchlosti
+    document.getElementById('line-color-mode').addEventListener('change', () => {
+        syncCanvasStyles();
+    });
     document.getElementById('line-color').addEventListener('input', () => {
         syncCanvasStyles();
+    });
+    ['slope-color-min', 'slope-color-mid', 'slope-color-max'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', () => {
+                syncCanvasStyles();
+            });
+        }
+    });
+
+    const gradConfigInputIds = [
+        'cfg-slope-min-sat', 'cfg-slope-mid-low', 'cfg-slope-mid-high', 'cfg-slope-max-sat',
+        'cfg-speed-min-sat', 'cfg-speed-mid-low', 'cfg-speed-mid-high', 'cfg-speed-max-sat',
+        'cfg-pace-min-sat', 'cfg-pace-mid-low', 'cfg-pace-mid-high', 'cfg-pace-max-sat',
+        'cfg-hr-min-sat', 'cfg-hr-mid-low', 'cfg-hr-mid-high', 'cfg-hr-max-sat',
+        'cfg-pwr-min-sat', 'cfg-pwr-mid-low', 'cfg-pwr-mid-high', 'cfg-pwr-max-sat'
+    ];
+    gradConfigInputIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', () => {
+                syncCanvasStyles();
+            });
+            el.addEventListener('change', () => {
+                syncCanvasStyles();
+            });
+        }
+    });
+
+    const btnGradConfigEl = document.getElementById('btn-grad-config');
+    const gradConfigPanelEl = document.getElementById('grad-config-panel');
+    const btnCloseGradConfigEl = document.getElementById('btn-close-grad-config');
+    const btnResetGradConfigEl = document.getElementById('btn-reset-grad-config');
+
+    // Výpočet a zobrazenie prepočítaných a nameraných hodnôt pre Sklon (%), Rýchlosť (km/h), Tempo (min/km), Tep (bpm) a Výkon (W) v okne Config
+    function updateGradConfigMeasuredStats() {
+        const slopeStatsEl = document.getElementById('cfg-slope-measured-stats');
+        const speedStatsEl = document.getElementById('cfg-speed-measured-stats');
+        const paceStatsEl = document.getElementById('cfg-pace-measured-stats');
+        const hrStatsEl = document.getElementById('cfg-hr-measured-stats');
+        const pwrStatsEl = document.getElementById('cfg-pwr-measured-stats');
+
+        const pts = (rawPoints && rawPoints.length >= 2) ? rawPoints : originalRawPoints;
+        if (!pts || pts.length < 2) {
+            if (slopeStatsEl) slopeStatsEl.innerText = 'Min: -- | Max: -- %';
+            if (speedStatsEl) speedStatsEl.innerText = 'Min: -- | Priemer: -- | Max: -- km/h';
+            if (paceStatsEl) paceStatsEl.innerText = 'Min: --:-- | Priemer: --:-- | Max: --:-- /km';
+            if (hrStatsEl) hrStatsEl.innerText = 'Min: -- | Priemer: -- | Max: -- bpm';
+            if (pwrStatsEl) pwrStatsEl.innerText = 'Min: -- | Priemer: -- | Max: -- W';
+            return;
+        }
+
+        const lastPt = pts[pts.length - 1];
+        const isTrimmedPts = typeof lastPt.cumDist === 'number';
+        const ptDist = p => isTrimmedPts ? p.cumDist : (p.origCumDist || 0);
+        const totalDistKm = ptDist(lastPt);
+
+        // 0. Sklon (%): minimum (záporná hodnota v klesaní) a maximum (kladná hodnota v stúpaní), bez priemeru
+        if (slopeStatsEl) {
+            let minSlopeVal = Infinity;
+            let maxSlopeVal = -Infinity;
+
+            // Výpočet sklonu na 100 m úseku (zhodný s metodikou pre POI najprudšie stúpanie / klesanie)
+            if (totalDistKm >= 0.10) {
+                let climbFwdIdx = 0;
+                for (let i = 0; i < pts.length - 1; i++) {
+                    const startDist = ptDist(pts[i]);
+                    const targetEndDist = startDist + 0.10;
+                    if (targetEndDist > totalDistKm) break;
+
+                    if (climbFwdIdx < i) climbFwdIdx = i;
+                    while (climbFwdIdx < pts.length - 1 && ptDist(pts[climbFwdIdx + 1]) < targetEndDist) {
+                        climbFwdIdx++;
+                    }
+                    const p0 = pts[climbFwdIdx];
+                    const p1 = pts[Math.min(pts.length - 1, climbFwdIdx + 1)];
+                    const d0 = ptDist(p0);
+                    const d1 = ptDist(p1);
+                    if (d1 < targetEndDist) continue;
+
+                    const frac = (d1 > d0) ? (targetEndDist - d0) / (d1 - d0) : 0;
+                    const endEle = (p0.ele || 0) + ((p1.ele || 0) - (p0.ele || 0)) * frac;
+                    const startEle = pts[i].ele || 0;
+                    const gradePct = endEle - startEle;
+                    if (gradePct >= -50 && gradePct <= 50) {
+                        if (gradePct < minSlopeVal) minSlopeVal = gradePct;
+                        if (gradePct > maxSlopeVal) maxSlopeVal = gradePct;
+                    }
+                }
+            }
+
+            // Ak je trasa kratšia než 100 m alebo nemá 100m okno, použijeme vyhladený sklon z activePoints
+            if ((!isFinite(minSlopeVal) || !isFinite(maxSlopeVal)) && activePoints && activePoints.length >= 2) {
+                for (let i = 0; i < activePoints.length; i++) {
+                    const s = activePoints[i].slopePct;
+                    if (typeof s === 'number' && !isNaN(s)) {
+                        if (s < minSlopeVal) minSlopeVal = s;
+                        if (s > maxSlopeVal) maxSlopeVal = s;
+                    }
+                }
+            }
+
+            if (isFinite(minSlopeVal) && isFinite(maxSlopeVal)) {
+                const minDisp = Math.min(0, minSlopeVal).toFixed(1);
+                const maxDisp = Math.max(0, maxSlopeVal).toFixed(1);
+                slopeStatsEl.innerText = `Min: ${minDisp} % | Max: +${maxDisp} %`;
+            } else {
+                slopeStatsEl.innerText = 'Min: -- | Max: -- %';
+            }
+        }
+
+        // 1. Rýchlosť (km/h) a Tempo (min/km)
+        if (!hasTimeData) {
+            if (speedStatsEl) speedStatsEl.innerText = 'Min: -- | Priemer: -- | Max: -- km/h';
+            if (paceStatsEl) paceStatsEl.innerText = 'Min: --:-- | Priemer: --:-- | Max: --:-- /km';
+        } else {
+            let movingTimeMs = 0;
+            let firstTimeMs = null;
+            let lastTimeMs = null;
+            for (let i = 0; i < pts.length; i++) {
+                if (pts[i].timeMs) {
+                    if (firstTimeMs === null) firstTimeMs = pts[i].timeMs;
+                    lastTimeMs = pts[i].timeMs;
+                }
+                if (i > 0) {
+                    const p0 = pts[i - 1];
+                    const p1 = pts[i];
+                    if (p0.timeMs && p1.timeMs && p1.timeMs > p0.timeMs) {
+                        const dtMs = p1.timeMs - p0.timeMs;
+                        const segDistKm = Math.max(0, ptDist(p1) - ptDist(p0));
+                        const segSpeedKmh = segDistKm / (dtMs / 3600000);
+                        if (dtMs <= 30000) {
+                            if (segSpeedKmh >= 1.5) movingTimeMs += dtMs;
+                        } else if (dtMs <= 300000 && segSpeedKmh >= 3.0) {
+                            movingTimeMs += dtMs;
+                        }
+                    }
+                }
+            }
+            if (movingTimeMs <= 0 && firstTimeMs !== null && lastTimeMs !== null && lastTimeMs > firstTimeMs) {
+                movingTimeMs = lastTimeMs - firstTimeMs;
+            }
+            const movingHours = movingTimeMs / 3600000;
+            const avgMovingSpeedKmh = (movingHours > 1e-5) ? (totalDistKm / movingHours) : 0;
+
+            const isFootAct = (typeof currentTrackActivity !== 'undefined') && (currentTrackActivity === 'turistika' || currentTrackActivity === 'beh');
+            const minMovingThresholdKmh = isFootAct ? 1.5 : 3.0;
+
+            let minMovingSpeedKmh = Infinity;
+            let maxMeasuredSpeedKmh = 0;
+
+            if (activePoints && activePoints.length >= 2) {
+                for (let i = 0; i < activePoints.length; i++) {
+                    const v = activePoints[i].speedKmh;
+                    if (typeof v === 'number' && !isNaN(v)) {
+                        if (v > maxMeasuredSpeedKmh && v <= 130) {
+                            maxMeasuredSpeedKmh = v;
+                        }
+                        if (v >= minMovingThresholdKmh && v < minMovingSpeedKmh) {
+                            minMovingSpeedKmh = v;
+                        }
+                    }
+                }
+            }
+
+            let backIdx = 0;
+            let fwdIdx = 0;
+            let windowMaxSpd = 0;
+            let windowMinSpd = Infinity;
+            for (let i = 0; i < pts.length; i++) {
+                const d = ptDist(pts[i]);
+                const winBack = Math.max(0, d - 0.08);
+                const winFwd = Math.min(totalDistKm, d + 0.08);
+
+                while (backIdx < i && ptDist(pts[backIdx + 1]) <= winBack) backIdx++;
+                if (fwdIdx < i) fwdIdx = i;
+                while (fwdIdx < pts.length - 1 && ptDist(pts[fwdIdx + 1]) < winFwd) fwdIdx++;
+
+                const pB = pts[backIdx];
+                const pF = pts[fwdIdx];
+                if (pB.timeMs && pF.timeMs && pF.timeMs > pB.timeMs) {
+                    const dtHours = (pF.timeMs - pB.timeMs) / 3600000;
+                    const distKm = ptDist(pF) - ptDist(pB);
+                    if (dtHours > 1e-5 && distKm >= 0.02) {
+                        const spd = distKm / dtHours;
+                        if (spd > windowMaxSpd && spd <= 130) windowMaxSpd = spd;
+                        if (spd >= minMovingThresholdKmh && spd < windowMinSpd) windowMinSpd = spd;
+                    }
+                }
+            }
+
+            if (windowMaxSpd > maxMeasuredSpeedKmh) {
+                maxMeasuredSpeedKmh = windowMaxSpd;
+            }
+            if (!isFinite(minMovingSpeedKmh)) {
+                minMovingSpeedKmh = isFinite(windowMinSpd) ? windowMinSpd : (avgMovingSpeedKmh > 0 ? Math.max(0.5, avgMovingSpeedKmh * 0.4) : 0);
+            }
+
+            if (speedStatsEl) {
+                if (maxMeasuredSpeedKmh > 0 && avgMovingSpeedKmh > 0) {
+                    speedStatsEl.innerText = `Min: ${minMovingSpeedKmh.toFixed(1)} | Priemer: ${avgMovingSpeedKmh.toFixed(1)} | Max: ${maxMeasuredSpeedKmh.toFixed(1)} km/h`;
+                } else {
+                    speedStatsEl.innerText = 'Min: -- | Priemer: -- | Max: -- km/h';
+                }
+            }
+
+            if (paceStatsEl) {
+                if (maxMeasuredSpeedKmh >= 0.5 && avgMovingSpeedKmh >= 0.5 && minMovingSpeedKmh >= 0.5) {
+                    const minPaceStr = formatPaceMinSec(maxMeasuredSpeedKmh);
+                    const avgPaceStr = formatPaceMinSec(avgMovingSpeedKmh);
+                    const maxPaceStr = formatPaceMinSec(minMovingSpeedKmh);
+                    paceStatsEl.innerText = `Min: ${minPaceStr} | Priemer: ${avgPaceStr} | Max: ${maxPaceStr} /km`;
+                } else {
+                    paceStatsEl.innerText = 'Min: --:-- | Priemer: --:-- | Max: --:-- /km';
+                }
+            }
+        }
+
+        // 2. Srdcový tep (hr/min) a Výkon (W) – namerané Min, Priemer (počas pohybu) a Max
+        let minHr = Infinity, maxHr = -Infinity, hrWeightedSum = 0, hrWeightTotal = 0;
+        let minPwr = Infinity, maxPwr = -Infinity, pwrWeightedSum = 0, pwrWeightTotal = 0;
+
+        for (let i = 0; i < pts.length; i++) {
+            const h = pts[i].hr;
+            if (hasHrData && h !== null && !isNaN(h) && h > 0) {
+                if (h < minHr) minHr = h;
+                if (h > maxHr) maxHr = h;
+            }
+            const w = pts[i].pwr;
+            if (hasPwrData && w !== null && !isNaN(w) && w > 0) {
+                if (w < minPwr) minPwr = w;
+                if (w > maxPwr) maxPwr = w;
+            }
+        }
+
+        if (hasTimeData) {
+            for (let i = 1; i < pts.length; i++) {
+                const p0 = pts[i - 1];
+                const p1 = pts[i];
+                if (p0.timeMs && p1.timeMs && p1.timeMs > p0.timeMs) {
+                    const dtMs = p1.timeMs - p0.timeMs;
+                    const segDistKm = Math.max(0, ptDist(p1) - ptDist(p0));
+                    const segSpeedKmh = segDistKm / (dtMs / 3600000);
+                    const isMovingSeg = (dtMs <= 30000 && segSpeedKmh >= 1.5) || (dtMs > 30000 && dtMs <= 300000 && segSpeedKmh >= 3.0);
+                    if (isMovingSeg) {
+                        if (hasHrData) {
+                            const h0 = (p0.hr !== null && !isNaN(p0.hr) && p0.hr > 0) ? p0.hr : null;
+                            const h1 = (p1.hr !== null && !isNaN(p1.hr) && p1.hr > 0) ? p1.hr : null;
+                            const segHr = (h0 !== null && h1 !== null) ? (h0 + h1) * 0.5 : (h1 !== null ? h1 : h0);
+                            if (segHr !== null && segHr > 0) {
+                                hrWeightedSum += segHr * dtMs;
+                                hrWeightTotal += dtMs;
+                            }
+                        }
+                        if (hasPwrData) {
+                            const w0 = (p0.pwr !== null && !isNaN(p0.pwr) && p0.pwr > 0) ? p0.pwr : null;
+                            const w1 = (p1.pwr !== null && !isNaN(p1.pwr) && p1.pwr > 0) ? p1.pwr : null;
+                            let segPwr = null;
+                            let pwrDt = dtMs;
+                            if (w0 !== null && w1 !== null) {
+                                segPwr = (w0 + w1) * 0.5;
+                            } else if (w1 !== null) {
+                                segPwr = w1;
+                                pwrDt = dtMs * 0.5;
+                            } else if (w0 !== null) {
+                                segPwr = w0;
+                                pwrDt = dtMs * 0.5;
+                            }
+                            if (segPwr !== null && segPwr > 0) {
+                                pwrWeightedSum += segPwr * pwrDt;
+                                pwrWeightTotal += pwrDt;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (hasHrData && hrWeightTotal <= 0) {
+            for (let i = 0; i < pts.length; i++) {
+                const h = pts[i].hr;
+                if (h !== null && !isNaN(h) && h > 0) {
+                    hrWeightedSum += h;
+                    hrWeightTotal += 1;
+                }
+            }
+        }
+        if (hasPwrData && pwrWeightTotal <= 0) {
+            for (let i = 0; i < pts.length; i++) {
+                const w = pts[i].pwr;
+                if (w !== null && !isNaN(w) && w > 0) {
+                    pwrWeightedSum += w;
+                    pwrWeightTotal += 1;
+                }
+            }
+        }
+
+        if (hrStatsEl) {
+            if (hasHrData && isFinite(minHr) && isFinite(maxHr) && hrWeightTotal > 0) {
+                const avgHr = Math.round(hrWeightedSum / hrWeightTotal);
+                hrStatsEl.innerText = `Min: ${Math.round(minHr)} | Priemer: ${avgHr} | Max: ${Math.round(maxHr)} bpm`;
+            } else {
+                hrStatsEl.innerText = 'Min: -- | Priemer: -- | Max: -- bpm';
+            }
+        }
+
+        if (pwrStatsEl) {
+            if (hasPwrData && isFinite(minPwr) && isFinite(maxPwr) && pwrWeightTotal > 0) {
+                const avgPwr = Math.round(pwrWeightedSum / pwrWeightTotal);
+                pwrStatsEl.innerText = `Min: ${Math.round(minPwr)} | Priemer: ${avgPwr} | Max: ${Math.round(maxPwr)} W`;
+            } else {
+                pwrStatsEl.innerText = 'Min: -- | Priemer: -- | Max: -- W';
+            }
+        }
+    }
+
+    if (gradConfigPanelEl) {
+        makeEditorPopoverDraggable(gradConfigPanelEl);
+        gradConfigPanelEl.addEventListener('click', e => {
+            e.stopPropagation();
+        });
+    }
+
+    if (btnGradConfigEl && gradConfigPanelEl) {
+        btnGradConfigEl.addEventListener('click', e => {
+            e.stopPropagation();
+            if (poiEditorPanel) {
+                poiEditorPanel.classList.remove('open');
+                btnPoiEditor.classList.remove('active');
+                resetEditorPopoverPosition(poiEditorPanel);
+            }
+            if (summaryEditorPanel) {
+                summaryEditorPanel.classList.remove('open');
+                btnSummaryEditor.classList.remove('active');
+                resetEditorPopoverPosition(summaryEditorPanel);
+            }
+            if (typeof activityMenuPanelEl !== 'undefined' && activityMenuPanelEl) {
+                activityMenuPanelEl.classList.remove('open');
+                if (btnActivityIndicatorEl) btnActivityIndicatorEl.classList.remove('active');
+                resetEditorPopoverPosition(activityMenuPanelEl);
+            }
+            const isOpen = gradConfigPanelEl.classList.toggle('open');
+            if (isOpen) {
+                updateGradConfigMeasuredStats();
+            }
+            resetEditorPopoverPosition(gradConfigPanelEl);
+            btnGradConfigEl.classList.toggle('active', isOpen);
+        });
+    }
+
+    if (btnCloseGradConfigEl && gradConfigPanelEl && btnGradConfigEl) {
+        btnCloseGradConfigEl.addEventListener('click', () => {
+            gradConfigPanelEl.classList.remove('open');
+            btnGradConfigEl.classList.remove('active');
+            resetEditorPopoverPosition(gradConfigPanelEl);
+        });
+    }
+
+    if (btnResetGradConfigEl) {
+        btnResetGradConfigEl.addEventListener('click', () => {
+            document.getElementById('cfg-slope-min-sat').value = '-8';
+            document.getElementById('cfg-slope-mid-low').value = '-2';
+            document.getElementById('cfg-slope-mid-high').value = '2';
+            document.getElementById('cfg-slope-max-sat').value = '8';
+            document.getElementById('cfg-speed-min-sat').value = '12';
+            document.getElementById('cfg-speed-mid-low').value = '20';
+            document.getElementById('cfg-speed-mid-high').value = '25';
+            document.getElementById('cfg-speed-max-sat').value = '33';
+            document.getElementById('cfg-pace-min-sat').value = '04:00';
+            document.getElementById('cfg-pace-mid-low').value = '06:00';
+            document.getElementById('cfg-pace-mid-high').value = '09:00';
+            document.getElementById('cfg-pace-max-sat').value = '14:00';
+            document.getElementById('cfg-hr-min-sat').value = '110';
+            document.getElementById('cfg-hr-mid-low').value = '130';
+            document.getElementById('cfg-hr-mid-high').value = '150';
+            document.getElementById('cfg-hr-max-sat').value = '170';
+            document.getElementById('cfg-pwr-min-sat').value = '100';
+            document.getElementById('cfg-pwr-mid-low').value = '160';
+            document.getElementById('cfg-pwr-mid-high').value = '220';
+            document.getElementById('cfg-pwr-max-sat').value = '300';
+            syncCanvasStyles();
+            if (typeof saveUserSettingsToStorage === 'function') saveUserSettingsToStorage();
+        });
+    }
+
+    document.addEventListener('click', e => {
+        if (gradConfigPanelEl && gradConfigPanelEl.classList.contains('open')) {
+            const wrapper = document.getElementById('grad-config-group');
+            if (wrapper && !wrapper.contains(e.target)) {
+                gradConfigPanelEl.classList.remove('open');
+                if (btnGradConfigEl) btnGradConfigEl.classList.remove('active');
+                resetEditorPopoverPosition(gradConfigPanelEl);
+            }
+        }
     });
 
     document.getElementById('neon-effect').addEventListener('change', () => {
@@ -7051,6 +9159,7 @@
 
         mapyKeyGroup.classList.toggle('group-disabled', !needsMapyKey);
         mapyKeyInput.disabled = !needsMapyKey;
+        if (btnToggleApiKey) btnToggleApiKey.disabled = !needsMapyKey;
         mapyLogoSizeGroup.classList.toggle('group-disabled', !needsMapyKey);
         mapyLogoSizeSelect.disabled = !needsMapyKey;
 
@@ -7318,15 +9427,229 @@
         return current;
     }
 
-    // Zostavenie geometrie vykresľovanej krivky: RDP downsampling + adaptívne zaoblenie zákrut
+    // Výpočet plynulého sklonu v % pre každý bod krivky (okno +-90 m + viacnásobné vyhladenie a dynamické prispôsobenie Min/Max trasy)
+    function computeSmoothedSlopesForPoints(pts) {
+        if (!pts || pts.length === 0) return;
+        if (pts.length === 1) {
+            pts[0].slopePct = 0;
+            pts[0].speedKmh = 0;
+            pts[0].paceMinKm = 7.5;
+            pts[0].hrBpm = (pts[0].hr !== null && !isNaN(pts[0].hr)) ? pts[0].hr : 140.0;
+            pts[0].pwrWatts = (pts[0].pwr !== null && !isNaN(pts[0].pwr)) ? pts[0].pwr : 180.0;
+            routeMinSlopePct = -12.0;
+            routeMaxSlopePct = 12.0;
+            routeMaxSpeedKmh = 33.0;
+            return;
+        }
+        const totalD = pts[pts.length - 1].cumDist || 0;
+        const halfWinKm = 0.09; // 90 m dozadu a 90 m dopredu (spolu 180 m okno pre jemný nábeh sklonu)
+        let backIdx = 0;
+        let fwdIdx = 0;
+        let bufA = new Float32Array(pts.length);
+        let bufB = new Float32Array(pts.length);
+
+        for (let i = 0; i < pts.length; i++) {
+            const d = pts[i].cumDist || 0;
+            const dBack = Math.max(0, d - halfWinKm);
+            const dFwd = Math.min(totalD, d + halfWinKm);
+
+            while (backIdx < i && (pts[backIdx + 1].cumDist || 0) <= dBack) {
+                backIdx++;
+            }
+            if (fwdIdx < i) fwdIdx = i;
+            while (fwdIdx < pts.length - 1 && (pts[fwdIdx].cumDist || 0) < dFwd) {
+                fwdIdx++;
+            }
+
+            const pB0 = pts[backIdx];
+            const pB1 = pts[Math.min(pts.length - 1, backIdx + 1)];
+            const spanB = (pB1.cumDist || 0) - (pB0.cumDist || 0);
+            const fracB = spanB > 1e-6 ? Math.max(0, Math.min(1, (dBack - pB0.cumDist) / spanB)) : 0;
+            const eleBack = (pB0.ele || 0) + ((pB1.ele || 0) - (pB0.ele || 0)) * fracB;
+
+            const pF0 = pts[Math.max(0, fwdIdx - 1)];
+            const pF1 = pts[fwdIdx];
+            const spanF = (pF1.cumDist || 0) - (pF0.cumDist || 0);
+            const fracF = spanF > 1e-6 ? Math.max(0, Math.min(1, (dFwd - pF0.cumDist) / spanF)) : 0;
+            const eleFwd = (pF0.ele || 0) + ((pF1.ele || 0) - (pF0.ele || 0)) * fracF;
+
+            const distMeters = (dFwd - dBack) * 1000;
+            if (distMeters >= 5.0) {
+                const grade = ((eleFwd - eleBack) / distMeters) * 100;
+                bufA[i] = Math.max(-35, Math.min(35, grade));
+            } else {
+                bufA[i] = (i > 0) ? bufA[i - 1] : 0;
+            }
+        }
+
+        // 4 prechody Gaussovho 5-bodového vyhladenia pre hodvábne plynulý farebný prechod medzi úsekmi
+        const n = pts.length;
+        for (let pass = 0; pass < 4; pass++) {
+            for (let i = 0; i < n; i++) {
+                const s_2 = bufA[Math.max(0, i - 2)];
+                const s_1 = bufA[Math.max(0, i - 1)];
+                const s0  = bufA[i];
+                const s1  = bufA[Math.min(n - 1, i + 1)];
+                const s2  = bufA[Math.min(n - 1, i + 2)];
+                bufB[i] = 0.0625 * s_2 + 0.25 * s_1 + 0.375 * s0 + 0.25 * s1 + 0.0625 * s2;
+            }
+            const tmp = bufA;
+            bufA = bufB;
+            bufB = tmp;
+        }
+
+        let minS = -3.0;
+        let maxS = 3.0;
+        for (let i = 0; i < n; i++) {
+            const val = bufA[i];
+            pts[i].slopePct = val;
+            if (val < minS) minS = val;
+            if (val > maxS) maxS = val;
+        }
+
+        // Dynamické nastavenie rozsahu gradientu podľa skutočného minima a maxima trasy (s rozumným minimálnym rozpätím aspoň -8 % / +8 %)
+        routeMinSlopePct = Math.min(-8.0, minS);
+        routeMaxSlopePct = Math.max(8.0, maxS);
+
+        // Výpočet plynulej rýchlosti (km/h) pre každý bod krivky (okno +-80 m + 4 prechody Gaussovho vyhladenia)
+        const halfSpeedWinKm = 0.08;
+        let sBackIdx = 0;
+        let sFwdIdx = 0;
+        let spdA = new Float32Array(n);
+        let spdB = new Float32Array(n);
+
+        for (let i = 0; i < n; i++) {
+            const d = pts[i].cumDist || 0;
+            const dBack = Math.max(0, d - halfSpeedWinKm);
+            const dFwd = Math.min(totalD, d + halfSpeedWinKm);
+
+            while (sBackIdx < i && (pts[sBackIdx + 1].cumDist || 0) <= dBack) {
+                sBackIdx++;
+            }
+            if (sFwdIdx < i) sFwdIdx = i;
+            while (sFwdIdx < n - 1 && (pts[sFwdIdx].cumDist || 0) < dFwd) {
+                sFwdIdx++;
+            }
+
+            const pB = pts[sBackIdx];
+            const pF = pts[sFwdIdx];
+            if (hasTimeData && pB.timeMs && pF.timeMs && pF.timeMs > pB.timeMs) {
+                const dtHours = (pF.timeMs - pB.timeMs) / 3600000;
+                const distKm = (pF.cumDist || 0) - (pB.cumDist || 0);
+                if (dtHours > 1e-6 && distKm >= 0.005) {
+                    const rawSpd = distKm / dtHours;
+                    spdA[i] = Math.max(0.0, Math.min(130.0, rawSpd));
+                } else {
+                    spdA[i] = (i > 0) ? spdA[i - 1] : 0.0;
+                }
+            } else {
+                spdA[i] = 22.5;
+            }
+        }
+
+        for (let pass = 0; pass < 4; pass++) {
+            for (let i = 0; i < n; i++) {
+                const v_2 = spdA[Math.max(0, i - 2)];
+                const v_1 = spdA[Math.max(0, i - 1)];
+                const v0  = spdA[i];
+                const v1  = spdA[Math.min(n - 1, i + 1)];
+                const v2  = spdA[Math.min(n - 1, i + 2)];
+                spdB[i] = 0.0625 * v_2 + 0.25 * v_1 + 0.375 * v0 + 0.25 * v1 + 0.0625 * v2;
+            }
+            const tmp = spdA;
+            spdA = spdB;
+            spdB = tmp;
+        }
+
+        let maxSpd = 0.0;
+        for (let i = 0; i < n; i++) {
+            const val = Math.max(0.0, spdA[i]);
+            pts[i].speedKmh = val;
+            pts[i].paceMinKm = (val >= 0.5) ? Math.min(60.0, 60.0 / val) : 60.0;
+            if (val > maxSpd) maxSpd = val;
+        }
+        routeMaxSpeedKmh = Math.max(speedMaxSatKmh, maxSpd);
+
+        // Výpočet plynulého srdcového tepu (hr/min) pre každý bod krivky (4 prechody Gaussovho vyhladenia)
+        let hrA = new Float32Array(n);
+        let hrB = new Float32Array(n);
+        let lastValidHrVal = 140.0;
+        for (let i = 0; i < n; i++) {
+            if (hasHrData && pts[i].hr !== null && !isNaN(pts[i].hr) && pts[i].hr > 0) {
+                lastValidHrVal = pts[i].hr;
+                break;
+            }
+        }
+        for (let i = 0; i < n; i++) {
+            if (hasHrData && pts[i].hr !== null && !isNaN(pts[i].hr) && pts[i].hr > 0) {
+                lastValidHrVal = pts[i].hr;
+            }
+            hrA[i] = lastValidHrVal;
+        }
+        for (let pass = 0; pass < 4; pass++) {
+            for (let i = 0; i < n; i++) {
+                const h_2 = hrA[Math.max(0, i - 2)];
+                const h_1 = hrA[Math.max(0, i - 1)];
+                const h0  = hrA[i];
+                const h1  = hrA[Math.min(n - 1, i + 1)];
+                const h2  = hrA[Math.min(n - 1, i + 2)];
+                hrB[i] = 0.0625 * h_2 + 0.25 * h_1 + 0.375 * h0 + 0.25 * h1 + 0.0625 * h2;
+            }
+            const tmp = hrA;
+            hrA = hrB;
+            hrB = tmp;
+        }
+        for (let i = 0; i < n; i++) {
+            pts[i].hrBpm = Math.max(0.0, hrA[i]);
+        }
+
+        // Výpočet plynulého výkonu (W) pre každý bod krivky (4 prechody Gaussovho vyhladenia)
+        let pwrA = new Float32Array(n);
+        let pwrB = new Float32Array(n);
+        let lastValidPwrVal = 180.0;
+        for (let i = 0; i < n; i++) {
+            if (hasPwrData && pts[i].pwr !== null && !isNaN(pts[i].pwr) && pts[i].pwr >= 0) {
+                lastValidPwrVal = pts[i].pwr;
+                break;
+            }
+        }
+        for (let i = 0; i < n; i++) {
+            if (hasPwrData && pts[i].pwr !== null && !isNaN(pts[i].pwr) && pts[i].pwr >= 0) {
+                lastValidPwrVal = pts[i].pwr;
+            }
+            pwrA[i] = lastValidPwrVal;
+        }
+        for (let pass = 0; pass < 4; pass++) {
+            for (let i = 0; i < n; i++) {
+                const w_2 = pwrA[Math.max(0, i - 2)];
+                const w_1 = pwrA[Math.max(0, i - 1)];
+                const w0  = pwrA[i];
+                const w1  = pwrA[Math.min(n - 1, i + 1)];
+                const w2  = pwrA[Math.min(n - 1, i + 2)];
+                pwrB[i] = 0.0625 * w_2 + 0.25 * w_1 + 0.375 * w0 + 0.25 * w1 + 0.0625 * w2;
+            }
+            const tmp = pwrA;
+            pwrA = pwrB;
+            pwrB = tmp;
+        }
+        for (let i = 0; i < n; i++) {
+            pts[i].pwrWatts = Math.max(0.0, pwrA[i]);
+        }
+    }
+
+    // Zostavenie geometrie vykresľovanej krivky: RDP downsampling + adaptívne zaoblenie zákrut + výpočet sklonu (%)
     function buildSmoothedPoints(points, level) {
         if (points.length < 3) {
-            return points.map(p => ({ ...p }));
+            const copy = points.map(p => ({ ...p }));
+            computeSmoothedSlopesForPoints(copy);
+            return copy;
         }
         const rdpToleranceMeters = (level === 0) ? 4.5 : (5.0 + level * 4.5);
         const simplified = simplifyRDP(points, rdpToleranceMeters);
         const cornerPasses = (level === 0) ? 1 : 2;
-        return roundSharpCorners(simplified, cornerPasses, 6);
+        const smoothed = roundSharpCorners(simplified, cornerPasses, 6);
+        computeSmoothedSlopesForPoints(smoothed);
+        return smoothed;
     }
 
     // Zostavenie virtuálnej koľajnice pre kameru (Douglas-Peucker s toleranciou 320m + plynulé oblúky)
@@ -7380,6 +9703,11 @@
 
         const lastPt = activePoints[activePoints.length - 1];
         currentRenderHeadDist = lastPt.cumDist;
+        currentRenderHeadSlope = lastPt.slopePct || 0;
+        currentRenderHeadSpeed = lastPt.speedKmh || 0;
+        currentRenderHeadPace = lastPt.paceMinKm || 7.5;
+        currentRenderHeadHr = lastPt.hrBpm || 140.0;
+        currentRenderHeadPwr = (typeof lastPt.pwrWatts === 'number') ? lastPt.pwrWatts : 180.0;
         currentRenderHeadIntIndex = activePoints.length - 1;
         currentRenderHeadMercX = activeMercCoords[(activePoints.length - 1) * 2];
         currentRenderHeadMercY = activeMercCoords[(activePoints.length - 1) * 2 + 1];
@@ -7414,6 +9742,9 @@
 
         syncTopLeftFromMap();
         renderCustomCanvas();
+        if (typeof updateGradConfigMeasuredStats === 'function') {
+            updateGradConfigMeasuredStats();
+        }
     }
 
     function applyGpxTrim(fitMapBounds = false) {
@@ -7771,6 +10102,21 @@
 
             if (originalRawPoints.length > 1) {
                 stopCurrentAnimation();
+                lastLoadedXmlDoc = xml;
+
+                // Povolenie indikátora aktivity a načítanie uloženej aktivity (alebo automatická detekcia z celej pôvodnej trasy)
+                if (activityTypeGroupEl && btnActivityIndicatorEl) {
+                    activityTypeGroupEl.classList.remove('group-disabled');
+                    btnActivityIndicatorEl.disabled = false;
+                }
+                const activityFileKey = 'gpx_v2_activity_' + trackStorageId;
+                const hadSavedActivity = loadActivityFromStorage(activityFileKey);
+                if (!hadSavedActivity) {
+                    currentTrackActivity = detectTrackActivityFromData(xml, originalRawPoints);
+                    currentActivityIsManual = false;
+                    updateActivityIndicatorUI();
+                    saveActivityToStorage();
+                }
 
                 // Načítanie uložených POI pre tento konkrétny GPX / TCX súbor + automatická analýza najvyššieho bodu a max. rýchlosti
                 const legacyFileKey = 'gpx_pois_' + (file.name || 'track').replace(/[^a-zA-Z0-9_-]/g, '_');
@@ -7935,6 +10281,9 @@
                 document.getElementById('btn-play').disabled = false;
                 document.getElementById('btn-fullscreen').disabled = false;
 
+                // Aplikovanie predvolených nastavení pre chodeckú / cyklistickú aktivitu a dostupnosť záznamu výkonu
+                applyActivityAndSensorRules(true);
+
                 applyGpxTrim(true);
             }
         };
@@ -7968,6 +10317,11 @@
         drawnPointsCount = 0;
         totalRenderPointsCount = 0;
         currentRenderHeadDist = 0;
+        currentRenderHeadSlope = 0;
+        currentRenderHeadSpeed = 0;
+        currentRenderHeadPace = 7.5;
+        currentRenderHeadHr = 140.0;
+        currentRenderHeadPwr = 180.0;
         currentRenderHeadIntIndex = 0;
         glSyncedFixedCount = 0;
         glCometTailSearchIdx = 0;
@@ -8124,6 +10478,11 @@
         drawnPointsCount = 1;
         totalRenderPointsCount = 1;
         currentRenderHeadDist = 0;
+        currentRenderHeadSlope = activePoints[0].slopePct || 0;
+        currentRenderHeadSpeed = activePoints[0].speedKmh || 0;
+        currentRenderHeadPace = activePoints[0].paceMinKm || 7.5;
+        currentRenderHeadHr = activePoints[0].hrBpm || 140.0;
+        currentRenderHeadPwr = (typeof activePoints[0].pwrWatts === 'number') ? activePoints[0].pwrWatts : 180.0;
         currentRenderHeadIntIndex = 0;
         currentRenderHeadMercX = activeMercCoords[0];
         currentRenderHeadMercY = activeMercCoords[1];
@@ -8410,8 +10769,15 @@
             drawnMercBuffer[headBufIdx + 1] = interpMercY;
             totalRenderPointsCount = drawnPointsCount + 1;
 
-            // Uloženie presnej pozície hlavičky pre vykreslenie stopy Kometí chvost
+            // Uloženie presnej pozície, okamžitého sklonu, rýchlosti, tempa, tepu a výkonu hlavičky pre vykreslenie stopy a gradientu
             currentRenderHeadDist = interpDist;
+            currentRenderHeadSlope = (pCurr.slopePct || 0) + ((pNext.slopePct || 0) - (pCurr.slopePct || 0)) * frac;
+            currentRenderHeadSpeed = (pCurr.speedKmh || 0) + ((pNext.speedKmh || 0) - (pCurr.speedKmh || 0)) * frac;
+            currentRenderHeadPace = (pCurr.paceMinKm || 7.5) + ((pNext.paceMinKm || 7.5) - (pCurr.paceMinKm || 7.5)) * frac;
+            currentRenderHeadHr = (pCurr.hrBpm || 140.0) + ((pNext.hrBpm || 140.0) - (pCurr.hrBpm || 140.0)) * frac;
+            const p0W = (typeof pCurr.pwrWatts === 'number') ? pCurr.pwrWatts : 180.0;
+            const p1W = (typeof pNext.pwrWatts === 'number') ? pNext.pwrWatts : 180.0;
+            currentRenderHeadPwr = p0W + (p1W - p0W) * frac;
             currentRenderHeadIntIndex = targetIntIndex;
             currentRenderHeadMercX = interpMercX;
             currentRenderHeadMercY = interpMercY;
@@ -8429,6 +10795,8 @@
 
             // Vykreslenie čiary a hlavičky priamo cez natívne API na vlastný <canvas>
             renderCustomCanvas();
+
+
 
             // Plynulý pohyb bodky zľava doprava v hornom okne PROFIL
             if (profileEnabled) {
@@ -9066,7 +11434,31 @@
         trimStatsMode: 'zero',
         mapStyle: 'satellite_hybrid',
         mapyLogoSize: '50',
+        lineColorMode: 'solid',
         lineColor: '#c8ff00',
+        slopeColorMin: '#00e5ff',
+        slopeColorMid: '#ffff00',
+        slopeColorMax: '#ff1744',
+        cfgSlopeMinSat: '-8',
+        cfgSlopeMidLow: '-2',
+        cfgSlopeMidHigh: '2',
+        cfgSlopeMaxSat: '8',
+        cfgSpeedMinSat: '12',
+        cfgSpeedMidLow: '20',
+        cfgSpeedMidHigh: '25',
+        cfgSpeedMaxSat: '33',
+        cfgPaceMinSat: '04:00',
+        cfgPaceMidLow: '06:00',
+        cfgPaceMidHigh: '09:00',
+        cfgPaceMaxSat: '14:00',
+        cfgHrMinSat: '110',
+        cfgHrMidLow: '130',
+        cfgHrMidHigh: '150',
+        cfgHrMaxSat: '170',
+        cfgPwrMinSat: '100',
+        cfgPwrMidLow: '160',
+        cfgPwrMidHigh: '220',
+        cfgPwrMaxSat: '300',
         lineWidth: '6',
         headSize: '40',
         lineSmooth: '1',
@@ -9114,7 +11506,31 @@
                 trimStatsMode: document.getElementById('trim-stats-mode').value,
                 mapStyle: document.getElementById('map-style').value,
                 mapyLogoSize: document.getElementById('mapy-logo-size').value,
+                lineColorMode: document.getElementById('line-color-mode').value,
                 lineColor: document.getElementById('line-color').value,
+                slopeColorMin: document.getElementById('slope-color-min').value,
+                slopeColorMid: document.getElementById('slope-color-mid').value,
+                slopeColorMax: document.getElementById('slope-color-max').value,
+                cfgSlopeMinSat: document.getElementById('cfg-slope-min-sat').value,
+                cfgSlopeMidLow: document.getElementById('cfg-slope-mid-low').value,
+                cfgSlopeMidHigh: document.getElementById('cfg-slope-mid-high').value,
+                cfgSlopeMaxSat: document.getElementById('cfg-slope-max-sat').value,
+                cfgSpeedMinSat: document.getElementById('cfg-speed-min-sat').value,
+                cfgSpeedMidLow: document.getElementById('cfg-speed-mid-low').value,
+                cfgSpeedMidHigh: document.getElementById('cfg-speed-mid-high').value,
+                cfgSpeedMaxSat: document.getElementById('cfg-speed-max-sat').value,
+                cfgPaceMinSat: document.getElementById('cfg-pace-min-sat').value,
+                cfgPaceMidLow: document.getElementById('cfg-pace-mid-low').value,
+                cfgPaceMidHigh: document.getElementById('cfg-pace-mid-high').value,
+                cfgPaceMaxSat: document.getElementById('cfg-pace-max-sat').value,
+                cfgHrMinSat: document.getElementById('cfg-hr-min-sat').value,
+                cfgHrMidLow: document.getElementById('cfg-hr-mid-low').value,
+                cfgHrMidHigh: document.getElementById('cfg-hr-mid-high').value,
+                cfgHrMaxSat: document.getElementById('cfg-hr-max-sat').value,
+                cfgPwrMinSat: document.getElementById('cfg-pwr-min-sat').value,
+                cfgPwrMidLow: document.getElementById('cfg-pwr-mid-low').value,
+                cfgPwrMidHigh: document.getElementById('cfg-pwr-mid-high').value,
+                cfgPwrMaxSat: document.getElementById('cfg-pwr-max-sat').value,
                 lineWidth: document.getElementById('line-width').value,
                 headSize: document.getElementById('head-size').value,
                 lineSmooth: document.getElementById('line-smooth').value,
@@ -9195,9 +11611,81 @@
                 updateMapLayer();
             }
 
-            // 4. Vzhľad čiary, hlavičky, vyhladenia, neónu a stopy
+            // 4. Vzhľad čiary, režim farbenia, paleta gradientu, hlavička, vyhladenie, neón a stopa
+            if (s.lineColorMode === 'solid' || s.lineColorMode === 'slope' || s.lineColorMode === 'speed' || s.lineColorMode === 'pace' || s.lineColorMode === 'hr' || s.lineColorMode === 'power') {
+                document.getElementById('line-color-mode').value = s.lineColorMode;
+            }
             if (s.lineColor !== undefined) {
                 document.getElementById('line-color').value = s.lineColor;
+            }
+            if (s.slopeColorMin !== undefined) {
+                document.getElementById('slope-color-min').value = s.slopeColorMin;
+            }
+            if (s.slopeColorMid !== undefined) {
+                document.getElementById('slope-color-mid').value = s.slopeColorMid;
+            }
+            if (s.slopeColorMax !== undefined) {
+                document.getElementById('slope-color-max').value = s.slopeColorMax;
+            }
+            if (s.cfgSlopeMinSat !== undefined) {
+                document.getElementById('cfg-slope-min-sat').value = s.cfgSlopeMinSat;
+            }
+            if (s.cfgSlopeMidLow !== undefined) {
+                document.getElementById('cfg-slope-mid-low').value = s.cfgSlopeMidLow;
+            }
+            if (s.cfgSlopeMidHigh !== undefined) {
+                document.getElementById('cfg-slope-mid-high').value = s.cfgSlopeMidHigh;
+            }
+            if (s.cfgSlopeMaxSat !== undefined) {
+                document.getElementById('cfg-slope-max-sat').value = s.cfgSlopeMaxSat;
+            }
+            if (s.cfgSpeedMinSat !== undefined) {
+                document.getElementById('cfg-speed-min-sat').value = s.cfgSpeedMinSat;
+            }
+            if (s.cfgSpeedMidLow !== undefined) {
+                document.getElementById('cfg-speed-mid-low').value = s.cfgSpeedMidLow;
+            }
+            if (s.cfgSpeedMidHigh !== undefined) {
+                document.getElementById('cfg-speed-mid-high').value = s.cfgSpeedMidHigh;
+            }
+            if (s.cfgSpeedMaxSat !== undefined) {
+                document.getElementById('cfg-speed-max-sat').value = s.cfgSpeedMaxSat;
+            }
+            if (s.cfgPaceMinSat !== undefined) {
+                document.getElementById('cfg-pace-min-sat').value = s.cfgPaceMinSat;
+            }
+            if (s.cfgPaceMidLow !== undefined) {
+                document.getElementById('cfg-pace-mid-low').value = s.cfgPaceMidLow;
+            }
+            if (s.cfgPaceMidHigh !== undefined) {
+                document.getElementById('cfg-pace-mid-high').value = s.cfgPaceMidHigh;
+            }
+            if (s.cfgPaceMaxSat !== undefined) {
+                document.getElementById('cfg-pace-max-sat').value = s.cfgPaceMaxSat;
+            }
+            if (s.cfgHrMinSat !== undefined) {
+                document.getElementById('cfg-hr-min-sat').value = s.cfgHrMinSat;
+            }
+            if (s.cfgHrMidLow !== undefined) {
+                document.getElementById('cfg-hr-mid-low').value = s.cfgHrMidLow;
+            }
+            if (s.cfgHrMidHigh !== undefined) {
+                document.getElementById('cfg-hr-mid-high').value = s.cfgHrMidHigh;
+            }
+            if (s.cfgHrMaxSat !== undefined) {
+                document.getElementById('cfg-hr-max-sat').value = s.cfgHrMaxSat;
+            }
+            if (s.cfgPwrMinSat !== undefined) {
+                document.getElementById('cfg-pwr-min-sat').value = s.cfgPwrMinSat;
+            }
+            if (s.cfgPwrMidLow !== undefined) {
+                document.getElementById('cfg-pwr-mid-low').value = s.cfgPwrMidLow;
+            }
+            if (s.cfgPwrMidHigh !== undefined) {
+                document.getElementById('cfg-pwr-mid-high').value = s.cfgPwrMidHigh;
+            }
+            if (s.cfgPwrMaxSat !== undefined) {
+                document.getElementById('cfg-pwr-max-sat').value = s.cfgPwrMaxSat;
             }
             if (s.lineWidth !== undefined) {
                 const lw = parseInt(s.lineWidth) || 6;
@@ -9446,7 +11934,13 @@
     function bindUserSettingsPersistence() {
         const watchedControlIds = [
             'trim-stats-mode', 'map-style', 'mapy-logo-size',
-            'line-color', 'line-width', 'head-size', 'line-smooth',
+            'line-color-mode', 'line-color', 'slope-color-min', 'slope-color-mid', 'slope-color-max',
+            'cfg-slope-min-sat', 'cfg-slope-mid-low', 'cfg-slope-mid-high', 'cfg-slope-max-sat',
+            'cfg-speed-min-sat', 'cfg-speed-mid-low', 'cfg-speed-mid-high', 'cfg-speed-max-sat',
+            'cfg-pace-min-sat', 'cfg-pace-mid-low', 'cfg-pace-mid-high', 'cfg-pace-max-sat',
+            'cfg-hr-min-sat', 'cfg-hr-mid-low', 'cfg-hr-mid-high', 'cfg-hr-max-sat',
+            'cfg-pwr-min-sat', 'cfg-pwr-mid-low', 'cfg-pwr-mid-high', 'cfg-pwr-max-sat',
+            'line-width', 'head-size', 'line-smooth',
             'neon-effect', 'trail-mode', 'comet-length', 'camera-mode',
             'camera-zoom', 'milestone-km', 'milestone-flash-effect', 'milestone-flash-color',
             'speed-mode', 'anim-speed', 'anim-duration', 'anim-timelapse', 'anim-points-speed',
