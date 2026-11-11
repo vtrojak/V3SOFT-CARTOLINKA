@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V3SOFT CartoLinka v1.066 (WebGL GPU Engine)</title>
+    <title>V3SOFT CartoLinka v1.073 (WebGL GPU Engine)</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
@@ -73,6 +73,14 @@
             color: #00e5ff;
             letter-spacing: 0.5px;
             line-height: 1.1;
+        }
+        .app-version-title .brand-carto {
+            color: #ff1493;
+            text-shadow: 0 0 8px rgba(255, 20, 147, 0.75);
+        }
+        .app-version-title .brand-linka {
+            color: #00f5ff;
+            text-shadow: 0 0 8px rgba(0, 245, 255, 0.75);
         }
         .app-version-num {
             font-size: 10px;
@@ -622,6 +630,9 @@
         }
         #mini-hud-hr-item .mini-hud-value-wrap {
             width: calc(var(--hud-font-size) * 2.25);
+        }
+        #mini-hud-slope-item .mini-hud-value-wrap {
+            width: calc(var(--hud-font-size) * 2.55);
         }
         #mini-hud-time-item .mini-hud-value-wrap {
             width: calc(var(--hud-font-size) * 3.05);
@@ -1181,6 +1192,124 @@
             transform: scale(var(--hud-scale));
             transform-origin: bottom right;
             transition: opacity 0.3s ease, transform 0.15s ease, background 0.15s ease;
+        }
+        #brand-banner {
+            position: absolute;
+            z-index: 9005;
+            height: 29px;
+            min-height: 29px;
+            max-height: 29px;
+            padding: 0 14px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, var(--hud-bg-opacity));
+            color: #000000;
+            border: 1px solid transparent;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, calc(0.35 * var(--hud-bg-opacity)));
+            display: none;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            pointer-events: none;
+            user-select: none;
+            box-sizing: border-box;
+            transition: opacity 0.3s ease, background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        #brand-banner .brand-banner-text {
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            font-size: 26px;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: 0.6px;
+            display: block;
+            transform: translateY(-1px);
+            flex: 0 0 auto;
+        }
+        #brand-banner.banner-dark-mode {
+            background: rgba(18, 18, 18, var(--hud-bg-opacity));
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, calc(0.22 * var(--hud-bg-opacity)));
+            box-shadow: 0 6px 18px rgba(0, 0, 0, calc(0.55 * var(--hud-bg-opacity)));
+        }
+        #brand-banner.banner-dark-mode .brand-banner-text {
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.85);
+        }
+        #brand-banner.banner-standalone-locked {
+            background: #ffffff !important;
+            color: #000000 !important;
+            border-color: transparent !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35) !important;
+        }
+        #brand-banner.banner-standalone-locked .brand-banner-text {
+            text-shadow: none !important;
+        }
+        #brand-banner.hud-fade-out {
+            opacity: 0 !important;
+            transform: translateY(-10px) !important;
+            transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), transform 0.45s cubic-bezier(0.22, 1, 0.36, 1) !important;
+        }
+        #final-summary-brand-banner {
+            position: absolute;
+            z-index: 9205;
+            height: 29px;
+            min-height: 29px;
+            max-height: 29px;
+            padding: 0 14px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, var(--hud-bg-opacity));
+            color: #000000;
+            border: 1px solid transparent;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, calc(0.35 * var(--hud-bg-opacity)));
+            display: none;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            pointer-events: none;
+            user-select: none;
+            box-sizing: border-box;
+            opacity: 0;
+            visibility: hidden;
+            transform: translate(-50%, 6px);
+            transition: opacity 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+                        transform 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+                        visibility 0.48s,
+                        background 0.15s ease,
+                        color 0.15s ease,
+                        border-color 0.15s ease,
+                        box-shadow 0.15s ease;
+        }
+        #final-summary-brand-banner .brand-banner-text {
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            font-size: 26px;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: 0.6px;
+            display: block;
+            transform: translateY(-1px);
+            flex: 0 0 auto;
+        }
+        #final-summary-brand-banner.banner-dark-mode {
+            background: rgba(18, 18, 18, var(--hud-bg-opacity));
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, calc(0.22 * var(--hud-bg-opacity)));
+            box-shadow: 0 6px 18px rgba(0, 0, 0, calc(0.55 * var(--hud-bg-opacity)));
+        }
+        #final-summary-brand-banner.banner-dark-mode .brand-banner-text {
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.85);
+        }
+        #final-summary-brand-banner.final-summary-visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, 0);
+        }
+        #final-summary-brand-banner.preview-layer-top {
+            z-index: 10075 !important;
+        }
+        body.cartolinka-logo-hidden #brand-banner,
+        body.cartolinka-logo-hidden #final-summary-brand-banner {
+            display: none !important;
+        }
+        body.mapy-logo-hidden #mapy-attribution {
+            display: none !important;
         }
         .hud-row {
             margin-bottom: 16px;
@@ -1786,6 +1915,16 @@
         #controls.retro-theme .app-version-title {
             color: #39ff14;
             text-shadow: 0 0 8px rgba(57, 255, 20, 0.65);
+        }
+        #controls.retro-theme .app-version-title .brand-carto,
+        #controls.glass-theme .app-version-title .brand-carto {
+            color: #ff1493;
+            text-shadow: 0 0 8px rgba(255, 20, 147, 0.85);
+        }
+        #controls.retro-theme .app-version-title .brand-linka,
+        #controls.glass-theme .app-version-title .brand-linka {
+            color: #00f5ff;
+            text-shadow: 0 0 8px rgba(0, 245, 255, 0.85);
         }
         #controls.retro-theme .app-version-num {
             color: #1ec81e;
@@ -2695,8 +2834,8 @@
         <!-- 1. RIADOK -->
         <div class="controls-row">
             <div class="app-version-badge">
-                <span class="app-version-title">V3SOFT CartoLinka</span>
-                <span class="app-version-num">v1.066</span>
+                <span class="app-version-title">V3SOFT <span class="brand-carto">Carto</span><span class="brand-linka">Linka</span></span>
+                <span class="app-version-num">v1.073</span>
             </div>
             <button id="btn-info" type="button" title="Informácie o aplikácii">ℹ️ INFO</button>
             <button id="btn-help" type="button" title="Zobraziť podrobný návod a vysvetlenie všetkých nastavení aplikácie">❓ HELP</button>
@@ -3086,6 +3225,7 @@
                     <button type="button" id="toggle-item-pace" class="btn-mini-toggle" title="Zobraziť / skryť vyhladené tempo (min/km)">TEMPO</button>
                     <button type="button" id="toggle-item-pwr" class="btn-mini-toggle" title="Zobraziť / skryť vyhladený výkon (watty)">W</button>
                     <button type="button" id="toggle-item-hr" class="btn-mini-toggle" title="Zobraziť / skryť vyhladený srdcový tep (bpm)">TEP</button>
+                    <button type="button" id="toggle-item-slope" class="btn-mini-toggle" title="Zobraziť / skryť vyhladený sklon (%)">SKLON</button>
                     <button type="button" id="toggle-item-time" class="btn-mini-toggle" title="Zobraziť / skryť denný čas aktivity">ČAS</button>
                     <button type="button" id="toggle-item-temp" class="btn-mini-toggle" title="Zobraziť / skryť vyhladenú teplotu (°C)">°C</button>
                 </div>
@@ -3101,7 +3241,7 @@
                 </div>
                 <div class="control-group" id="cg-hud-scale">
                     <label>Veľkosť okna (<span id="lbl-hud-scale">70</span>%)</label>
-                    <input type="range" id="hud-scale" min="50" max="180" value="70" style="width: 70px;">
+                    <input type="range" id="hud-scale" min="55" max="70" value="70" style="width: 70px;">
                 </div>
                 <div class="control-group" id="cg-hud-opacity">
                     <label>Priehľadnosť (<span id="lbl-hud-opacity">80</span>%)</label>
@@ -3109,7 +3249,7 @@
                 </div>
                 <div class="control-group" id="cg-font-size">
                     <label>Písmo (<span id="lbl-font-size">40</span>px)</label>
-                    <input type="range" id="hud-font-size" min="20" max="80" value="40" style="width: 65px;">
+                    <input type="range" id="hud-font-size" min="40" max="55" value="40" style="width: 65px;">
                 </div>
                 <div class="control-group">
                     <label>Farba písma</label>
@@ -3341,6 +3481,18 @@
                     <div class="hud-label">Srdcový tep (bpm)</div>
                 </div>
             </div>
+            <!-- Vyhladený sklon (Značka sklonu %) -->
+            <div class="hud-row" id="hud-slope-row">
+                <div class="hud-item-grid">
+                    <div class="hud-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" d="M12 2L1 21h22L12 2zm0 3.8L4.4 19h15.2L12 5.8zM6.2 18h11.8l-2.3-4L6.2 18z"/>
+                        </svg>
+                    </div>
+                    <div class="hud-value" id="hud-slope">0.0</div>
+                    <div class="hud-label">Sklon (%)</div>
+                </div>
+            </div>
             <!-- Denný čas aktivity (Budík) -->
             <div class="hud-row" id="hud-time-row">
                 <div class="hud-item-grid">
@@ -3440,6 +3592,18 @@
                     <div class="mini-hud-unit">BPM</div>
                 </div>
             </div>
+            <!-- Vyhladený sklon (Značka sklonu %) -->
+            <div class="mini-hud-item" id="mini-hud-slope-item">
+                <div class="hud-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <path fill-rule="evenodd" d="M12 2L1 21h22L12 2zm0 3.8L4.4 19h15.2L12 5.8zM6.2 18h11.8l-2.3-4L6.2 18z"/>
+                    </svg>
+                </div>
+                <div class="mini-hud-value-wrap">
+                    <div class="hud-value" id="mini-hud-slope">0.0</div>
+                    <div class="mini-hud-unit">SKLON %</div>
+                </div>
+            </div>
             <!-- Denný čas aktivity (Budík) -->
             <div class="mini-hud-item" id="mini-hud-time-item">
                 <div class="hud-icon" aria-hidden="true">
@@ -3469,6 +3633,8 @@
         <div id="poi-hud"></div>
         <!-- Kontajner pre inteligentné zobrazenie fotografií k bodom záujmu (POI) pod sebou -->
         <div id="poi-photo-hud" class="photo-mode-klasik"></div>
+        <!-- Spoločný plávajúci banner CartoLinka (fixná výška 29px, nápis 26px) -->
+        <div id="brand-banner"><span class="brand-banner-text">CartoLinka</span></div>
         <!-- Pripravený kontajner pre horné okno PROFIL (Krok 1 UI/CSS príprava) -->
         <div id="profile-hud">
             <div class="hud-row" style="margin-bottom: 0;">
@@ -3487,8 +3653,9 @@
                 <canvas id="profile-dot-canvas"></canvas>
             </div>
         </div>
-        <!-- Samostatné vycentrované okno záverečných štatistík (#final-summary-hud) -->
+        <!-- Samostatné vycentrované okno záverečných štatistík (#final-summary-hud) + prikotvený banner CartoLinka pod ním -->
         <div id="final-summary-hud"></div>
+        <div id="final-summary-brand-banner"><span class="brand-banner-text">CartoLinka</span></div>
     </div>
 </div>
 
@@ -3496,7 +3663,7 @@
 <div id="help-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="help-modal-title">
     <div class="help-modal-box">
         <div class="help-modal-header">
-            <span class="help-modal-title" id="help-modal-title">❓ Návod na používanie – V3SOFT CartoLinka v1.066</span>
+            <span class="help-modal-title" id="help-modal-title">❓ Návod na používanie – V3SOFT CartoLinka v1.073</span>
             <button type="button" id="btn-close-help" title="Zavrieť nápovedu (Esc)">✕ Zavrieť</button>
         </div>
         <div class="help-modal-body">
@@ -3649,14 +3816,15 @@
             <div class="help-section">
                 <h3>6. Zobrazené údaje, vzhľad HUD okien a spustenie</h3>
                 <div class="help-item">
-                    <span class="help-item-title">Zobrazené údaje (KM, M, KM/H, TEMPO, W, TEP, ČAS, °C):</span>
-                    Osem samostatných prepínačov, ktorými si presne zvolíte, ktoré telemetrické veličiny chcete v okne štatistiky vidieť:
+                    <span class="help-item-title">Zobrazené údaje (KM, M, KM/H, TEMPO, W, TEP, SKLON, ČAS, °C):</span>
+                    Deväť samostatných prepínačov, ktorými si presne zvolíte, ktoré telemetrické veličiny chcete v okne štatistiky vidieť:
                     <br>• <strong>KM:</strong> Prejdená vzdialenosť v kilometroch.
                     <br>• <strong>M:</strong> Nastúpané výškové metre (s prahom citlivosti / hysteréziou 1,5 m pre elimináciu barometrického a GPS šumu, presne podľa logiky cyklopočítačov).
                     <br>• <strong>KM/H:</strong> Vyhladená okamžitá rýchlosť v km/h.
                     <br>• <strong>TEMPO:</strong> Vyhladené tempo pohybu v min/km (formát MM:SS).
                     <br>• <strong>W:</strong> Vyhladený výkon vo wattoch (zobrazí sa, ak súbor obsahuje dáta z wattmetra).
                     <br>• <strong>TEP:</strong> Vyhladená srdcová frekvencia v bpm (ak súbor obsahuje záznam tepu).
+                    <br>• <strong>SKLON:</strong> Vyhladený aktuálny sklon trasy v % (s presnosťou na 1 desatinné miesto).
                     <br>• <strong>ČAS:</strong> Reálny denný čas aktivity vo formáte HH:MM.
                     <br>• <strong>°C:</strong> Vyhladená teplota vzduchu v stupňoch Celzia (ak súbor obsahuje záznam teplomera).
                 </div>
@@ -3665,7 +3833,7 @@
                     Posuvník na doladenie zobrazovanej teploty oproti hodnote nameranej v cyklopočítači (napr. ak slnko zohrievalo Garmin na riadidlách a chcete zobraziť reálnejšiu teplotu vzduchu).
                 </div>
                 <div class="help-item">
-                    <span class="help-item-title">Veľkosť okna (50% – 180%):</span>
+                    <span class="help-item-title">Veľkosť okna (55% – 70%):</span>
                     Mierka (škálovanie) všetkých plávajúcich HUD okien (štatistika, profil, POI baner aj fotografia), aby ste ich veľkosť prispôsobili rozlíšeniu monitora.
                 </div>
                 <div class="help-item">
@@ -3673,7 +3841,7 @@
                     Nastavuje krytie tmavého pozadia HUD okien. Hodnota <em>0%</em> vytvorí úplne priehľadné pozadie (zostanú visieť len čisté čísla a ikony priamo nad mapou).
                 </div>
                 <div class="help-item">
-                    <span class="help-item-title">Písmo (20px – 80px) & Farba písma:</span>
+                    <span class="help-item-title">Písmo (40px – 55px) & Farba písma:</span>
                     Nastavuje veľkosť hlavných číselných hodnôt a farbu písma, ikon a krivky výškového profilu.
                 </div>
                 <div class="help-item">
@@ -3711,7 +3879,7 @@
             <div class="info-line"><strong>Koncept a dizajn:</strong> Vlado Troják</div>
             <div class="info-line"><strong>Kód a vývoj:</strong> AI Gemini Argon</div>
             <div class="info-line"><strong>Rok výroby:</strong> 11/2026</div>
-            <div class="info-line"><strong>Verzia:</strong> v1.066</div>
+            <div class="info-line"><strong>Verzia:</strong> v1.073</div>
             <div class="info-freeware">Táto aplikácia je freeware.</div>
             <div class="info-yt-label">Tu môžeš sledovať moje videá:</div>
             <a href="https://www.youtube.com/@VladoTrojak" target="_blank" rel="noopener noreferrer" class="btn-yt-link">
@@ -3853,13 +4021,13 @@
 
     function getDefaultGradientPalette(mapStyleVal, colorModeVal) {
         const isTopoMap = TOPO_GRADIENT_MAP_STYLES.has(mapStyleVal);
-        const isSpeedOrPace = (colorModeVal === 'speed' || colorModeVal === 'pace');
+        const isSpeed = (colorModeVal === 'speed');
         if (isTopoMap) {
-            return isSpeedOrPace
+            return isSpeed
                 ? { min: '#e60000', mid: '#ff00e6', max: '#5a00ff' }
                 : { min: '#5a00ff', mid: '#ff00e6', max: '#e60000' };
         }
-        return isSpeedOrPace
+        return isSpeed
             ? { min: '#ff0000', mid: '#ffff00', max: '#00ff00' }
             : { min: '#00ff00', mid: '#ffff00', max: '#ff0000' };
     }
@@ -3887,7 +4055,8 @@
         const modeSelect = document.getElementById('line-color-mode');
         const pal = getDefaultGradientPalette(
             mapStyleEl ? mapStyleEl.value : 'satellite_hybrid',
-            modeSelect ? modeSelect.value : 'solid'
+            modeSelect ? modeSelect.value : 'solid',
+            typeof currentTrackActivity !== 'undefined' ? currentTrackActivity : 'mtb'
         );
         minInput.value = pal.min;
         midInput.value = pal.mid;
@@ -4386,6 +4555,7 @@
     let showPace = true;
     let showPwr = true;
     let showHr = true;
+    let showSlope = true;
     let showTime = true;
     let showTemp = true;
 
@@ -5044,6 +5214,9 @@
         if (!isAnimating && totalRenderPointsCount > 0) {
             syncTopLeftFromMap();
             renderCustomCanvas();
+        }
+        if (typeof updateBrandBannerLayout === 'function') {
+            updateBrandBannerLayout();
         }
     }
 
@@ -7879,6 +8052,28 @@
     let finalSummaryShowTimeout = null;
     let finalSummaryHideTimeout = null;
     const finalSummaryHudEl = document.getElementById('final-summary-hud');
+    const finalSummaryBannerEl = document.getElementById('final-summary-brand-banner');
+
+    function updateFinalSummaryBannerLayout() {
+        if (!finalSummaryBannerEl || !finalSummaryHudEl) return;
+        const isActive = finalSummaryHudEl.children.length > 0 &&
+                         (finalSummaryHudEl.classList.contains('final-summary-visible') || finalSummaryBannerEl.style.display === 'flex');
+        if (!isActive || finalSummaryHudEl.offsetWidth === 0) {
+            return;
+        }
+
+        const scaleVal = (parseFloat(document.getElementById('hud-scale').value) || 70) / 100;
+        const opacityVal = parseInt(document.getElementById('hud-opacity').value);
+        const currentOpacityPct = isNaN(opacityVal) ? 80 : opacityVal;
+
+        const sumW = finalSummaryHudEl.offsetWidth * scaleVal;
+        const sumH = finalSummaryHudEl.offsetHeight * scaleVal;
+
+        finalSummaryBannerEl.classList.toggle('banner-dark-mode', currentOpacityPct <= 49);
+        finalSummaryBannerEl.style.width = Math.max(140, sumW).toFixed(2) + 'px';
+        finalSummaryBannerEl.style.left = '50%';
+        finalSummaryBannerEl.style.top = `calc(50% + ${(sumH / 2 + 6).toFixed(2)}px)`;
+    }
 
     function clearEndAnimationTimers() {
         if (endCleanupTimeout) {
@@ -7903,10 +8098,12 @@
         const hudEl = document.getElementById('hud');
         const miniHudEl = document.getElementById('mini-hud');
         const profileHudEl = document.getElementById('profile-hud');
+        const brandBannerEl = document.getElementById('brand-banner');
         const mapEl = document.getElementById('map');
         if (hudEl) hudEl.classList.remove('hud-fade-out');
         if (miniHudEl) miniHudEl.classList.remove('hud-fade-out');
         if (profileHudEl) profileHudEl.classList.remove('hud-fade-out');
+        if (brandBannerEl) brandBannerEl.classList.remove('hud-fade-out');
         if (mapEl) mapEl.classList.remove('map-end-filter');
     }
 
@@ -7914,9 +8111,11 @@
         const hudEl = document.getElementById('hud');
         const miniHudEl = document.getElementById('mini-hud');
         const profileHudEl = document.getElementById('profile-hud');
+        const brandBannerEl = document.getElementById('brand-banner');
         if (hudEl) hudEl.classList.add('hud-fade-out');
         if (miniHudEl) miniHudEl.classList.add('hud-fade-out');
         if (profileHudEl) profileHudEl.classList.add('hud-fade-out');
+        if (brandBannerEl) brandBannerEl.classList.add('hud-fade-out');
 
         // Efektne schováme aj všetky práve zobrazené POI okná a ich fotky
         for (let i = 0; i < activePoiWindows.length; i++) {
@@ -7932,6 +8131,10 @@
         if (finalSummaryHudEl) {
             finalSummaryHudEl.classList.remove('final-summary-visible', 'preview-layer-top');
             finalSummaryHudEl.innerHTML = '';
+        }
+        if (finalSummaryBannerEl) {
+            finalSummaryBannerEl.classList.remove('final-summary-visible', 'preview-layer-top');
+            finalSummaryBannerEl.style.display = 'none';
         }
         if (typeof syncPreviewTopLayerState === 'function') syncPreviewTopLayerState();
     }
@@ -8000,24 +8203,39 @@
         });
 
         finalSummaryHudEl.classList.remove('final-summary-visible');
+        if (finalSummaryBannerEl) {
+            finalSummaryBannerEl.classList.remove('final-summary-visible');
+            finalSummaryBannerEl.style.display = 'flex';
+        }
         void finalSummaryHudEl.offsetWidth;
+        updateFinalSummaryBannerLayout();
         finalSummaryHudEl.classList.add('final-summary-visible');
+        if (finalSummaryBannerEl) {
+            finalSummaryBannerEl.classList.add('final-summary-visible');
+        }
 
         if (autoHide) {
             finalSummaryHudEl.classList.add('preview-layer-top');
+            if (finalSummaryBannerEl) finalSummaryBannerEl.classList.add('preview-layer-top');
             if (typeof syncPreviewTopLayerState === 'function') syncPreviewTopLayerState();
             const maxDurSec = Math.max(...activeList.map(i => parseFloat(i.duration) || 5.0), 5.0);
             finalSummaryHideTimeout = setTimeout(() => {
                 finalSummaryHudEl.classList.remove('final-summary-visible');
+                if (finalSummaryBannerEl) finalSummaryBannerEl.classList.remove('final-summary-visible');
                 setTimeout(() => {
                     if (!finalSummaryHudEl.classList.contains('final-summary-visible')) {
                         finalSummaryHudEl.classList.remove('preview-layer-top');
+                        if (finalSummaryBannerEl) {
+                            finalSummaryBannerEl.classList.remove('preview-layer-top');
+                            finalSummaryBannerEl.style.display = 'none';
+                        }
                         if (typeof syncPreviewTopLayerState === 'function') syncPreviewTopLayerState();
                     }
                 }, 480);
             }, maxDurSec * 1000);
         } else {
             finalSummaryHudEl.classList.remove('preview-layer-top');
+            if (finalSummaryBannerEl) finalSummaryBannerEl.classList.remove('preview-layer-top');
             if (typeof syncPreviewTopLayerState === 'function') syncPreviewTopLayerState();
         }
     }
@@ -8726,12 +8944,98 @@
 
     loadSummaryFromStorage('gpx_summary_default');
 
+    // Prepočet pozície, šírky a farebnej inverzie spoločného bannera CartoLinka (fixná výška 29px, nápis 26px)
+    let lastKlasikHudWidth = 0;
+
+    function updateBrandBannerLayout() {
+        if (typeof updateFinalSummaryBannerLayout === 'function') {
+            updateFinalSummaryBannerLayout();
+        }
+        const banner = document.getElementById('brand-banner');
+        if (!banner) return;
+
+        if (!rawPoints || rawPoints.length === 0) {
+            banner.style.display = 'none';
+            return;
+        }
+
+        const hud = document.getElementById('hud');
+        const miniHud = document.getElementById('mini-hud');
+        const profileHud = document.getElementById('profile-hud');
+
+        const klasikVisible = Boolean(hud && hud.style.display !== 'none');
+        const miniVisible = Boolean(miniHud && miniHud.style.display !== 'none');
+        const profileVisible = Boolean(profileHud && profileHud.style.display !== 'none');
+
+        const scaleVal = (parseFloat(document.getElementById('hud-scale').value) || 70) / 100;
+        const opacityVal = parseInt(document.getElementById('hud-opacity').value);
+        const currentOpacityPct = isNaN(opacityVal) ? 80 : opacityVal;
+
+        banner.style.display = 'flex';
+
+        if (!klasikVisible && !miniVisible && !profileVisible) {
+            // Režim D: Vypnutý HUD aj PROFIL -> vpravo hore, uzamknutá 100% biela a čierny nápis, bez škálovania
+            banner.classList.add('banner-standalone-locked');
+            banner.classList.remove('banner-dark-mode');
+            banner.style.width = 'auto';
+            banner.style.top = '20px';
+            banner.style.bottom = 'auto';
+            banner.style.right = '40px';
+            banner.style.left = 'auto';
+            return;
+        }
+
+        banner.classList.remove('banner-standalone-locked');
+        banner.classList.toggle('banner-dark-mode', currentOpacityPct <= 49);
+
+        if (klasikVisible) {
+            // Režim A: Zapnutý KLASIK HUD -> prikotvený 6px nad oknom #hud, šírka presne podľa aktuálnej šírky #hud
+            const hudW = hud.offsetWidth * scaleVal;
+            const hudH = hud.offsetHeight * scaleVal;
+            lastKlasikHudWidth = hudW;
+            banner.style.width = Math.max(140, hudW).toFixed(2) + 'px';
+            banner.style.bottom = (65 + hudH + 6).toFixed(2) + 'px';
+            banner.style.top = 'auto';
+            banner.style.right = '40px';
+            banner.style.left = 'auto';
+        } else if (miniVisible) {
+            // Režim B: Zapnutý MINI HUD -> prikotvený 6px nad pravým horným rohom #mini-hud, neškáluje žiadnym smerom
+            const mapCont = document.getElementById('map-container');
+            const contW = mapCont ? mapCont.clientWidth : window.innerWidth;
+            const miniW = miniHud.offsetWidth * scaleVal;
+            const miniH = miniHud.offsetHeight * scaleVal;
+            const rightPx = Math.max(0, (contW - miniW) / 2);
+            banner.style.width = 'auto';
+            banner.style.bottom = (65 + miniH + 6).toFixed(2) + 'px';
+            banner.style.top = 'auto';
+            banner.style.right = rightPx.toFixed(2) + 'px';
+            banner.style.left = 'auto';
+        } else if (profileVisible) {
+            // Režim C: Vypnutý HUD, zapnutý PROFIL -> prikotvený 6px pod oknom #profile-hud, šírka presne podľa okna profilu
+            const profW = profileHud.offsetWidth * scaleVal;
+            const profH = profileHud.offsetHeight * scaleVal;
+            banner.style.width = Math.max(140, profW).toFixed(2) + 'px';
+            banner.style.top = (20 + profH + 6).toFixed(2) + 'px';
+            banner.style.bottom = 'auto';
+            banner.style.right = '40px';
+            banner.style.left = 'auto';
+        }
+    }
+
     // Pomocné funkcie pre zápis hodnôt súčasne do KLASIK HUD aj MINI HUD
     function setHudText(key, val) {
         const elKlasik = document.getElementById('hud-' + key);
         const elMini = document.getElementById('mini-hud-' + key);
         if (elKlasik) elKlasik.innerText = val;
         if (elMini) elMini.innerText = val;
+        const hud = document.getElementById('hud');
+        if (hud && hud.style.display !== 'none') {
+            const scaleVal = (parseFloat(document.getElementById('hud-scale').value) || 70) / 100;
+            const curW = hud.offsetWidth * scaleVal;
+            if (Math.abs(curW - lastKlasikHudWidth) > 0.5) {
+                updateBrandBannerLayout();
+            }
+        }
     }
 
     function triggerMilestonePulse() {
@@ -8772,6 +9076,7 @@
         const paceRow = document.getElementById('hud-pace-row');
         const pwrRow = document.getElementById('hud-pwr-row');
         const hrRow = document.getElementById('hud-hr-row');
+        const slopeRow = document.getElementById('hud-slope-row');
         const timeRow = document.getElementById('hud-time-row');
         const tempRow = document.getElementById('hud-temp-row');
 
@@ -8781,6 +9086,7 @@
         const miniPaceItem = document.getElementById('mini-hud-pace-item');
         const miniPwrItem = document.getElementById('mini-hud-pwr-item');
         const miniHrItem = document.getElementById('mini-hud-hr-item');
+        const miniSlopeItem = document.getElementById('mini-hud-slope-item');
         const miniTimeItem = document.getElementById('mini-hud-time-item');
         const miniTempItem = document.getElementById('mini-hud-temp-item');
 
@@ -8793,6 +9099,7 @@
         paceRow.style.display = showPace ? 'block' : 'none';
         pwrRow.style.display = canShowPwrHud ? 'block' : 'none';
         hrRow.style.display = (showHr && hasHrData) ? 'block' : 'none';
+        if (slopeRow) slopeRow.style.display = showSlope ? 'block' : 'none';
         timeRow.style.display = (showTime && hasTimeData) ? 'block' : 'none';
         tempRow.style.display = (showTemp && hasTempData) ? 'block' : 'none';
 
@@ -8802,10 +9109,11 @@
         miniPaceItem.style.display = showPace ? 'flex' : 'none';
         miniPwrItem.style.display = canShowPwrHud ? 'flex' : 'none';
         miniHrItem.style.display = (showHr && hasHrData) ? 'flex' : 'none';
+        if (miniSlopeItem) miniSlopeItem.style.display = showSlope ? 'flex' : 'none';
         miniTimeItem.style.display = (showTime && hasTimeData) ? 'flex' : 'none';
         miniTempItem.style.display = (showTemp && hasTempData) ? 'flex' : 'none';
 
-        const anyRowVisible = showDist || showEle || showSpeed || showPace || canShowPwrHud || (showHr && hasHrData) || (showTime && hasTimeData) || (showTemp && hasTempData);
+        const anyRowVisible = showDist || showEle || showSpeed || showPace || canShowPwrHud || (showHr && hasHrData) || showSlope || (showTime && hasTimeData) || (showTemp && hasTempData);
         if (hudEnabled && rawPoints.length > 0 && anyRowVisible) {
             if (hudMode === 'klasik') {
                 hud.style.display = 'block';
@@ -8819,7 +9127,7 @@
             miniHud.style.display = 'none';
         }
 
-        const allRows = [distRow, eleRow, speedRow, paceRow, pwrRow, hrRow, timeRow, tempRow];
+        const allRows = [distRow, eleRow, speedRow, paceRow, pwrRow, hrRow, slopeRow, timeRow, tempRow].filter(Boolean);
         const visibleRows = allRows.filter(r => r.style.display !== 'none');
         allRows.forEach(r => r.style.marginBottom = '16px');
         if (visibleRows.length > 0) {
@@ -8837,6 +9145,10 @@
             profileHud.style.display = 'none';
         }
 
+        if (typeof updateBrandBannerLayout === 'function') {
+            updateBrandBannerLayout();
+        }
+
         if (typeof updatePoiPhotoPosition === 'function') {
             updatePoiPhotoPosition();
         }
@@ -8849,6 +9161,7 @@
     const btnTogglePace = document.getElementById('toggle-item-pace');
     const btnTogglePwr = document.getElementById('toggle-item-pwr');
     const btnToggleHr = document.getElementById('toggle-item-hr');
+    const btnToggleSlope = document.getElementById('toggle-item-slope');
     const btnToggleTime = document.getElementById('toggle-item-time');
     const btnToggleTemp = document.getElementById('toggle-item-temp');
 
@@ -8882,6 +9195,13 @@
         btnToggleHr.classList.toggle('inactive', !showHr);
         updateHudVisibility();
     });
+    if (btnToggleSlope) {
+        btnToggleSlope.addEventListener('click', () => {
+            showSlope = !showSlope;
+            btnToggleSlope.classList.toggle('inactive', !showSlope);
+            updateHudVisibility();
+        });
+    }
     btnToggleTime.addEventListener('click', () => {
         showTime = !showTime;
         btnToggleTime.classList.toggle('inactive', !showTime);
@@ -9455,6 +9775,9 @@
         const val = parseInt(e.target.value);
         document.getElementById('lbl-hud-scale').innerText = val;
         document.documentElement.style.setProperty('--hud-scale', (val / 100).toFixed(2));
+        if (typeof updateBrandBannerLayout === 'function') {
+            updateBrandBannerLayout();
+        }
         if (typeof updatePoiPhotoPosition === 'function') {
             updatePoiPhotoPosition();
         }
@@ -9465,6 +9788,9 @@
         const val = parseInt(e.target.value);
         document.getElementById('lbl-hud-opacity').innerText = val;
         document.documentElement.style.setProperty('--hud-bg-opacity', (val / 100).toFixed(2));
+        if (typeof updateBrandBannerLayout === 'function') {
+            updateBrandBannerLayout();
+        }
     });
 
     // Veľkosť a farba písma v HUD štatistike aj v okne profilu
@@ -9475,6 +9801,9 @@
         if (profileEnabled && rawPoints.length > 1) {
             renderStaticProfile();
             renderProfileDot(lastProfileProgress, lastProfileEle);
+        }
+        if (typeof updateBrandBannerLayout === 'function') {
+            updateBrandBannerLayout();
         }
         if (typeof updatePoiPhotoPosition === 'function') {
             updatePoiPhotoPosition();
@@ -9596,6 +9925,7 @@
                 if (lblHudOpacityEl) lblHudOpacityEl.innerText = '100';
                 document.documentElement.style.setProperty('--hud-bg-opacity', '1.00');
                 syncCanvasStyles();
+                if (typeof updateBrandBannerLayout === 'function') updateBrandBannerLayout();
             } else if (wasSolidOrChroma) {
                 if (lineColorInput) lineColorInput.value = (style === 'mapy_outdoor') ? '#c800ff' : '#c8ff00';
                 if (lineWidthInput) lineWidthInput.value = '6';
@@ -9606,6 +9936,7 @@
                 if (lblHudOpacityEl) lblHudOpacityEl.innerText = '80';
                 document.documentElement.style.setProperty('--hud-bg-opacity', '0.80');
                 syncCanvasStyles();
+                if (typeof updateBrandBannerLayout === 'function') updateBrandBannerLayout();
             } else if (lineColorInput) {
                 const curLineCol = (lineColorInput.value || '').toLowerCase();
                 if (style === 'mapy_outdoor' && curLineCol === '#c8ff00') {
@@ -10191,6 +10522,8 @@
         setHudText('pace', previewSpeedKmh >= 0.3 ? formatPaceMinSec(previewSpeedKmh) : "--:--");
         setHudText('pwr', (hasPwrData && firstPt.pwr !== null) ? Math.round(firstPt.pwr) : "--");
         setHudText('hr', (hasHrData && firstPt.hr !== null) ? Math.round(firstPt.hr) : "--");
+        const initPreviewSlope = Math.round((firstPt.slopePct || 0) * 10) / 10;
+        setHudText('slope', (Object.is(initPreviewSlope, -0) ? 0 : initPreviewSlope).toFixed(1));
         setHudText('time', hasTimeData ? formatDayTime(activePoints[0].timeMs) : "--:--");
         if (hasTempData && firstPt.temp !== null) {
             lastRawTempC = firstPt.temp;
@@ -10830,6 +11163,8 @@
         setHudText('pace', "--:--");
         setHudText('pwr', (hasPwrData && activePoints[0].pwr !== null) ? Math.round(activePoints[0].pwr) : "--");
         setHudText('hr', (hasHrData && activePoints[0].hr !== null) ? Math.round(activePoints[0].hr) : "--");
+        const initStartSlope = Math.round((activePoints[0].slopePct || 0) * 10) / 10;
+        setHudText('slope', (Object.is(initStartSlope, -0) ? 0 : initStartSlope).toFixed(1));
         document.getElementById('profile-ele-val').innerText = Math.round(startAltMeters);
         if (hasTimeData) {
             setHudText('time', formatDayTime(activePoints[0].timeMs));
@@ -10974,6 +11309,11 @@
         let emaHrInitialized = (hasHrData && activePoints[0].hr !== null);
         let lastHrDomUpdateMs = 0;
         let hrWindowSearchIdx = 0;
+
+        let emaSlopePct = (typeof activePoints[0].slopePct === 'number' && !isNaN(activePoints[0].slopePct)) ? activePoints[0].slopePct : 0;
+        let emaSlopeInitialized = true;
+        let lastSlopeDomUpdateMs = 0;
+        let slopeWindowSearchIdx = 0;
 
         let emaTempC = (hasTempData && activePoints[0].temp !== null) ? activePoints[0].temp : 0;
         let emaTempInitialized = (hasTempData && activePoints[0].temp !== null);
@@ -11388,6 +11728,41 @@
                 }
             }
 
+            // Výpočet a vyhladenie sklonu (%) - rovnaký postup ako pri rýchlosti a tepe (priestorové okno +-80 m + EMA + 220 ms obnova)
+            if (showSlope) {
+                const winBackDist = Math.max(0, interpDist - 0.08);
+                const winFwdDist = Math.min(totalDistKm, interpDist + 0.08);
+                const posBack = findIndexByDistance(activePoints, winBackDist, slopeWindowSearchIdx);
+                slopeWindowSearchIdx = posBack.index;
+                const posFwd = findIndexByDistance(activePoints, winFwdDist, slopeWindowSearchIdx);
+
+                const pB0 = activePoints[posBack.index];
+                const pB1 = activePoints[Math.min(activePoints.length - 1, posBack.index + 1)];
+                const slopeBack = (pB0.slopePct || 0) + ((pB1.slopePct || 0) - (pB0.slopePct || 0)) * posBack.frac;
+
+                const pF0 = activePoints[posFwd.index];
+                const pF1 = activePoints[Math.min(activePoints.length - 1, posFwd.index + 1)];
+                const slopeFwd = (pF0.slopePct || 0) + ((pF1.slopePct || 0) - (pF0.slopePct || 0)) * posFwd.frac;
+
+                const slopeMid = currentRenderHeadSlope;
+                let rawSlopePct = (slopeBack + slopeMid + slopeFwd) / 3;
+                rawSlopePct = Math.max(-45, Math.min(45, rawSlopePct));
+
+                if (!emaSlopeInitialized) {
+                    emaSlopePct = rawSlopePct;
+                    emaSlopeInitialized = true;
+                } else {
+                    const emaAlpha = 1 - Math.exp(-smoothedDt / 0.45);
+                    emaSlopePct += (rawSlopePct - emaSlopePct) * emaAlpha;
+                }
+
+                if (now - lastSlopeDomUpdateMs >= 220) {
+                    const roundedSlope = Math.round(emaSlopePct * 10) / 10;
+                    setHudText('slope', (Object.is(roundedSlope, -0) ? 0 : roundedSlope).toFixed(1));
+                    lastSlopeDomUpdateMs = now;
+                }
+            }
+
             // Výpočet a vyhladenie teploty (°C) - odfiltrovanie stojacich úsekov + teplotný limit (Slew-Rate Limiter) + EMA + korekcia posuvníkom
             if (showTemp && hasTempData) {
                 const winBackDist = Math.max(0, interpDist - 0.08);
@@ -11469,6 +11844,7 @@
                 setHudText('dist', displayedDist.toFixed(1));
                 setHudText('ele', Math.round(displayedEle));
                 profileEleVal.innerText = Math.round(interpAlt);
+                if (typeof updateBrandBannerLayout === 'function') updateBrandBannerLayout();
 
                 triggerMilestonePulse();
 
@@ -11497,6 +11873,10 @@
                 }
                 if (showHr && hasHrData) {
                     setHudText('hr', Math.round(emaHrBpm));
+                }
+                if (showSlope) {
+                    const finalRoundedSlope = Math.round(emaSlopePct * 10) / 10;
+                    setHudText('slope', (Object.is(finalRoundedSlope, -0) ? 0 : finalRoundedSlope).toFixed(1));
                 }
                 if (hasTimeData && finalPt.timeMs) {
                     setHudText('time', formatDayTime(finalPt.timeMs));
@@ -11863,8 +12243,8 @@
 
     updateStorageUsageBadge();
 
-    // Detekcia napísania slova "hckd" a zobrazenie veľkého bieleho nápisu HCKD na 3 sekundy
-    let hckdBuffer = '';
+    // Detekcia klávesových príkazov ("hckd", "logoff", "logon", "mapoff", "mapon")
+    let cheatKeyBuffer = '';
     let hckdTimeout = null;
     const hckdOverlayEl = document.getElementById('hckd-overlay');
 
@@ -11872,9 +12252,10 @@
         if (e.target && e.target.closest('input, textarea, select')) return;
         if (!e.key || e.key.length !== 1) return;
 
-        hckdBuffer = (hckdBuffer + e.key.toLowerCase()).slice(-4);
-        if (hckdBuffer === 'hckd') {
-            hckdBuffer = '';
+        cheatKeyBuffer = (cheatKeyBuffer + e.key.toLowerCase()).slice(-10);
+
+        if (cheatKeyBuffer.endsWith('hckd')) {
+            cheatKeyBuffer = '';
             if (hckdOverlayEl) {
                 hckdOverlayEl.classList.add('visible');
                 if (hckdTimeout) clearTimeout(hckdTimeout);
@@ -11883,6 +12264,18 @@
                     hckdTimeout = null;
                 }, 3000);
             }
+        } else if (cheatKeyBuffer.endsWith('logoff')) {
+            cheatKeyBuffer = '';
+            document.body.classList.add('cartolinka-logo-hidden');
+        } else if (cheatKeyBuffer.endsWith('logon')) {
+            cheatKeyBuffer = '';
+            document.body.classList.remove('cartolinka-logo-hidden');
+        } else if (cheatKeyBuffer.endsWith('mapoff')) {
+            cheatKeyBuffer = '';
+            document.body.classList.add('mapy-logo-hidden');
+        } else if (cheatKeyBuffer.endsWith('mapon')) {
+            cheatKeyBuffer = '';
+            document.body.classList.remove('mapy-logo-hidden');
         }
     });
 
@@ -11949,6 +12342,7 @@
         showPace: true,
         showPwr: true,
         showHr: true,
+        showSlope: true,
         showTime: true,
         showTemp: true,
         tempOffset: '0',
@@ -12023,6 +12417,7 @@
                 showPace: showPace,
                 showPwr: showPwr,
                 showHr: showHr,
+                showSlope: showSlope,
                 showTime: showTime,
                 showTemp: showTemp,
                 tempOffset: document.getElementById('temp-offset').value,
@@ -12243,6 +12638,10 @@
                 showHr = s.showHr;
                 btnToggleHr.classList.toggle('inactive', !showHr);
             }
+            if (typeof s.showSlope === 'boolean') {
+                showSlope = s.showSlope;
+                if (btnToggleSlope) btnToggleSlope.classList.toggle('inactive', !showSlope);
+            }
             if (typeof s.showTime === 'boolean') {
                 showTime = s.showTime;
                 btnToggleTime.classList.toggle('inactive', !showTime);
@@ -12259,7 +12658,7 @@
                 document.getElementById('lbl-temp-offset').innerText = toVal > 0 ? `+${toVal}` : toVal;
             }
             if (s.hudScale !== undefined) {
-                const scVal = parseInt(s.hudScale) || 70;
+                const scVal = Math.max(55, Math.min(70, parseInt(s.hudScale) || 70));
                 document.getElementById('hud-scale').value = scVal;
                 document.getElementById('lbl-hud-scale').innerText = scVal;
                 document.documentElement.style.setProperty('--hud-scale', (scVal / 100).toFixed(2));
@@ -12273,7 +12672,7 @@
                 }
             }
             if (s.hudFontSize !== undefined) {
-                const fsVal = parseInt(s.hudFontSize) || 40;
+                const fsVal = Math.max(40, Math.min(55, parseInt(s.hudFontSize) || 40));
                 document.getElementById('hud-font-size').value = fsVal;
                 document.getElementById('lbl-font-size').innerText = fsVal;
                 document.documentElement.style.setProperty('--hud-font-size', fsVal + 'px');
@@ -12337,6 +12736,8 @@
         }
         DEFAULT_USER_SETTINGS.gradConfigByActivity = createDefaultGradConfigByActivity();
         applyUserSettingsObject(DEFAULT_USER_SETTINGS);
+        applyDefaultGradientPaletteIfNotCustom(true);
+        syncCanvasStyles();
         if (!isAnimating && rawPoints && rawPoints.length > 1) {
             if (typeof updatePoisOnTrim === 'function') updatePoisOnTrim();
             renderTrimmedRoutePreview();
@@ -12379,7 +12780,7 @@
         const watchedButtonIds = [
             'btn-style', 'btn-toggle-profile', 'btn-toggle-hud', 'btn-hud-mode',
             'toggle-item-dist', 'toggle-item-ele', 'toggle-item-speed', 'toggle-item-pace',
-            'toggle-item-pwr', 'toggle-item-hr', 'toggle-item-time', 'toggle-item-temp'
+            'toggle-item-pwr', 'toggle-item-hr', 'toggle-item-slope', 'toggle-item-time', 'toggle-item-temp'
         ];
         watchedButtonIds.forEach(id => {
             const btn = document.getElementById(id);
