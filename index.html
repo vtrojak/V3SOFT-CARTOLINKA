@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="favicon.png">
-    <title>V3SOFT CartoLinka v1.113 (WebGL GPU Engine)</title>
+    <title>V3SOFT CartoLinka v1.116 (WebGL GPU Engine)</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
@@ -113,9 +113,17 @@
         }
         .controls-row-left {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             gap: 8px;
             align-items: center;
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+        body:not(.is-mobile-browser) #cg-temp-offset {
+            margin-right: 12px;
+        }
+        body:not(.is-mobile-browser) #cg-hud-opacity {
+            margin-right: 10px;
         }
         .controls-row-right {
             display: flex;
@@ -123,6 +131,41 @@
             gap: 8px;
             align-items: center;
             flex-shrink: 0;
+            margin-left: auto;
+        }
+        @media (max-width: 1480px) {
+            body:not(.is-mobile-browser) #controls {
+                padding: 8px 12px;
+                gap: 7px;
+            }
+            body:not(.is-mobile-browser) .controls-row {
+                gap: 6px;
+            }
+            body:not(.is-mobile-browser) #controls-row-2 {
+                gap: 5px;
+            }
+            body:not(.is-mobile-browser) .controls-row-4,
+            body:not(.is-mobile-browser) .controls-row-left,
+            body:not(.is-mobile-browser) .controls-row-right {
+                gap: 6px;
+            }
+            body:not(.is-mobile-browser) #cg-trim { width: 150px; }
+            body:not(.is-mobile-browser) #cg-width { width: 68px; }
+            body:not(.is-mobile-browser) #cg-head-size { width: 76px; }
+            body:not(.is-mobile-browser) #zoom-group { width: 56px; }
+            body:not(.is-mobile-browser) #speed-slider-group { width: 96px; }
+            body:not(.is-mobile-browser) #timelapse-group { width: 82px; }
+            body:not(.is-mobile-browser) #points-speed-group { width: 68px; }
+            body:not(.is-mobile-browser) #cg-temp-offset { width: 122px; margin-right: 8px; }
+            body:not(.is-mobile-browser) #cg-hud-scale { width: 100px; }
+            body:not(.is-mobile-browser) #cg-hud-opacity { width: 92px; margin-right: 6px; }
+            body:not(.is-mobile-browser) #cg-font-size { width: 64px; }
+            body:not(.is-mobile-browser) #cg-keep-buffer { width: 74px; }
+            body:not(.is-mobile-browser) #btn-toggle-hud { width: 134px; padding: 6px 8px; }
+            body:not(.is-mobile-browser) #btn-toggle-profile { width: 112px; padding: 6px 8px; }
+            body:not(.is-mobile-browser) #btn-hud-mode { width: 124px; padding: 6px 8px; }
+            body:not(.is-mobile-browser) #btn-poi-editor { width: 124px; padding: 6px 8px; }
+            body:not(.is-mobile-browser) #btn-summary-editor { width: 118px; padding: 6px 8px; }
         }
         .app-version-badge {
             display: flex;
@@ -485,7 +528,13 @@
             transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
             z-index: 10020;
         }
-        #controls .btn-grad-save-default:hover::after {
+        #controls #grad-sec-slope .btn-grad-save-default::after {
+            bottom: auto;
+            top: calc(100% + 8px);
+            transform: translateY(-4px);
+        }
+        #controls .btn-grad-save-default:hover::after,
+        #controls #grad-sec-slope .btn-grad-save-default:hover::after {
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
@@ -2787,12 +2836,19 @@
             transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), transform 0.45s cubic-bezier(0.22, 1, 0.36, 1) !important;
         }
 
-        /* Prechod mapového podkladu do mierne rozmazanej čiernobielej farebnej palety 1s po ukončení animácie */
+        /* Prechod mapového podkladu do mierne rozmazanej čiernobielej farebnej palety a postupné zneviditeľnenie vykresľovanej čiary 1s po ukončení animácie */
         #map {
             transition: filter 1.2s cubic-bezier(0.22, 1, 0.36, 1);
         }
         #map.map-end-filter {
             filter: grayscale(100%) blur(4px) brightness(0.75);
+        }
+        #route-canvas {
+            opacity: 1;
+            transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        #route-canvas.route-end-fade {
+            opacity: 0 !important;
         }
 
 
@@ -3303,7 +3359,7 @@
         <div class="controls-row">
             <div class="app-version-badge">
                 <span class="app-version-title">V3SOFT <span class="brand-carto">Carto</span><span class="brand-linka">Linka</span></span>
-                <span class="app-version-num">v1.113</span>
+                <span class="app-version-num">v1.116</span>
             </div>
             <button id="btn-info" type="button" title="Informácie o aplikácii">ℹ️ INFO</button>
             <button id="btn-help" type="button" title="Zobraziť podrobný návod a vysvetlenie všetkých nastavení aplikácie">❓ HELP</button>
@@ -3364,11 +3420,11 @@
         <div class="controls-row" id="controls-row-2">
             <div class="control-group poi-dropdown-wrapper group-disabled" id="activity-type-group">
                 <label>Aktivita</label>
-                <button id="btn-activity-indicator" type="button" title="Indikátor aktivity (automatická detekcia zo súboru). Kliknutím môžete ručne nastaviť aktivitu (Turistika / Beh / MTB / Road / Moto)." disabled>
+                <button id="btn-activity-indicator" type="button" aria-expanded="false" aria-controls="activity-menu-panel" aria-haspopup="dialog" title="Indikátor aktivity (automatická detekcia zo súboru). Kliknutím môžete ručne nastaviť aktivitu (Turistika / Beh / MTB / Road / Moto)." disabled>
                     <span class="act-ind-svg" id="activity-indicator-icon"><svg viewBox="0 0 24 24"><path d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z"/></svg></span>
                     <span id="activity-indicator-label">MTB</span>
                 </button>
-                <div id="activity-menu-panel" class="poi-editor-popover">
+                <div id="activity-menu-panel" class="poi-editor-popover" role="dialog" aria-modal="false" aria-label="Výber typu aktivity">
                     <div class="poi-editor-header">
                         <span class="poi-editor-title">🏅 Typ aktivity</span>
                         <div class="poi-editor-actions">
@@ -3425,8 +3481,8 @@
             </div>
             <div class="control-group poi-dropdown-wrapper group-disabled" id="grad-config-group">
                 <label>Pásma</label>
-                <button id="btn-grad-config" type="button" title="Nastaviť vlastné rozpätie MID a hraničné body plnej sýtosti pre Sklon (%), Rýchlosť (km/h), Tempo (min/km), Tep (hr/min) a Výkon (W)" disabled>⚙️ Config</button>
-                <div id="grad-config-panel" class="poi-editor-popover" style="width: 655px;">
+                <button id="btn-grad-config" type="button" aria-expanded="false" aria-controls="grad-config-panel" aria-haspopup="dialog" title="Nastaviť vlastné rozpätie MID a hraničné body plnej sýtosti pre Sklon (%), Rýchlosť (km/h), Tempo (min/km), Tep (hr/min) a Výkon (W)" disabled>⚙️ Config</button>
+                <div id="grad-config-panel" class="poi-editor-popover" role="dialog" aria-modal="false" aria-label="Konfigurácia farebných pásiem" style="width: 655px;">
                     <div class="poi-editor-header">
                         <span class="poi-editor-title">⚙️ Konfigurácia farebných pásiem (Sklon, Rýchlosť, Tempo, Tep & Výkon)</span>
                         <div class="poi-editor-actions">
@@ -3725,8 +3781,8 @@
                 </div>
                 <div class="control-group poi-dropdown-wrapper" id="poi-editor-group">
                     <label>Body záujmu (POI)</label>
-                    <button id="btn-poi-editor" type="button" title="Otvoriť editor bodov záujmu (POI) na trase">📍 POI Editor (<span id="poi-count-badge">0</span>)</button>
-                    <div id="poi-editor-panel" class="poi-editor-popover">
+                    <button id="btn-poi-editor" type="button" aria-expanded="false" aria-controls="poi-editor-panel" aria-haspopup="dialog" title="Otvoriť editor bodov záujmu (POI) na trase">📍 POI Editor (<span id="poi-count-badge">0</span>)</button>
+                    <div id="poi-editor-panel" class="poi-editor-popover" role="dialog" aria-modal="false" aria-label="Editor bodov záujmu (POI na trase)">
                         <div class="poi-editor-header">
                             <span class="poi-editor-title">📍 Editor bodov záujmu (POI na trase)</span>
                             <div class="poi-editor-actions">
@@ -3786,8 +3842,8 @@
                 </div>
                 <div class="control-group poi-dropdown-wrapper" id="summary-editor-group">
                     <label>Súhrn jazdy</label>
-                    <button id="btn-summary-editor" type="button" title="Otvoriť editor súhrnu štatistík jazdy">📋 SÚHRN (<span id="summary-count-badge">0</span>)</button>
-                    <div id="summary-editor-panel" class="poi-editor-popover" style="width: 595px;">
+                    <button id="btn-summary-editor" type="button" aria-expanded="false" aria-controls="summary-editor-panel" aria-haspopup="dialog" title="Otvoriť editor súhrnu štatistík jazdy">📋 SÚHRN (<span id="summary-count-badge">0</span>)</button>
+                    <div id="summary-editor-panel" class="poi-editor-popover" role="dialog" aria-modal="false" aria-label="Editor súhrnu štatistík jazdy" style="width: 595px;">
                         <div class="poi-editor-header">
                             <span class="poi-editor-title">📋 Súhrn štatistík jazdy</span>
                             <div class="poi-editor-actions">
@@ -3854,11 +3910,11 @@
             <div class="controls-row-right">
                 <button id="btn-style" type="button" title="Prepínať vzhľad ovládacieho panela (SKLO / NORMAL / RETRO)">Štýl</button>
                 <div class="poi-dropdown-wrapper" id="panel-color-group">
-                    <button id="btn-panel-color" type="button" title="Zmeniť farbu ovládacieho panela pre aktuálny štýl (SKLO / NORMAL / RETRO)">
+                    <button id="btn-panel-color" type="button" aria-expanded="false" aria-controls="panel-color-panel" aria-haspopup="dialog" title="Zmeniť farbu ovládacieho panela pre aktuálny štýl (SKLO / NORMAL / RETRO)">
                         <span class="panel-color-dot" id="panel-color-dot"></span>
                         <span>Farba</span>
                     </button>
-                    <div id="panel-color-panel" class="poi-editor-popover">
+                    <div id="panel-color-panel" class="poi-editor-popover" role="dialog" aria-modal="false" aria-labelledby="panel-color-title">
                         <div class="poi-editor-header">
                             <span class="poi-editor-title" id="panel-color-title">🎨 Farba panela (SKLO)</span>
                             <div class="poi-editor-actions">
@@ -4150,7 +4206,7 @@
 <div id="help-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="help-modal-title">
     <div class="help-modal-box">
         <div class="help-modal-header">
-            <span class="help-modal-title" id="help-modal-title">❓ Návod na používanie – V3SOFT CartoLinka v1.113</span>
+            <span class="help-modal-title" id="help-modal-title">❓ Návod na používanie – V3SOFT CartoLinka v1.116</span>
             <button type="button" id="btn-close-help" title="Zavrieť nápovedu (Esc)">✕ Zavrieť</button>
         </div>
         <div class="help-modal-body">
@@ -4307,7 +4363,7 @@
                     Otvára editor záverečného súhrnu štatistík jazdy, ktorý sa automaticky zobrazí vycentrovaný v strede obrazovky po dokončení animácie trasy:
                     <br>• <strong>Automatické štatistiky (oranžové riadky):</strong> Po nahratí trasy aplikácia automaticky vypočíta až 12 súhrnných položiek (<em>Prejdená vzdialenosť, Nastúpané metre, Celkový čas jazdy, Čistý čas jazdy bez prestávok, Priemerná rýchlosť z čistého času, Maximálna rýchlosť, Priemerné tempo pohybu, Priemerný tep, Priemerný výkon, Priemerná kadencia, Celkový počet otáčok</em> a <em>Priemerná teplota v pohybe</em>) a zapne tie, ktoré zodpovedajú rozpoznanej aktivite a dostupným senzorom.
                     <br>• <strong>Úprava a vlastné položky:</strong> Každý riadok môžete zapnúť/vypnúť (<em>ZAP/VYP</em>), ľubovoľne prepísať jeho text (oddelením cez dvojbodku <code>Názov: Hodnota</code> sa v záverečnom okne automaticky naformátuje veľká hodnota nad menším popisom), zmeniť mu ikonu, dĺžku zobrazenia pri náhľade (sek), pridať vlastný riadok tlačidlom <strong>+ Pridať</strong> alebo vyskúšať živý náhľad súhrnu priamo nad mapou tlačidlom <strong>👁️</strong>.
-                    <br>• <strong>Záverečná sekvencia po skončení animácie:</strong> Po príchode čiary do cieľa sa po <em>0,5 s</em> plynulo stiahnu priebežné HUD okná a profil, po <em>1,0 s</em> sa mapový podklad jemne stlmí, odhluční do čiernobieleho tónu a rozmaže (okrem čierneho pozadia a Chroma Key plátien) a po <em>2,0 s</em> sa v strede obrazovky s pulzným efektom rozsvieti finálna tabuľka <strong>Súhrn jazdy</strong>.
+                    <br>• <strong>Záverečná sekvencia po skončení animácie:</strong> Po príchode čiary do cieľa sa po <em>0,5 s</em> plynulo stiahnu priebežné HUD okná a profil, po <em>1,0 s</em> sa mapový podklad jemne stlmí, odhluční do čiernobieleho tónu a rozmaže (okrem čierneho pozadia a Chroma Key plátien), pričom sa súčasne plynulo zneviditeľní aj vykreslená čiara trasy, a po <em>2,0 s</em> sa v strede obrazovky s pulzným efektom rozsvieti finálna tabuľka <strong>Súhrn jazdy</strong>.
                 </div>
             </div>
 
@@ -4375,7 +4431,7 @@
                 <h3>7. Mobilná verzia rozhrania (označenie verzie s príponou „M“)</h3>
                 <div class="help-item">
                     <span class="help-item-title">Automatická detekcia dotykových zariadení:</span>
-                    Pri otvorení aplikácie na smartfóne alebo tablete (Android, iOS, iPadOS) sa rozhranie automaticky prepne do mobilného režimu (v názve verzie pribudne písmeno <strong>M</strong>, napr. <em>v1.113M</em>):
+                    Pri otvorení aplikácie na smartfóne alebo tablete (Android, iOS, iPadOS) sa rozhranie automaticky prepne do mobilného režimu (v názve verzie pribudne písmeno <strong>M</strong>, napr. <em>v1.116M</em>):
                     <br>• <strong>4 akordeónové sekcie:</strong> Namiesto štyroch širokých riadkov sú nastavenia rozdelené do 4 prehľadných rozbaľovacích kariet (<em>1. 📁 Súbor & Mapa</em>, <em>2. 🎨 Čiara & Vzhľad</em>, <em>3. 🎥 Kamera & Rýchlosť</em>, <em>4. 📊 HUD, POI & Súhrn</em>), ktoré sa pri spustení animácie automaticky zbalia.
                     <br>• <strong>Dotykové posuvníky s tlačidlami − / +:</strong> Každý posuvník je vybavený zväčšeným dotykovým tiahlom a bočnými tlačidlami <strong>−</strong> a <strong>+</strong> pre presné krokovanie hodnôt jedným ťuknutím.
                     <br>• <strong>Optimalizované rozmery a orientácia displeja:</strong> Pre zachovanie maximálneho čistého výhľadu na mapu sú na mobile pevne prednastavené optimálne hodnoty mierky HUD (40 %), písma (32 px), priehľadnosti (85 %), loga Mapy.com (32 px), štýlu panela (NORMAL) a buffera dlaždíc (8), pričom tieto ladiace posuvníky a prepínač MINI HUD sú na mobile skryté. Okno výškového profilu (<em>⛰️ Profil</em>) sa na mobilnom displeji zobrazuje iba pri otočení telefónu <strong>na šírku (landscape)</strong>.
@@ -4396,7 +4452,7 @@
             <div class="info-line"><strong>Koncept a dizajn:</strong> Vlado Troják</div>
             <div class="info-line"><strong>Kód a vývoj:</strong> AI Gemini Argon</div>
             <div class="info-line"><strong>Rok výroby:</strong> 11/2026</div>
-            <div class="info-line"><strong>Verzia:</strong> <span id="info-version-val">v1.113</span></div>
+            <div class="info-line"><strong>Verzia:</strong> <span id="info-version-val">v1.116</span></div>
             <div class="info-freeware">Táto aplikácia je freeware.</div>
             <div class="info-yt-label">Tu môžeš sledovať moje videá:</div>
             <a href="https://www.youtube.com/@VladoTrojak" target="_blank" rel="noopener noreferrer" class="btn-yt-link">
@@ -6170,9 +6226,14 @@
             gradConfigGroup.classList.toggle('group-disabled', !isGradientMode);
             btnGradConfig.disabled = !isGradientMode;
             if (!isGradientMode && gradConfigPanel && gradConfigPanel.classList.contains('open')) {
-                gradConfigPanel.classList.remove('open');
-                btnGradConfig.classList.remove('active');
-                if (typeof resetEditorPopoverPosition === 'function') resetEditorPopoverPosition(gradConfigPanel);
+                if (typeof setEditorPopoverOpenState === 'function') {
+                    setEditorPopoverOpenState(gradConfigPanel, btnGradConfig, false);
+                } else {
+                    gradConfigPanel.classList.remove('open');
+                    btnGradConfig.classList.remove('active');
+                    btnGradConfig.setAttribute('aria-expanded', 'false');
+                    if (typeof resetEditorPopoverPosition === 'function') resetEditorPopoverPosition(gradConfigPanel);
+                }
             }
         }
 
@@ -7901,6 +7962,44 @@
         panel.classList.remove('is-dragging');
     }
 
+    function setEditorPopoverOpenState(panel, btn, isOpen) {
+        if (panel) {
+            panel.classList.toggle('open', Boolean(isOpen));
+            resetEditorPopoverPosition(panel);
+        }
+        if (btn) {
+            btn.classList.toggle('active', Boolean(isOpen));
+            btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        }
+    }
+
+    function closeAllEditorPopoversExcept(keepPanel) {
+        const pairs = [
+            [poiEditorPanel, btnPoiEditor],
+            [typeof summaryEditorPanel !== 'undefined' ? summaryEditorPanel : document.getElementById('summary-editor-panel'), typeof btnSummaryEditor !== 'undefined' ? btnSummaryEditor : document.getElementById('btn-summary-editor')],
+            [document.getElementById('grad-config-panel'), document.getElementById('btn-grad-config')],
+            [typeof activityMenuPanelEl !== 'undefined' ? activityMenuPanelEl : document.getElementById('activity-menu-panel'), typeof btnActivityIndicatorEl !== 'undefined' ? btnActivityIndicatorEl : document.getElementById('btn-activity-indicator')],
+            [document.getElementById('panel-color-panel'), document.getElementById('btn-panel-color')]
+        ];
+        for (let i = 0; i < pairs.length; i++) {
+            const [p, b] = pairs[i];
+            if (p && p !== keepPanel && p.classList.contains('open')) {
+                setEditorPopoverOpenState(p, b, false);
+            } else if (b && p !== keepPanel) {
+                b.classList.remove('active');
+                b.setAttribute('aria-expanded', 'false');
+            }
+        }
+    }
+
+    function shouldIgnorePopoverOutsideClick(target, wrapper) {
+        if (!target) return true;
+        if (wrapper && wrapper.contains(target)) return true;
+        const mapCont = document.getElementById('map-container');
+        if (mapCont && mapCont.contains(target)) return true;
+        return false;
+    }
+
     function makeEditorPopoverDraggable(panel) {
         if (!panel || IS_MOBILE_BROWSER) return;
         let isDragging = false;
@@ -7955,39 +8054,13 @@
 
     btnPoiEditor.addEventListener('click', e => {
         e.stopPropagation();
-        if (typeof summaryEditorPanel !== 'undefined' && summaryEditorPanel) {
-            summaryEditorPanel.classList.remove('open');
-            btnSummaryEditor.classList.remove('active');
-            resetEditorPopoverPosition(summaryEditorPanel);
-        }
-        const gPanel = document.getElementById('grad-config-panel');
-        const gBtn = document.getElementById('btn-grad-config');
-        if (gPanel) {
-            gPanel.classList.remove('open');
-            if (gBtn) gBtn.classList.remove('active');
-            resetEditorPopoverPosition(gPanel);
-        }
-        if (typeof activityMenuPanelEl !== 'undefined' && activityMenuPanelEl) {
-            activityMenuPanelEl.classList.remove('open');
-            if (btnActivityIndicatorEl) btnActivityIndicatorEl.classList.remove('active');
-            resetEditorPopoverPosition(activityMenuPanelEl);
-        }
-        const pColPanel = document.getElementById('panel-color-panel');
-        const pColBtn = document.getElementById('btn-panel-color');
-        if (pColPanel) {
-            pColPanel.classList.remove('open');
-            if (pColBtn) pColBtn.classList.remove('active');
-            resetEditorPopoverPosition(pColPanel);
-        }
-        const isOpen = poiEditorPanel.classList.toggle('open');
-        resetEditorPopoverPosition(poiEditorPanel);
-        btnPoiEditor.classList.toggle('active', isOpen);
+        closeAllEditorPopoversExcept(poiEditorPanel);
+        const willOpen = !poiEditorPanel.classList.contains('open');
+        setEditorPopoverOpenState(poiEditorPanel, btnPoiEditor, willOpen);
     });
 
     btnClosePoiEditor.addEventListener('click', () => {
-        poiEditorPanel.classList.remove('open');
-        btnPoiEditor.classList.remove('active');
-        resetEditorPopoverPosition(poiEditorPanel);
+        setEditorPopoverOpenState(poiEditorPanel, btnPoiEditor, false);
     });
 
     poiEditorPanel.addEventListener('click', e => {
@@ -7997,10 +8070,8 @@
     document.addEventListener('click', e => {
         if (poiEditorPanel.classList.contains('open')) {
             const wrapper = document.getElementById('poi-editor-group');
-            if (wrapper && !wrapper.contains(e.target)) {
-                poiEditorPanel.classList.remove('open');
-                btnPoiEditor.classList.remove('active');
-                resetEditorPopoverPosition(poiEditorPanel);
+            if (!shouldIgnorePopoverOutsideClick(e.target, wrapper)) {
+                setEditorPopoverOpenState(poiEditorPanel, btnPoiEditor, false);
             }
         }
     });
@@ -8532,41 +8603,15 @@
     if (btnActivityIndicatorEl && activityMenuPanelEl) {
         btnActivityIndicatorEl.addEventListener('click', e => {
             e.stopPropagation();
-            if (poiEditorPanel) {
-                poiEditorPanel.classList.remove('open');
-                btnPoiEditor.classList.remove('active');
-                resetEditorPopoverPosition(poiEditorPanel);
-            }
-            if (summaryEditorPanel) {
-                summaryEditorPanel.classList.remove('open');
-                btnSummaryEditor.classList.remove('active');
-                resetEditorPopoverPosition(summaryEditorPanel);
-            }
-            const gPanel = document.getElementById('grad-config-panel');
-            const gBtn = document.getElementById('btn-grad-config');
-            if (gPanel) {
-                gPanel.classList.remove('open');
-                if (gBtn) gBtn.classList.remove('active');
-                resetEditorPopoverPosition(gPanel);
-            }
-            const pColPanel = document.getElementById('panel-color-panel');
-            const pColBtn = document.getElementById('btn-panel-color');
-            if (pColPanel) {
-                pColPanel.classList.remove('open');
-                if (pColBtn) pColBtn.classList.remove('active');
-                resetEditorPopoverPosition(pColPanel);
-            }
-            const isOpen = activityMenuPanelEl.classList.toggle('open');
-            resetEditorPopoverPosition(activityMenuPanelEl);
-            btnActivityIndicatorEl.classList.toggle('active', isOpen);
+            closeAllEditorPopoversExcept(activityMenuPanelEl);
+            const willOpen = !activityMenuPanelEl.classList.contains('open');
+            setEditorPopoverOpenState(activityMenuPanelEl, btnActivityIndicatorEl, willOpen);
         });
     }
 
     if (btnCloseActivityMenuEl && activityMenuPanelEl && btnActivityIndicatorEl) {
         btnCloseActivityMenuEl.addEventListener('click', () => {
-            activityMenuPanelEl.classList.remove('open');
-            btnActivityIndicatorEl.classList.remove('active');
-            resetEditorPopoverPosition(activityMenuPanelEl);
+            setEditorPopoverOpenState(activityMenuPanelEl, btnActivityIndicatorEl, false);
         });
     }
 
@@ -8580,9 +8625,7 @@
                 saveActivityToStorage();
                 applyActivityAndSensorRules(true);
                 if (activityMenuPanelEl && btnActivityIndicatorEl) {
-                    activityMenuPanelEl.classList.remove('open');
-                    btnActivityIndicatorEl.classList.remove('active');
-                    resetEditorPopoverPosition(activityMenuPanelEl);
+                    setEditorPopoverOpenState(activityMenuPanelEl, btnActivityIndicatorEl, false);
                 }
             }
         });
@@ -8603,10 +8646,8 @@
     document.addEventListener('click', e => {
         if (activityMenuPanelEl && activityMenuPanelEl.classList.contains('open')) {
             const wrapper = document.getElementById('activity-type-group');
-            if (wrapper && !wrapper.contains(e.target)) {
-                activityMenuPanelEl.classList.remove('open');
-                if (btnActivityIndicatorEl) btnActivityIndicatorEl.classList.remove('active');
-                resetEditorPopoverPosition(activityMenuPanelEl);
+            if (!shouldIgnorePopoverOutsideClick(e.target, wrapper)) {
+                setEditorPopoverOpenState(activityMenuPanelEl, btnActivityIndicatorEl, false);
             }
         }
     });
@@ -8680,6 +8721,7 @@
         if (profileHudEl) profileHudEl.classList.remove('hud-fade-out');
         if (brandBannerEl) brandBannerEl.classList.remove('hud-fade-out');
         if (mapEl) mapEl.classList.remove('map-end-filter');
+        if (routeCanvas) routeCanvas.classList.remove('route-end-fade');
     }
 
     function fadeOutAllActiveWindowsEffect() {
@@ -9460,37 +9502,13 @@
 
     btnSummaryEditor.addEventListener('click', e => {
         e.stopPropagation();
-        poiEditorPanel.classList.remove('open');
-        btnPoiEditor.classList.remove('active');
-        resetEditorPopoverPosition(poiEditorPanel);
-        const gPanel = document.getElementById('grad-config-panel');
-        const gBtn = document.getElementById('btn-grad-config');
-        if (gPanel) {
-            gPanel.classList.remove('open');
-            if (gBtn) gBtn.classList.remove('active');
-            resetEditorPopoverPosition(gPanel);
-        }
-        if (typeof activityMenuPanelEl !== 'undefined' && activityMenuPanelEl) {
-            activityMenuPanelEl.classList.remove('open');
-            if (btnActivityIndicatorEl) btnActivityIndicatorEl.classList.remove('active');
-            resetEditorPopoverPosition(activityMenuPanelEl);
-        }
-        const pColPanel = document.getElementById('panel-color-panel');
-        const pColBtn = document.getElementById('btn-panel-color');
-        if (pColPanel) {
-            pColPanel.classList.remove('open');
-            if (pColBtn) pColBtn.classList.remove('active');
-            resetEditorPopoverPosition(pColPanel);
-        }
-        const isOpen = summaryEditorPanel.classList.toggle('open');
-        resetEditorPopoverPosition(summaryEditorPanel);
-        btnSummaryEditor.classList.toggle('active', isOpen);
+        closeAllEditorPopoversExcept(summaryEditorPanel);
+        const willOpen = !summaryEditorPanel.classList.contains('open');
+        setEditorPopoverOpenState(summaryEditorPanel, btnSummaryEditor, willOpen);
     });
 
     btnCloseSummaryEditor.addEventListener('click', () => {
-        summaryEditorPanel.classList.remove('open');
-        btnSummaryEditor.classList.remove('active');
-        resetEditorPopoverPosition(summaryEditorPanel);
+        setEditorPopoverOpenState(summaryEditorPanel, btnSummaryEditor, false);
     });
 
     summaryEditorPanel.addEventListener('click', e => {
@@ -9500,10 +9518,8 @@
     document.addEventListener('click', e => {
         if (summaryEditorPanel.classList.contains('open')) {
             const wrapper = document.getElementById('summary-editor-group');
-            if (wrapper && !wrapper.contains(e.target)) {
-                summaryEditorPanel.classList.remove('open');
-                btnSummaryEditor.classList.remove('active');
-                resetEditorPopoverPosition(summaryEditorPanel);
+            if (!shouldIgnorePopoverOutsideClick(e.target, wrapper)) {
+                setEditorPopoverOpenState(summaryEditorPanel, btnSummaryEditor, false);
             }
         }
     });
@@ -10178,42 +10194,18 @@
     if (btnGradConfigEl && gradConfigPanelEl) {
         btnGradConfigEl.addEventListener('click', e => {
             e.stopPropagation();
-            if (poiEditorPanel) {
-                poiEditorPanel.classList.remove('open');
-                btnPoiEditor.classList.remove('active');
-                resetEditorPopoverPosition(poiEditorPanel);
-            }
-            if (summaryEditorPanel) {
-                summaryEditorPanel.classList.remove('open');
-                btnSummaryEditor.classList.remove('active');
-                resetEditorPopoverPosition(summaryEditorPanel);
-            }
-            if (typeof activityMenuPanelEl !== 'undefined' && activityMenuPanelEl) {
-                activityMenuPanelEl.classList.remove('open');
-                if (btnActivityIndicatorEl) btnActivityIndicatorEl.classList.remove('active');
-                resetEditorPopoverPosition(activityMenuPanelEl);
-            }
-            const pColPanel = document.getElementById('panel-color-panel');
-            const pColBtn = document.getElementById('btn-panel-color');
-            if (pColPanel) {
-                pColPanel.classList.remove('open');
-                if (pColBtn) pColBtn.classList.remove('active');
-                resetEditorPopoverPosition(pColPanel);
-            }
-            const isOpen = gradConfigPanelEl.classList.toggle('open');
-            if (isOpen) {
+            closeAllEditorPopoversExcept(gradConfigPanelEl);
+            const willOpen = !gradConfigPanelEl.classList.contains('open');
+            if (willOpen) {
                 updateGradConfigMeasuredStats();
             }
-            resetEditorPopoverPosition(gradConfigPanelEl);
-            btnGradConfigEl.classList.toggle('active', isOpen);
+            setEditorPopoverOpenState(gradConfigPanelEl, btnGradConfigEl, willOpen);
         });
     }
 
     if (btnCloseGradConfigEl && gradConfigPanelEl && btnGradConfigEl) {
         btnCloseGradConfigEl.addEventListener('click', () => {
-            gradConfigPanelEl.classList.remove('open');
-            btnGradConfigEl.classList.remove('active');
-            resetEditorPopoverPosition(gradConfigPanelEl);
+            setEditorPopoverOpenState(gradConfigPanelEl, btnGradConfigEl, false);
         });
     }
 
@@ -10282,10 +10274,8 @@
     document.addEventListener('click', e => {
         if (gradConfigPanelEl && gradConfigPanelEl.classList.contains('open')) {
             const wrapper = document.getElementById('grad-config-group');
-            if (wrapper && !wrapper.contains(e.target)) {
-                gradConfigPanelEl.classList.remove('open');
-                if (btnGradConfigEl) btnGradConfigEl.classList.remove('active');
-                resetEditorPopoverPosition(gradConfigPanelEl);
+            if (!shouldIgnorePopoverOutsideClick(e.target, wrapper)) {
+                setEditorPopoverOpenState(gradConfigPanelEl, btnGradConfigEl, false);
             }
         }
     });
@@ -11096,6 +11086,9 @@
         }
 
         isPreviewMode = true;
+        if (routeCanvas) routeCanvas.classList.remove('route-end-fade');
+        const mapElPreview = document.getElementById('map');
+        if (mapElPreview) mapElPreview.classList.remove('map-end-filter');
         drawnPointsCount = activePoints.length;
         totalRenderPointsCount = activePoints.length;
         resetGlRouteBuffer(activePoints.length);
@@ -12510,13 +12503,16 @@
                 }, 500);
 
                 // 1 sekunda po konci animácie mapový podklad postupne prejde do mierne rozmazanej čiernobielej palety (okrem čierneho pozadia a Chroma Key plátien)
+                // a zároveň sa postupne zneviditeľní vykresľovaná čiara (stopa animácie aj hlavička), aby ostal čistý podklad / Chroma Key
                 mapEndFilterTimeout = setTimeout(() => {
                     const mapStyle = document.getElementById('map-style').value;
                     const isSolidOrChroma = (mapStyle === 'none' || mapStyle === 'green' || mapStyle === 'blue' || mapStyle === 'red');
-                    const isFs = Boolean(document.fullscreenElement || document.webkitFullscreenElement || document.getElementById('controls').style.display === 'none');
                     const mapEl = document.getElementById('map');
-                    if (!isSolidOrChroma && mapEl && (isFs || summaryItems.some(s => s.enabled))) {
+                    if (!isSolidOrChroma && mapEl) {
                         mapEl.classList.add('map-end-filter');
+                    }
+                    if (routeCanvas) {
+                        routeCanvas.classList.add('route-end-fade');
                     }
                 }, 1000);
 
@@ -12750,6 +12746,15 @@
         }
     });
 
+    if (typeof ResizeObserver !== 'undefined' && controlsEl && !IS_MOBILE_BROWSER) {
+        const controlsResizeObserver = new ResizeObserver(() => {
+            if (controlsEl.classList.contains('glass-theme') && controlsEl.style.display !== 'none') {
+                document.documentElement.style.setProperty('--controls-height', (controlsEl.offsetHeight || 0) + 'px');
+            }
+        });
+        controlsResizeObserver.observe(controlsEl);
+    }
+
     btnStyle.addEventListener('click', () => {
         if (currentPanelStyle === 'glass') {
             currentPanelStyle = 'normal';
@@ -12776,50 +12781,24 @@
     if (btnPanelColorEl && panelColorPanelEl) {
         btnPanelColorEl.addEventListener('click', e => {
             e.stopPropagation();
-            if (poiEditorPanel) {
-                poiEditorPanel.classList.remove('open');
-                btnPoiEditor.classList.remove('active');
-                resetEditorPopoverPosition(poiEditorPanel);
-            }
-            if (summaryEditorPanel) {
-                summaryEditorPanel.classList.remove('open');
-                btnSummaryEditor.classList.remove('active');
-                resetEditorPopoverPosition(summaryEditorPanel);
-            }
-            const gPanel = document.getElementById('grad-config-panel');
-            const gBtn = document.getElementById('btn-grad-config');
-            if (gPanel) {
-                gPanel.classList.remove('open');
-                if (gBtn) gBtn.classList.remove('active');
-                resetEditorPopoverPosition(gPanel);
-            }
-            if (typeof activityMenuPanelEl !== 'undefined' && activityMenuPanelEl) {
-                activityMenuPanelEl.classList.remove('open');
-                if (btnActivityIndicatorEl) btnActivityIndicatorEl.classList.remove('active');
-                resetEditorPopoverPosition(activityMenuPanelEl);
-            }
+            closeAllEditorPopoversExcept(panelColorPanelEl);
             syncPanelColorPickerUI();
-            const isOpen = panelColorPanelEl.classList.toggle('open');
-            resetEditorPopoverPosition(panelColorPanelEl);
-            btnPanelColorEl.classList.toggle('active', isOpen);
+            const willOpen = !panelColorPanelEl.classList.contains('open');
+            setEditorPopoverOpenState(panelColorPanelEl, btnPanelColorEl, willOpen);
         });
     }
 
     if (btnClosePanelColorEl && panelColorPanelEl && btnPanelColorEl) {
         btnClosePanelColorEl.addEventListener('click', () => {
-            panelColorPanelEl.classList.remove('open');
-            btnPanelColorEl.classList.remove('active');
-            resetEditorPopoverPosition(panelColorPanelEl);
+            setEditorPopoverOpenState(panelColorPanelEl, btnPanelColorEl, false);
         });
     }
 
     document.addEventListener('click', e => {
         if (panelColorPanelEl && panelColorPanelEl.classList.contains('open')) {
             const wrapper = document.getElementById('panel-color-group');
-            if (wrapper && !wrapper.contains(e.target)) {
-                panelColorPanelEl.classList.remove('open');
-                if (btnPanelColorEl) btnPanelColorEl.classList.remove('active');
-                resetEditorPopoverPosition(panelColorPanelEl);
+            if (!shouldIgnorePopoverOutsideClick(e.target, wrapper)) {
+                setEditorPopoverOpenState(panelColorPanelEl, btnPanelColorEl, false);
             }
         }
     });
@@ -12908,6 +12887,7 @@
             }
             const mapEl = document.getElementById('map');
             if (mapEl) mapEl.classList.remove('map-end-filter');
+            if (routeCanvas) routeCanvas.classList.remove('route-end-fade');
             setTimeout(() => {
                 map.invalidateSize();
                 resizeRouteCanvas();
