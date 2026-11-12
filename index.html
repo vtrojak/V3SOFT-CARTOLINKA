@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="favicon.png">
-    <title>V3SOFT CartoLinka v1.073 (WebGL GPU Engine)</title>
+    <title>V3SOFT CartoLinka v1.111 (WebGL GPU Engine)</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
@@ -17,6 +17,61 @@
             --mapy-logo-height: 50px;
             --mapy-copy-font-size: 11px;
             --controls-height: 0px;
+            --normal-panel-bg: #222222;
+            --normal-panel-border: #383838;
+            --glass-panel-bg: rgba(18, 22, 28, 0.33);
+            --glass-popover-bg: rgba(18, 22, 28, 0.55);
+            --glass-grad-popover-bg: rgba(18, 22, 28, 0.76);
+            --retro-main: #39ff14;
+            --retro-bright: #76ff03;
+            --retro-border: #00ff41;
+            --retro-muted: #1ec81e;
+            --retro-dim: #175c17;
+            --retro-dim-hover: #268c26;
+            --retro-placeholder: #156515;
+            --retro-empty: #1e7e1e;
+            --retro-border-mid: #1b8a1b;
+            --retro-border-dark: #145214;
+            --retro-border-dim: #0e380e;
+            --retro-border-dim-btm: #061c06;
+            --retro-border-dim-hover: #195c19;
+            --retro-btn-btm: #0b4f0b;
+            --retro-bg-panel: #040d04;
+            --retro-bg-input: #020802;
+            --retro-bg-card: #061506;
+            --retro-bg-card-dis: #030a03;
+            --retro-bg-file-btn: #072207;
+            --retro-btn-grad-top: #0b2e0b;
+            --retro-btn-grad-btm: #051605;
+            --retro-btn-hover-top: #134b13;
+            --retro-btn-hover-btm: #092609;
+            --retro-btn-act-top: #195e19;
+            --retro-btn-act-btm: #0d360d;
+            --retro-btn-dis-top: #051005;
+            --retro-btn-dis-btm: #020802;
+            --retro-btn-dis-hov-top: #081c08;
+            --retro-btn-dis-hov-btm: #041004;
+            --retro-style-btn-top: #39ff14;
+            --retro-style-btn-btm: #00c800;
+            --retro-style-btn-border: #aaff80;
+            --retro-style-btn-btm-border: #006400;
+            --retro-style-btn-text: #021002;
+            --retro-style-hov-top: #66ff33;
+            --retro-style-hov-btm: #1ae000;
+            --retro-style-hov-border: #ccffb3;
+            --retro-glow-12: rgba(0, 255, 65, 0.12);
+            --retro-glow-18: rgba(0, 255, 65, 0.18);
+            --retro-glow-25: rgba(0, 255, 65, 0.25);
+            --retro-glow-28: rgba(57, 255, 20, 0.28);
+            --retro-glow-32: rgba(57, 255, 20, 0.32);
+            --retro-glow-35: rgba(57, 255, 20, 0.35);
+            --retro-glow-40: rgba(118, 255, 3, 0.4);
+            --retro-glow-45: rgba(57, 255, 20, 0.45);
+            --retro-glow-55: rgba(57, 255, 20, 0.55);
+            --retro-glow-65: rgba(57, 255, 20, 0.65);
+            --retro-glow-85: rgba(57, 255, 20, 0.85);
+            --retro-glow-100: rgba(57, 255, 20, 1);
+            --retro-glow-05: rgba(0, 255, 65, 0.05);
         }
         body, html {
             margin: 0;
@@ -35,13 +90,14 @@
         #controls {
             position: relative;
             padding: 10px 16px;
-            background: #222222;
+            background: var(--normal-panel-bg, #222222);
             display: flex;
             flex-direction: column;
             gap: 10px;
             z-index: 9500;
             box-shadow: 0 4px 15px rgba(0,0,0,0.7);
-            border-bottom: 1px solid #383838;
+            border-bottom: 1px solid var(--normal-panel-border, #383838);
+            transition: background 0.2s ease, border-color 0.2s ease;
         }
         .controls-row {
             display: flex;
@@ -52,12 +108,21 @@
         }
         .controls-row-4 {
             justify-content: space-between;
+            gap: 8px;
+            flex-wrap: nowrap;
         }
-        .controls-row-left, .controls-row-right {
+        .controls-row-left {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 8px;
             align-items: center;
+        }
+        .controls-row-right {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 8px;
+            align-items: center;
+            flex-shrink: 0;
         }
         .app-version-badge {
             display: flex;
@@ -302,10 +367,10 @@
             letter-spacing: 0.4px;
         }
         #controls.retro-theme .activity-opt-btn.selected {
-            background: linear-gradient(180deg, #195e19 0%, #0d360d 100%);
-            border-color: #76ff03;
-            color: #76ff03;
-            box-shadow: 0 0 10px rgba(57, 255, 20, 0.55);
+            background: linear-gradient(180deg, var(--retro-btn-act-top) 0%, var(--retro-btn-act-btm) 100%);
+            border-color: var(--retro-bright);
+            color: var(--retro-bright);
+            box-shadow: 0 0 10px var(--retro-glow-55);
         }
         #controls.glass-theme .activity-opt-btn.selected {
             background: linear-gradient(180deg, rgba(255, 255, 255, 0.46) 0%, rgba(255, 255, 255, 0.22) 100%);
@@ -426,9 +491,9 @@
             transform: translateY(0);
         }
         #controls.retro-theme .btn-grad-save-default::after {
-            background: #041004;
-            color: #39ff14;
-            border-color: #00ff41;
+            background: var(--retro-bg-panel);
+            color: var(--retro-main);
+            border-color: var(--retro-border);
         }
         .btn-grad-row-reset {
             height: 30px;
@@ -446,18 +511,18 @@
             background: #455a64;
         }
         #controls.retro-theme .grad-config-section {
-            background: #061506;
-            border-color: #145214;
+            background: var(--retro-bg-card);
+            border-color: var(--retro-border-dark);
         }
         #controls.retro-theme .grad-config-sec-title {
-            color: #39ff14;
-            border-bottom-color: #145214;
+            color: var(--retro-main);
+            border-bottom-color: var(--retro-border-dark);
         }
         #controls.retro-theme .grad-config-sec-stats {
-            color: #76ff03;
+            color: var(--retro-bright);
         }
         #controls.glass-theme #grad-config-panel {
-            background: rgba(18, 22, 28, 0.76);
+            background: var(--glass-grad-popover-bg, rgba(18, 22, 28, 0.76));
             backdrop-filter: blur(18px) saturate(140%);
             -webkit-backdrop-filter: blur(18px) saturate(140%);
         }
@@ -653,7 +718,8 @@
 
         #btn-play {
             background: #ef6c00;
-            width: 105px;
+            width: 64px;
+            padding: 8px 10px;
             justify-content: center;
         }
         #btn-play:hover:not(:disabled) {
@@ -661,8 +727,23 @@
         }
         #btn-fullscreen {
             background: #e53935;
-            width: 168px;
+            width: 96px;
+            padding: 8px 10px;
+            gap: 6px;
             justify-content: center;
+        }
+        .rec-circle-icon {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ffffff;
+            display: inline-block;
+            flex-shrink: 0;
+            box-shadow: 0 0 4px rgba(255, 255, 255, 0.85);
+        }
+        #controls.retro-theme .rec-circle-icon {
+            background: #ffffff;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.9);
         }
         #btn-fullscreen:hover:not(:disabled) {
             background: #ff5252;
@@ -783,7 +864,8 @@
         }
         #btn-poi-editor {
             background: #6a1b9a;
-            width: 148px;
+            width: 136px;
+            padding: 8px 10px;
             justify-content: center;
         }
         #btn-poi-editor:hover:not(:disabled) {
@@ -976,7 +1058,7 @@
         }
         .poi-row-item {
             display: grid;
-            grid-template-columns: 50px 70px 1fr 128px 46px 32px 32px 32px;
+            grid-template-columns: 50px 70px minmax(200px, 1fr) 128px 46px 32px 32px 32px;
             gap: 6px;
             align-items: center;
             background: #262626;
@@ -1305,8 +1387,12 @@
         #final-summary-brand-banner.preview-layer-top {
             z-index: 10075 !important;
         }
+        #mob-hud-brand-logo {
+            display: none;
+        }
         body.cartolinka-logo-hidden #brand-banner,
-        body.cartolinka-logo-hidden #final-summary-brand-banner {
+        body.cartolinka-logo-hidden #final-summary-brand-banner,
+        body.cartolinka-logo-hidden #mob-hud-brand-logo {
             display: none !important;
         }
         body.mapy-logo-hidden #mapy-attribution {
@@ -1900,22 +1986,105 @@
             transform: translateY(1px) scale(0.98);
         }
 
+        /* Malé tlačidlo Farba a jeho rozbaľovací panel v PC verzii */
+        #panel-color-group {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+        #btn-panel-color {
+            background: linear-gradient(180deg, #546e7a 0%, #37474f 100%);
+            border: 1px solid #78909c;
+            border-bottom-color: #263238;
+            color: #ffffff;
+            height: 34px;
+            padding: 0 10px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.4px;
+            gap: 6px;
+            justify-content: center;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35),
+                        0 3px 5px rgba(0, 0, 0, 0.5);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+            transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+        }
+        #btn-panel-color:hover:not(:disabled) {
+            background: linear-gradient(180deg, #607d8b 0%, #455a64 100%);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45),
+                        0 3px 6px rgba(0, 0, 0, 0.55),
+                        0 0 12px rgba(120, 144, 156, 0.55);
+        }
+        #btn-panel-color.active {
+            background: linear-gradient(180deg, #78909c 0%, #546e7a 100%);
+            border-color: #b0bec5;
+            box-shadow: 0 0 14px rgba(176, 190, 197, 0.65);
+        }
+        #btn-panel-color:active:not(:disabled) {
+            transform: translateY(1px) scale(0.98);
+        }
+        .panel-color-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+            display: inline-block;
+            flex-shrink: 0;
+        }
+        #panel-color-panel {
+            left: auto;
+            right: 0;
+            width: 245px;
+            padding: 12px;
+            gap: 10px;
+        }
+        .panel-color-picker-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+        }
+        #controls.retro-theme .panel-color-picker-row {
+            background: var(--retro-bg-card);
+            border-color: var(--retro-border-dark);
+        }
+        .panel-color-picker-row input[type="color"] {
+            width: 54px !important;
+            height: 32px !important;
+            padding: 2px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        #btn-reset-panel-color {
+            height: 32px;
+            padding: 0 12px;
+            font-size: 11.5px;
+            font-weight: 800;
+            justify-content: center;
+            flex-grow: 1;
+        }
+
         /* =========================================================================
-           VZHĽAD RETRO (80s Monochromatický Zelený Terminál pre ovládací panel)
+           VZHĽAD RETRO (80s Monochromatický Terminál pre ovládací panel)
            Presne zachováva rozmiestnenie a veľkosti všetkých prvkov
            ========================================================================= */
         #controls.retro-theme {
-            background: #040d04;
-            border-bottom: 1px solid #00ff41;
-            box-shadow: 0 4px 18px rgba(0, 255, 65, 0.18), inset 0 0 24px rgba(0, 255, 65, 0.05);
-            color: #39ff14;
+            background: var(--retro-bg-panel);
+            border-bottom: 1px solid var(--retro-border);
+            box-shadow: 0 4px 18px var(--retro-glow-18), inset 0 0 24px var(--retro-glow-05);
+            color: var(--retro-main);
         }
         #controls.retro-theme .app-version-badge {
-            border-right-color: #145214;
+            border-right-color: var(--retro-border-dark);
         }
         #controls.retro-theme .app-version-title {
-            color: #39ff14;
-            text-shadow: 0 0 8px rgba(57, 255, 20, 0.65);
+            color: var(--retro-main);
+            text-shadow: 0 0 8px var(--retro-glow-65);
         }
         #controls.retro-theme .app-version-title .brand-carto,
         #controls.glass-theme .app-version-title .brand-carto {
@@ -1928,37 +2097,37 @@
             text-shadow: 0 0 8px rgba(0, 245, 255, 0.85);
         }
         #controls.retro-theme .app-version-num {
-            color: #1ec81e;
+            color: var(--retro-muted);
         }
         #controls.retro-theme .control-group label,
         #controls.retro-theme .poi-field-col label {
-            color: #39ff14;
-            text-shadow: 0 0 5px rgba(57, 255, 20, 0.35);
+            color: var(--retro-main);
+            text-shadow: 0 0 5px var(--retro-glow-35);
         }
         #controls.retro-theme input,
         #controls.retro-theme select {
-            background: #020802;
-            color: #39ff14;
-            border-color: #1b8a1b;
-            box-shadow: inset 0 0 6px rgba(0, 255, 65, 0.12);
-            accent-color: #39ff14;
+            background: var(--retro-bg-input);
+            color: var(--retro-main);
+            border-color: var(--retro-border-mid);
+            box-shadow: inset 0 0 6px var(--retro-glow-12);
+            accent-color: var(--retro-main);
         }
         #controls.retro-theme input::placeholder {
-            color: #156515;
+            color: var(--retro-placeholder);
         }
         #controls.retro-theme input:focus,
         #controls.retro-theme select:focus {
-            border-color: #39ff14;
-            box-shadow: 0 0 8px rgba(57, 255, 20, 0.45), inset 0 0 6px rgba(0, 255, 65, 0.2);
+            border-color: var(--retro-main);
+            box-shadow: 0 0 8px var(--retro-glow-45), inset 0 0 6px var(--retro-glow-18);
         }
         #controls.retro-theme select option {
-            background: #040d04;
-            color: #39ff14;
+            background: var(--retro-bg-panel);
+            color: var(--retro-main);
         }
         #controls.retro-theme input[type="file"]::file-selector-button {
-            background: #072207;
-            color: #39ff14;
-            border: 1px solid #00ff41;
+            background: var(--retro-bg-file-btn);
+            color: var(--retro-main);
+            border: 1px solid var(--retro-border);
             border-radius: 3px;
             cursor: pointer;
         }
@@ -1978,14 +2147,14 @@
         #controls.retro-theme .btn-poi-photo,
         #controls.retro-theme .btn-poi-row-toggle,
         #controls.retro-theme .btn-poi-icon-action {
-            background: linear-gradient(180deg, #0b2e0b 0%, #051605 100%);
-            color: #39ff14;
-            border: 1px solid #00ff41;
-            border-bottom-color: #0b4f0b;
-            box-shadow: inset 0 1px 0 rgba(57, 255, 20, 0.28),
+            background: linear-gradient(180deg, var(--retro-btn-grad-top) 0%, var(--retro-btn-grad-btm) 100%);
+            color: var(--retro-main);
+            border: 1px solid var(--retro-border);
+            border-bottom-color: var(--retro-btn-btm);
+            box-shadow: inset 0 1px 0 var(--retro-glow-28),
                         0 2px 5px rgba(0, 0, 0, 0.8),
-                        0 0 8px rgba(57, 255, 20, 0.32);
-            text-shadow: 0 0 6px rgba(57, 255, 20, 0.65);
+                        0 0 8px var(--retro-glow-32);
+            text-shadow: 0 0 6px var(--retro-glow-65);
         }
         #controls.retro-theme button:hover:not(:disabled),
         #controls.retro-theme #btn-info:hover:not(:disabled),
@@ -2001,22 +2170,22 @@
         #controls.retro-theme .btn-poi-photo:hover:not(:disabled),
         #controls.retro-theme .btn-poi-row-toggle:hover:not(:disabled),
         #controls.retro-theme .btn-poi-icon-action:hover:not(:disabled) {
-            background: linear-gradient(180deg, #134b13 0%, #092609 100%);
-            color: #76ff03;
-            border-color: #76ff03;
-            box-shadow: inset 0 1px 0 rgba(118, 255, 3, 0.4),
+            background: linear-gradient(180deg, var(--retro-btn-hover-top) 0%, var(--retro-btn-hover-btm) 100%);
+            color: var(--retro-bright);
+            border-color: var(--retro-bright);
+            box-shadow: inset 0 1px 0 var(--retro-glow-40),
                         0 3px 6px rgba(0, 0, 0, 0.85),
-                        0 0 14px rgba(57, 255, 20, 0.6);
+                        0 0 14px var(--retro-glow-55);
         }
         #controls.retro-theme #btn-poi-editor.active,
         #controls.retro-theme .btn-poi-photo.has-photo,
         #controls.retro-theme .btn-poi-icon-action.has-photo {
-            background: linear-gradient(180deg, #195e19 0%, #0d360d 100%);
-            border-color: #76ff03;
-            box-shadow: 0 0 12px rgba(57, 255, 20, 0.65);
+            background: linear-gradient(180deg, var(--retro-btn-act-top) 0%, var(--retro-btn-act-btm) 100%);
+            border-color: var(--retro-bright);
+            box-shadow: 0 0 12px var(--retro-glow-65);
         }
 
-        /* Pasívne / vypnuté tlačidlá v režime RETRO (stále monochromatické tmavozelené) */
+        /* Pasívne / vypnuté tlačidlá v režime RETRO (stále monochromatické tmavé) */
         #controls.retro-theme .btn-toggle.inactive,
         #controls.retro-theme .btn-mini-toggle.inactive,
         #controls.retro-theme .btn-poi-row-toggle.inactive,
@@ -2027,71 +2196,71 @@
         #controls.retro-theme #btn-fullscreen:disabled,
         #controls.retro-theme #btn-hud-mode:disabled,
         #controls.retro-theme #btn-poi-editor:disabled {
-            background: linear-gradient(180deg, #051005 0%, #020802 100%);
-            color: #175c17;
-            border: 1px solid #0e380e;
-            border-bottom-color: #061c06;
+            background: linear-gradient(180deg, var(--retro-btn-dis-top) 0%, var(--retro-btn-dis-btm) 100%);
+            color: var(--retro-dim);
+            border: 1px solid var(--retro-border-dim);
+            border-bottom-color: var(--retro-border-dim-btm);
             box-shadow: none;
             text-shadow: none;
         }
         #controls.retro-theme .btn-toggle.inactive:hover:not(:disabled),
         #controls.retro-theme .btn-mini-toggle.inactive:hover:not(:disabled),
         #controls.retro-theme .btn-poi-row-toggle.inactive:hover:not(:disabled) {
-            background: linear-gradient(180deg, #081c08 0%, #041004 100%);
-            color: #268c26;
-            border-color: #195c19;
+            background: linear-gradient(180deg, var(--retro-btn-dis-hov-top) 0%, var(--retro-btn-dis-hov-btm) 100%);
+            color: var(--retro-dim-hover);
+            border-color: var(--retro-border-dim-hover);
         }
 
-        /* Samotné tlačidlo Štýl v režime RETRO má krikľavo zelenú farbu */
+        /* Samotné tlačidlo Štýl v režime RETRO má jasnú farbu témy */
         #controls.retro-theme #btn-style {
-            background: linear-gradient(180deg, #39ff14 0%, #00c800 100%);
-            color: #021002;
-            border: 1px solid #aaff80;
-            border-bottom-color: #006400;
+            background: linear-gradient(180deg, var(--retro-style-btn-top) 0%, var(--retro-style-btn-btm) 100%);
+            color: var(--retro-style-btn-text);
+            border: 1px solid var(--retro-style-btn-border);
+            border-bottom-color: var(--retro-style-btn-btm-border);
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55),
                         0 3px 6px rgba(0, 0, 0, 0.7),
-                        0 0 16px rgba(57, 255, 20, 0.85);
+                        0 0 16px var(--retro-glow-85);
             text-shadow: none;
         }
         #controls.retro-theme #btn-style:hover:not(:disabled) {
-            background: linear-gradient(180deg, #66ff33 0%, #1ae000 100%);
+            background: linear-gradient(180deg, var(--retro-style-hov-top) 0%, var(--retro-style-hov-btm) 100%);
             color: #000000;
-            border-color: #ccffb3;
+            border-color: var(--retro-style-hov-border);
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65),
                         0 3px 8px rgba(0, 0, 0, 0.75),
-                        0 0 22px rgba(57, 255, 20, 1);
+                        0 0 22px var(--retro-glow-100);
         }
 
         /* POI Editor rozbaľovací panel v režime RETRO */
         #controls.retro-theme .poi-editor-popover {
-            background: #040d04;
-            border-color: #00ff41;
-            box-shadow: 0 14px 38px rgba(0, 0, 0, 0.95), 0 0 18px rgba(0, 255, 65, 0.25);
-            color: #39ff14;
+            background: var(--retro-bg-panel);
+            border-color: var(--retro-border);
+            box-shadow: 0 14px 38px rgba(0, 0, 0, 0.95), 0 0 18px var(--retro-glow-25);
+            color: var(--retro-main);
         }
         #controls.retro-theme .poi-editor-header {
-            border-bottom-color: #145214;
+            border-bottom-color: var(--retro-border-dark);
         }
         #controls.retro-theme .poi-editor-title {
-            color: #39ff14;
-            text-shadow: 0 0 6px rgba(57, 255, 20, 0.5);
+            color: var(--retro-main);
+            text-shadow: 0 0 6px var(--retro-glow-45);
         }
         #controls.retro-theme .poi-add-form,
         #controls.retro-theme .poi-row-item {
-            background: #061506;
-            border-color: #145214;
+            background: var(--retro-bg-card);
+            border-color: var(--retro-border-dark);
         }
         #controls.retro-theme .poi-row-item.poi-disabled {
-            background: #030a03;
-            border-color: #0b2e0b;
+            background: var(--retro-bg-card-dis);
+            border-color: var(--retro-btn-grad-top);
         }
         #controls.retro-theme .poi-list-empty {
-            color: #1e7e1e;
+            color: var(--retro-empty);
         }
         #controls.retro-theme .poi-photo-clear-badge {
-            background: #041204;
-            color: #39ff14;
-            border-color: #39ff14;
+            background: var(--retro-bg-panel);
+            color: var(--retro-main);
+            border-color: var(--retro-main);
         }
 
 
@@ -2103,7 +2272,8 @@
                         0 3px 5px rgba(0, 0, 0, 0.5),
                         0 0 10px rgba(171, 71, 188, 0.45);
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-            width: 148px;
+            width: 132px;
+            padding: 8px 10px;
             justify-content: center;
             transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
         }
@@ -2154,7 +2324,7 @@
         }
         .summary-row-item {
             display: grid;
-            grid-template-columns: 52px 1fr 135px 62px 32px 32px;
+            grid-template-columns: 52px minmax(220px, 1fr) 135px 62px 32px 32px;
             gap: 6px;
             align-items: center;
             background: #262626;
@@ -2186,37 +2356,37 @@
         }
         #controls.retro-theme #btn-summary-editor,
         #controls.retro-theme #btn-add-summary {
-            background: linear-gradient(180deg, #0b2e0b 0%, #051605 100%);
-            color: #39ff14;
-            border: 1px solid #00ff41;
-            border-bottom-color: #0b4f0b;
-            box-shadow: inset 0 1px 0 rgba(57, 255, 20, 0.28),
+            background: linear-gradient(180deg, var(--retro-btn-grad-top) 0%, var(--retro-btn-grad-btm) 100%);
+            color: var(--retro-main);
+            border: 1px solid var(--retro-border);
+            border-bottom-color: var(--retro-btn-btm);
+            box-shadow: inset 0 1px 0 var(--retro-glow-28),
                         0 2px 5px rgba(0, 0, 0, 0.8),
-                        0 0 8px rgba(57, 255, 20, 0.32);
-            text-shadow: 0 0 6px rgba(57, 255, 20, 0.65);
+                        0 0 8px var(--retro-glow-32);
+            text-shadow: 0 0 6px var(--retro-glow-65);
         }
         #controls.retro-theme #btn-summary-editor:hover:not(:disabled),
         #controls.retro-theme #btn-add-summary:hover:not(:disabled) {
-            background: linear-gradient(180deg, #134b13 0%, #092609 100%);
-            color: #76ff03;
-            border-color: #76ff03;
-            box-shadow: inset 0 1px 0 rgba(118, 255, 3, 0.4),
+            background: linear-gradient(180deg, var(--retro-btn-hover-top) 0%, var(--retro-btn-hover-btm) 100%);
+            color: var(--retro-bright);
+            border-color: var(--retro-bright);
+            box-shadow: inset 0 1px 0 var(--retro-glow-40),
                         0 3px 6px rgba(0, 0, 0, 0.85),
-                        0 0 14px rgba(57, 255, 20, 0.6);
+                        0 0 14px var(--retro-glow-55);
         }
         #controls.retro-theme #btn-summary-editor.active {
-            background: linear-gradient(180deg, #195e19 0%, #0d360d 100%);
-            border-color: #76ff03;
-            box-shadow: 0 0 12px rgba(57, 255, 20, 0.65);
+            background: linear-gradient(180deg, var(--retro-btn-act-top) 0%, var(--retro-btn-act-btm) 100%);
+            border-color: var(--retro-bright);
+            box-shadow: 0 0 12px var(--retro-glow-65);
         }
         #controls.retro-theme .summary-add-form,
         #controls.retro-theme .summary-row-item {
-            background: #061506;
-            border-color: #145214;
+            background: var(--retro-bg-card);
+            border-color: var(--retro-border-dark);
         }
         #controls.retro-theme .summary-row-item.poi-disabled {
-            background: #030a03;
-            border-color: #0b2e0b;
+            background: var(--retro-bg-card-dis);
+            border-color: var(--retro-btn-grad-top);
         }
 
         /* =========================================================================
@@ -2245,11 +2415,12 @@
             content: "";
             position: absolute;
             inset: 0;
-            background: rgba(18, 22, 28, 0.33);
+            background: var(--glass-panel-bg, rgba(18, 22, 28, 0.33));
             backdrop-filter: blur(8px) saturate(130%);
             -webkit-backdrop-filter: blur(8px) saturate(130%);
             pointer-events: none;
             z-index: -1;
+            transition: background 0.2s ease;
         }
         #controls.glass-theme .app-version-badge {
             border-right-color: rgba(255, 255, 255, 0.25);
@@ -2479,7 +2650,7 @@
 
         /* POI a SÚHRN rozbaľovacie panely v režime SKLO */
         #controls.glass-theme .poi-editor-popover {
-            background: rgba(18, 22, 28, 0.55);
+            background: var(--glass-popover-bg, rgba(18, 22, 28, 0.55));
             backdrop-filter: blur(14px) saturate(135%);
             -webkit-backdrop-filter: blur(14px) saturate(135%);
             border-color: rgba(255, 255, 255, 0.38);
@@ -2826,6 +2997,302 @@
         #hckd-overlay.visible {
             display: block;
         }
+    
+        /* =========================================================================
+           MOBILNÉ ROZHRANIE (.is-mobile-browser) – AKORDEÓNOVÉ MENU & DOTYKOVÉ TIAHLA
+           ========================================================================= */
+        body.is-mobile-browser #controls {
+            background: #222222 !important;
+            border-bottom: 1px solid #383838 !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.75) !important;
+            padding: 8px 10px !important;
+            gap: 6px !important;
+            max-height: 78vh;
+            overflow-y: auto;
+        }
+        body.is-mobile-browser #controls::before {
+            display: none !important;
+        }
+        body.is-mobile-browser #btn-style,
+        body.is-mobile-browser #panel-color-group,
+        body.is-mobile-browser #cg-hud-scale,
+        body.is-mobile-browser #cg-hud-opacity,
+        body.is-mobile-browser #cg-font-size,
+        body.is-mobile-browser #cg-keep-buffer,
+        body.is-mobile-browser #mapy-logo-size-group,
+        body.is-mobile-browser #hud-mode-group,
+        body.is-mobile-browser #mini-hud,
+        body.is-mobile-browser #brand-banner,
+        body.is-mobile-browser #final-summary-brand-banner {
+            display: none !important;
+        }
+        body.is-mobile-browser #mob-hud-brand-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 20px;
+            min-height: 20px;
+            max-height: 20px;
+            font-size: 20px;
+            line-height: 20px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 0.6px;
+            text-align: center;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+            user-select: none;
+            pointer-events: none;
+        }
+        @media (orientation: portrait) {
+            body.is-mobile-browser #profile-hud {
+                display: none !important;
+            }
+        }
+        body.is-mobile-browser #btn-toggle-profile,
+        body.is-mobile-browser #btn-toggle-hud,
+        body.is-mobile-browser #btn-hud-mode,
+        body.is-mobile-browser #btn-activity-indicator,
+        body.is-mobile-browser #btn-grad-config {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            height: 36px !important;
+            box-sizing: border-box !important;
+        }
+        .mob-top-bar {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #333;
+        }
+        .mob-top-row-1, .mob-top-row-2 {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            width: 100%;
+        }
+        .mob-top-row-1-btns {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .mob-top-row-2 button {
+            flex: 1 1 0;
+            justify-content: center !important;
+            min-width: 0;
+        }
+        .mob-top-bar button {
+            height: 34px;
+            padding: 0 10px;
+            font-size: 11.5px;
+        }
+        .mob-tabs-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+            width: 100%;
+        }
+        .mob-tab-btn {
+            background: linear-gradient(180deg, #333842 0%, #22262e 100%) !important;
+            border: 1px solid #485260 !important;
+            color: #e0e0e0 !important;
+            height: 36px !important;
+            padding: 0 10px !important;
+            font-size: 11.5px !important;
+            font-weight: 800 !important;
+            justify-content: space-between !important;
+            border-radius: 6px !important;
+        }
+        .mob-tab-btn.active {
+            background: linear-gradient(180deg, #1976d2 0%, #0d47a1 100%) !important;
+            border-color: #64b5f6 !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 10px rgba(33, 150, 243, 0.45) !important;
+        }
+        .mob-panel-drawer {
+            display: none;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px;
+            background: #1a1a1a;
+            border: 1px solid #383838;
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .mob-panel-drawer.open {
+            display: flex;
+        }
+        body.is-mobile-browser .control-group {
+            width: calc(50% - 5px) !important;
+            min-width: 135px;
+            flex-grow: 1;
+        }
+        body.is-mobile-browser #cg-trim,
+        body.is-mobile-browser #cg-hud-items {
+            width: 100% !important;
+            flex-basis: 100% !important;
+        }
+        body.is-mobile-browser .hud-items-toggles {
+            display: grid !important;
+            grid-template-columns: repeat(5, 1fr) !important;
+            gap: 5px !important;
+            width: 100% !important;
+        }
+        body.is-mobile-browser .hud-items-toggles .btn-mini-toggle {
+            width: 100% !important;
+            justify-content: center !important;
+            padding: 4px 2px !important;
+        }
+        body.is-mobile-browser .control-group select,
+        body.is-mobile-browser .control-group input[type="number"],
+        body.is-mobile-browser .control-group input[type="text"],
+        body.is-mobile-browser .control-group input[type="password"],
+        body.is-mobile-browser .control-group input[type="file"] {
+            width: 100% !important;
+            height: 36px !important;
+            font-size: 13px !important;
+            box-sizing: border-box;
+        }
+        /* Dotykové posuvníky (väčší palec + tlačidlá - / +) */
+        .mob-slider-wrap {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            width: 100%;
+        }
+        .mob-step-btn {
+            width: 32px !important;
+            min-width: 32px !important;
+            height: 32px !important;
+            padding: 0 !important;
+            justify-content: center !important;
+            background: #37474f !important;
+            border: 1px solid #546e7a !important;
+            border-radius: 6px !important;
+            font-size: 16px !important;
+            font-weight: 900 !important;
+            color: #fff !important;
+            flex-shrink: 0;
+        }
+        body.is-mobile-browser input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100% !important;
+            height: 34px !important;
+            background: transparent !important;
+            border: none !important;
+            touch-action: pan-y;
+        }
+        body.is-mobile-browser input[type="range"]::-webkit-slider-runnable-track {
+            height: 8px;
+            border-radius: 4px;
+            background: #444;
+            border: 1px solid #666;
+        }
+        body.is-mobile-browser input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            margin-top: -10px;
+            background: #00e5ff;
+            border: 2px solid #ffffff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.65);
+        }
+        /* Fixné veľkosti a neprekrývajúce sa pozície HUD a pop-up okien v mobile */
+        body.is-mobile-browser .poi-editor-popover {
+            position: fixed !important;
+            top: 8px !important;
+            left: 2.5vw !important;
+            width: 95vw !important;
+            max-width: 95vw !important;
+            max-height: 88vh !important;
+            overflow-y: auto !important;
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch;
+            box-sizing: border-box !important;
+        }
+        body.is-mobile-browser .poi-add-form,
+        body.is-mobile-browser .summary-add-form,
+        body.is-mobile-browser .grad-config-grid {
+            grid-template-columns: 1fr 1fr !important;
+        }
+        body.is-mobile-browser .poi-add-form > .poi-field-col:nth-child(2),
+        body.is-mobile-browser .summary-add-form > .poi-field-col:nth-child(1) {
+            grid-column: 1 / -1 !important;
+        }
+        body.is-mobile-browser #poi-input-name,
+        body.is-mobile-browser #summary-input-name {
+            width: 100% !important;
+            min-width: 240px !important;
+            height: 36px !important;
+            font-size: 13.5px !important;
+            padding: 5px 8px !important;
+            box-sizing: border-box !important;
+        }
+        body.is-mobile-browser .poi-list-wrap {
+            overflow-x: auto !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch;
+            max-height: 48vh !important;
+            padding-bottom: 6px !important;
+        }
+        body.is-mobile-browser .poi-row-item {
+            grid-template-columns: 52px 74px minmax(240px, 1fr) 132px 52px 34px 34px 34px !important;
+            width: max-content !important;
+            min-width: 100% !important;
+        }
+        body.is-mobile-browser .summary-row-item {
+            grid-template-columns: 52px minmax(250px, 1fr) 138px 62px 34px 34px !important;
+            width: max-content !important;
+            min-width: 100% !important;
+        }
+        body.is-mobile-browser .poi-row-item input,
+        body.is-mobile-browser .poi-row-item select,
+        body.is-mobile-browser .summary-row-item input,
+        body.is-mobile-browser .summary-row-item select {
+            height: 34px !important;
+            font-size: 13px !important;
+        }
+        body.is-mobile-browser .poi-row-item input[type="text"] {
+            min-width: 240px !important;
+            padding: 4px 8px !important;
+        }
+        body.is-mobile-browser .summary-row-item input[type="text"] {
+            min-width: 250px !important;
+            padding: 4px 8px !important;
+        }
+        body.is-mobile-browser #profile-hud {
+            top: 10px !important;
+            right: 10px !important;
+            min-width: 240px !important;
+            max-width: 62vw !important;
+        }
+        body.is-mobile-browser #hud {
+            bottom: 36px !important;
+            right: 10px !important;
+            min-width: 175px !important;
+        }
+        body.is-mobile-browser #mini-hud {
+            bottom: 36px !important;
+            max-width: 96vw !important;
+            overflow-x: auto;
+        }
+        body.is-mobile-browser #mapy-attribution {
+            top: auto !important;
+            bottom: 10px !important;
+            left: 10px !important;
+            transform: none !important;
+            transform-origin: bottom left;
+        }
+
     </style>
 </head>
 <body>
@@ -2836,7 +3303,7 @@
         <div class="controls-row">
             <div class="app-version-badge">
                 <span class="app-version-title">V3SOFT <span class="brand-carto">Carto</span><span class="brand-linka">Linka</span></span>
-                <span class="app-version-num">v1.073</span>
+                <span class="app-version-num">v1.111</span>
             </div>
             <button id="btn-info" type="button" title="Informácie o aplikácii">ℹ️ INFO</button>
             <button id="btn-help" type="button" title="Zobraziť podrobný návod a vysvetlenie všetkých nastavení aplikácie">❓ HELP</button>
@@ -2898,7 +3365,7 @@
             <div class="control-group poi-dropdown-wrapper group-disabled" id="activity-type-group">
                 <label>Aktivita</label>
                 <button id="btn-activity-indicator" type="button" title="Indikátor aktivity (automatická detekcia zo súboru). Kliknutím môžete ručne nastaviť aktivitu (Turistika / Beh / MTB / Road / Moto)." disabled>
-                    <span class="act-ind-svg" id="activity-indicator-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 2c1.93 0 3.68.69 5.05 1.83L12.88 10c-.27-.11-.57-.18-.88-.18s-.61.07-.88.18L6.95 5.83C8.32 4.69 10.07 4 12 4zm-7.93 7h5.95c.05.34.17.66.35.95l-4.21 4.21C4.88 14.99 4.19 13.57 4.07 11zm7.93 9c-1.93 0-3.68-.69-5.05-1.83l4.17-4.17c.27.11.57.18.88.18s.61-.07.88-.18l4.17 4.17C15.68 19.31 13.93 20 12 20zm5.86-3.84l-4.21-4.21c.18-.29.3-.61.35-.95h5.95c-.12 2.57-.81 3.99-2.09 5.16zm.12-7.16h-5.95c-.05-.34-.17-.66-.35-.95l4.21-4.21C19.12 7.01 19.81 8.43 19.98 10zM6.14 5.84l4.21 4.21c-.18.29-.3.61-.35.95H4.05c.17-1.57.86-2.99 2.09-4.16z"/></svg></span>
+                    <span class="act-ind-svg" id="activity-indicator-icon"><svg viewBox="0 0 24 24"><path d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z"/></svg></span>
                     <span id="activity-indicator-label">MTB</span>
                 </button>
                 <div id="activity-menu-panel" class="poi-editor-popover">
@@ -2911,24 +3378,24 @@
                     </div>
                     <div class="activity-options-list">
                         <button type="button" class="activity-opt-btn" data-act="turistika">
-                            <span class="activity-opt-left"><span class="act-ind-svg"><svg viewBox="0 0 24 24"><path d="M19.5 16h-2l-3.2-3.5L13 8V5H6v11c0 1.66 1.34 3 3 3h11.5c.83 0 1.5-.67 1.5-1.5S20.83 16 19.5 16zM8 7h3v2H8V7zm0 4h3.5l1.2 1.5H8V11zm11 6H9c-.55 0-1-.45-1-1v-1h11v2z"/></svg></span><span>Turistika</span></span>
-                            <span class="activity-opt-badge">Topánka</span>
+                            <span class="activity-opt-left"><span class="act-ind-svg"><svg viewBox="0 0 24 24"><path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM17.5 10.78c-1.23-.37-2.22-1.17-2.8-2.18l-1-1.6c-.41-.65-1.11-1-1.84-1-.78 0-1.59.5-1.78 1.44S7 23 7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3c1 1.15 2.41 2.01 4 2.34V23H19V9h-1.5v1.78zM7.43 13.13l-2.12-.41c-.54-.11-.9-.63-.79-1.17l.76-3.93c.21-1.08 1.26-1.79 2.34-1.58l1.16.23-1.35 6.86z"/></svg></span><span>Turistika</span></span>
+                            <span class="activity-opt-badge">Turista</span>
                         </button>
                         <button type="button" class="activity-opt-btn" data-act="beh">
-                            <span class="activity-opt-left"><span class="act-ind-svg"><svg viewBox="0 0 24 24"><path d="M19.5 16h-2l-3.2-3.5L13 8V5H6v11c0 1.66 1.34 3 3 3h11.5c.83 0 1.5-.67 1.5-1.5S20.83 16 19.5 16zM8 7h3v2H8V7zm0 4h3.5l1.2 1.5H8V11zm11 6H9c-.55 0-1-.45-1-1v-1h11v2z"/></svg></span><span>Beh</span></span>
-                            <span class="activity-opt-badge">Topánka</span>
+                            <span class="activity-opt-left"><span class="act-ind-svg"><svg viewBox="0 0 24 24"><path d="M13.49 5.48c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-3.6 13.9l1-4.4 2.1 2v6h2v-7.5l-2.1-2 .6-3c1.3 1.5 3.3 2.5 5.5 2.5v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1l-5.2 2.2v4.7h2v-3.4l1.8-.7-1.6 8.1-4.9-1-.4 2 7 1.4z"/></svg></span><span>Beh</span></span>
+                            <span class="activity-opt-badge">Bežec</span>
                         </button>
                         <button type="button" class="activity-opt-btn selected" data-act="mtb">
-                            <span class="activity-opt-left"><span class="act-ind-svg"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 2c1.93 0 3.68.69 5.05 1.83L12.88 10c-.27-.11-.57-.18-.88-.18s-.61.07-.88.18L6.95 5.83C8.32 4.69 10.07 4 12 4zm-7.93 7h5.95c.05.34.17.66.35.95l-4.21 4.21C4.88 14.99 4.19 13.57 4.07 11zm7.93 9c-1.93 0-3.68-.69-5.05-1.83l4.17-4.17c.27.11.57.18.88.18s.61-.07.88-.18l4.17 4.17C15.68 19.31 13.93 20 12 20zm5.86-3.84l-4.21-4.21c.18-.29.3-.61.35-.95h5.95c-.12 2.57-.81 3.99-2.09 5.16zm.12-7.16h-5.95c-.05-.34-.17-.66-.35-.95l4.21-4.21C19.12 7.01 19.81 8.43 19.98 10zM6.14 5.84l4.21 4.21c-.18.29-.3.61-.35.95H4.05c.17-1.57.86-2.99 2.09-4.16z"/></svg></span><span>MTB</span></span>
-                            <span class="activity-opt-badge">Koleso</span>
+                            <span class="activity-opt-left"><span class="act-ind-svg"><svg viewBox="0 0 24 24"><path d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z"/></svg></span><span>MTB</span></span>
+                            <span class="activity-opt-badge">Kopec</span>
                         </button>
                         <button type="button" class="activity-opt-btn" data-act="road">
-                            <span class="activity-opt-left"><span class="act-ind-svg"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 2c1.93 0 3.68.69 5.05 1.83L12.88 10c-.27-.11-.57-.18-.88-.18s-.61.07-.88.18L6.95 5.83C8.32 4.69 10.07 4 12 4zm-7.93 7h5.95c.05.34.17.66.35.95l-4.21 4.21C4.88 14.99 4.19 13.57 4.07 11zm7.93 9c-1.93 0-3.68-.69-5.05-1.83l4.17-4.17c.27.11.57.18.88.18s.61-.07.88-.18l4.17 4.17C15.68 19.31 13.93 20 12 20zm5.86-3.84l-4.21-4.21c.18-.29.3-.61.35-.95h5.95c-.12 2.57-.81 3.99-2.09 5.16zm.12-7.16h-5.95c-.05-.34-.17-.66-.35-.95l4.21-4.21C19.12 7.01 19.81 8.43 19.98 10zM6.14 5.84l4.21 4.21c-.18.29-.3.61-.35.95H4.05c.17-1.57.86-2.99 2.09-4.16z"/></svg></span><span>Road</span></span>
-                            <span class="activity-opt-badge">Koleso</span>
+                            <span class="activity-opt-left"><span class="act-ind-svg"><svg viewBox="0 0 24 24"><path d="M18.4 4H13v3h-2V4H5.6L2 20h9v-4h2v4h9L18.4 4zM11 13v-4h2v4h-2z"/></svg></span><span>Road</span></span>
+                            <span class="activity-opt-badge">Cesta</span>
                         </button>
                         <button type="button" class="activity-opt-btn" data-act="moto">
-                            <span class="activity-opt-left"><span class="act-ind-svg"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 2c1.93 0 3.68.69 5.05 1.83L12.88 10c-.27-.11-.57-.18-.88-.18s-.61.07-.88.18L6.95 5.83C8.32 4.69 10.07 4 12 4zm-7.93 7h5.95c.05.34.17.66.35.95l-4.21 4.21C4.88 14.99 4.19 13.57 4.07 11zm7.93 9c-1.93 0-3.68-.69-5.05-1.83l4.17-4.17c.27.11.57.18.88.18s.61-.07.88-.18l4.17 4.17C15.68 19.31 13.93 20 12 20zm5.86-3.84l-4.21-4.21c.18-.29.3-.61.35-.95h5.95c-.12 2.57-.81 3.99-2.09 5.16zm.12-7.16h-5.95c-.05-.34-.17-.66-.35-.95l4.21-4.21C19.12 7.01 19.81 8.43 19.98 10zM6.14 5.84l4.21 4.21c-.18.29-.3.61-.35.95H4.05c.17-1.57.86-2.99 2.09-4.16z"/></svg></span><span>Moto</span></span>
-                            <span class="activity-opt-badge">Koleso</span>
+                            <span class="activity-opt-left"><span class="act-ind-svg"><svg viewBox="0 0 24 24"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.08 3.11H5.77L6.85 7zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg></span><span>Moto</span></span>
+                            <span class="activity-opt-badge">Auto</span>
                         </button>
                     </div>
                 </div>
@@ -2990,7 +3457,7 @@
                                 <input type="number" id="cfg-slope-max-sat" step="0.5" min="0" max="50" value="6" title="Hodnota stúpania v %, pri ktorej farba dosiahne plnú sýtosť MAX (napr. +6 % alebo +12 %)">
                             </div>
                             <div class="grad-row-actions">
-                                <button type="button" class="btn-grad-save-default" data-grad-row="slope" data-tooltip="Uloží do pamäte aplikácie nastavené hodnoty ako predvolené. Teda hodnoty ku ktorým sa dá vrátiť stlačením tlačidla predvolené. Cez tlačidlo RESET (ani Továrenské nastavenia, ani potvrdiť a vymazať) sa tieto užívateľom nastavené hodnoty nezmenia." title="Uloží do pamäte aplikácie nastavené hodnoty ako predvolené. Teda hodnoty ku ktorým sa dá vrátiť stlačením tlačidla predvolené. Cez tlačidlo RESET (ani Továrenské nastavenia, ani potvrdiť a vymazať) sa tieto užívateľom nastavené hodnoty nezmenia.">ULOŽIŤ</button>
+                                <button type="button" class="btn-grad-save-default" data-grad-row="slope" data-tooltip="Uloží do pamäte aplikácie nastavené hodnoty ako predvolené. Teda hodnoty ku ktorým sa dá vrátiť stlačením tlačidla predvolené. Cez tlačidlo RESET (ani Továrenské nastavenia, ani potvrdiť a vymazať) sa tieto užívateľom nastavené hodnoty nezmenia.">ULOŽIŤ</button>
                                 <button type="button" class="btn-grad-row-reset" data-grad-row="slope" title="Vrátiť tento riadok (Sklon) na predvolené hodnoty pre aktuálnu aktivitu">↺</button>
                             </div>
                         </div>
@@ -3018,7 +3485,7 @@
                                 <input type="number" id="cfg-speed-max-sat" step="1" min="1" max="150" value="20" title="Rýchlosť v km/h, nad ktorou farba dosiahne plnú sýtosť MAX (až po max. rýchlosť jazdy)">
                             </div>
                             <div class="grad-row-actions">
-                                <button type="button" class="btn-grad-save-default" data-grad-row="speed" data-tooltip="Uloží do pamäte aplikácie nastavené hodnoty ako predvolené. Teda hodnoty ku ktorým sa dá vrátiť stlačením tlačidla predvolené. Cez tlačidlo RESET (ani Továrenské nastavenia, ani potvrdiť a vymazať) sa tieto užívateľom nastavené hodnoty nezmenia." title="Uloží do pamäte aplikácie nastavené hodnoty ako predvolené. Teda hodnoty ku ktorým sa dá vrátiť stlačením tlačidla predvolené. Cez tlačidlo RESET (ani Továrenské nastavenia, ani potvrdiť a vymazať) sa tieto užívateľom nastavené hodnoty nezmenia.">ULOŽIŤ</button>
+                                <button type="button" class="btn-grad-save-default" data-grad-row="speed" data-tooltip="Uloží do pamäte aplikácie nastavené hodnoty ako predvolené. Teda hodnoty ku ktorým sa dá vrátiť stlačením tlačidla predvolené. Cez tlačidlo RESET (ani Továrenské nastavenia, ani potvrdiť a vymazať) sa tieto užívateľom nastavené hodnoty nezmenia.">ULOŽIŤ</button>
                                 <button type="button" class="btn-grad-row-reset" data-grad-row="speed" title="Vrátiť tento riadok (Rýchlosť) na predvolené hodnoty pre aktuálnu aktivitu">↺</button>
                             </div>
                         </div>
@@ -3046,7 +3513,7 @@
                                 <input type="text" id="cfg-pace-max-sat" value="16" placeholder="16" title="Vyššie číslo / pomalší pohyb do kopca v min/km (napr. 16 alebo 6:45), nad ktorým farba dosiahne plnú sýtosť MAX">
                             </div>
                             <div class="grad-row-actions">
-                                <button type="button" class="btn-grad-save-default" data-grad-row="pace" data-tooltip="Uloží do pamäte aplikácie nastavené hodnoty ako predvolené. Teda hodnoty ku ktorým sa dá vrátiť stlačením tlačidla predvolené. Cez tlačidlo RESET (ani Továrenské nastavenia, ani potvrdiť a vymazať) sa tieto užívateľom nastavené hodnoty nezmenia." title="Uloží do pamäte aplikácie nastavené hodnoty ako predvolené. Teda hodnoty ku ktorým sa dá vrátiť stlačením tlačidla predvolené. Cez tlačidlo RESET (ani Továrenské nastavenia, ani potvrdiť a vymazať) sa tieto užívateľom nastavené hodnoty nezmenia.">ULOŽIŤ</button>
+                                <button type="button" class="btn-grad-save-default" data-grad-row="pace" data-tooltip="Uloží do pamäte aplikácie nastavené hodnoty ako predvolené. Teda hodnoty ku ktorým sa dá vrátiť stlačením tlačidla predvolené. Cez tlačidlo RESET (ani Továrenské nastavenia, ani potvrdiť a vymazať) sa tieto užívateľom nastavené hodnoty nezmenia.">ULOŽIŤ</button>
                                 <button type="button" class="btn-grad-row-reset" data-grad-row="pace" title="Vrátiť tento riadok (Tempo) na predvolené hodnoty pre aktuálnu aktivitu">↺</button>
                             </div>
                         </div>
@@ -3074,7 +3541,7 @@
                                 <input type="number" id="cfg-hr-max-sat" step="1" min="50" max="250" value="170" title="Srdcový tep v hr/min (bpm), nad ktorým farba dosiahne plnú sýtosť MAX">
                             </div>
                             <div class="grad-row-actions">
-                                <button type="button" class="btn-grad-save-default" data-grad-row="hr" data-tooltip="Uloží do pamäte aplikácie nastavené hodnoty ako predvolené. Teda hodnoty ku ktorým sa dá vrátiť stlačením tlačidla predvolené. Cez tlačidlo RESET (ani Továrenské nastavenia, ani potvrdiť a vymazať) sa tieto užívateľom nastavené hodnoty nezmenia." title="Uloží do pamäte aplikácie nastavené hodnoty ako predvolené. Teda hodnoty ku ktorým sa dá vrátiť stlačením tlačidla predvolené. Cez tlačidlo RESET (ani Továrenské nastavenia, ani potvrdiť a vymazať) sa tieto užívateľom nastavené hodnoty nezmenia.">ULOŽIŤ</button>
+                                <button type="button" class="btn-grad-save-default" data-grad-row="hr" data-tooltip="Uloží do pamäte aplikácie nastavené hodnoty ako predvolené. Teda hodnoty ku ktorým sa dá vrátiť stlačením tlačidla predvolené. Cez tlačidlo RESET (ani Továrenské nastavenia, ani potvrdiť a vymazať) sa tieto užívateľom nastavené hodnoty nezmenia.">ULOŽIŤ</button>
                                 <button type="button" class="btn-grad-row-reset" data-grad-row="hr" title="Vrátiť tento riadok (Tep) na predvolené hodnoty pre aktuálnu aktivitu">↺</button>
                             </div>
                         </div>
@@ -3102,7 +3569,7 @@
                                 <input type="number" id="cfg-pwr-max-sat" step="5" min="10" max="2500" value="300" title="Výkon vo wattoch (W), nad ktorým farba dosiahne plnú sýtosť MAX">
                             </div>
                             <div class="grad-row-actions">
-                                <button type="button" class="btn-grad-save-default" data-grad-row="pwr" data-tooltip="Uloží do pamäte aplikácie nastavené hodnoty ako predvolené. Teda hodnoty ku ktorým sa dá vrátiť stlačením tlačidla predvolené. Cez tlačidlo RESET (ani Továrenské nastavenia, ani potvrdiť a vymazať) sa tieto užívateľom nastavené hodnoty nezmenia." title="Uloží do pamäte aplikácie nastavené hodnoty ako predvolené. Teda hodnoty ku ktorým sa dá vrátiť stlačením tlačidla predvolené. Cez tlačidlo RESET (ani Továrenské nastavenia, ani potvrdiť a vymazať) sa tieto užívateľom nastavené hodnoty nezmenia.">ULOŽIŤ</button>
+                                <button type="button" class="btn-grad-save-default" data-grad-row="pwr" data-tooltip="Uloží do pamäte aplikácie nastavené hodnoty ako predvolené. Teda hodnoty ku ktorým sa dá vrátiť stlačením tlačidla predvolené. Cez tlačidlo RESET (ani Továrenské nastavenia, ani potvrdiť a vymazať) sa tieto užívateľom nastavené hodnoty nezmenia.">ULOŽIŤ</button>
                                 <button type="button" class="btn-grad-row-reset" data-grad-row="pwr" title="Vrátiť tento riadok (Výkon) na predvolené hodnoty pre aktuálnu aktivitu">↺</button>
                             </div>
                         </div>
@@ -3217,7 +3684,7 @@
                 <label>Typ okna štatistiky</label>
                 <button id="btn-hud-mode" type="button" title="Prepínať medzi bočným oknom KLASIK HUD a spodným riadkom MINI HUD">🎛️ KLASIK HUD</button>
             </div>
-            <div class="control-group">
+            <div class="control-group" id="cg-hud-items">
                 <label>Zobrazené údaje</label>
                 <div class="hud-items-toggles">
                     <button type="button" id="toggle-item-dist" class="btn-mini-toggle" title="Zobraziť / skryť vzdialenosť">KM</button>
@@ -3386,8 +3853,26 @@
             </div>
             <div class="controls-row-right">
                 <button id="btn-style" type="button" title="Prepínať vzhľad ovládacieho panela (SKLO / NORMAL / RETRO)">Štýl</button>
-                <button id="btn-play" disabled>▶ Spustiť</button>
-                <button id="btn-fullscreen" disabled title="Prepne na celú obrazovku a po 5s potichu spustí animáciu">⛶ Fullscreen (5s štart)</button>
+                <div class="poi-dropdown-wrapper" id="panel-color-group">
+                    <button id="btn-panel-color" type="button" title="Zmeniť farbu ovládacieho panela pre aktuálny štýl (SKLO / NORMAL / RETRO)">
+                        <span class="panel-color-dot" id="panel-color-dot"></span>
+                        <span>Farba</span>
+                    </button>
+                    <div id="panel-color-panel" class="poi-editor-popover">
+                        <div class="poi-editor-header">
+                            <span class="poi-editor-title" id="panel-color-title">🎨 Farba panela (SKLO)</span>
+                            <div class="poi-editor-actions">
+                                <button type="button" id="btn-close-panel-color" class="btn-poi-small" title="Zavrieť výber farby">✕</button>
+                            </div>
+                        </div>
+                        <div class="panel-color-picker-row">
+                            <input type="color" id="panel-theme-color-input" value="#12161c" title="Vybrať farbu pre aktuálny štýl ovládacieho panela">
+                            <button type="button" id="btn-reset-panel-color" class="btn-poi-small" title="Vrátiť pôvodnú predvolenú farbu pre aktuálny štýl">↺ Pôvodné</button>
+                        </div>
+                    </div>
+                </div>
+                <button id="btn-play" disabled title="Okamžite spustiť animáciu trasy">PLAY</button>
+                <button id="btn-fullscreen" disabled title="Prepne na celú obrazovku a po 5s potichu spustí animáciu"><span class="rec-circle-icon" aria-hidden="true"></span><span>REC (5s)</span></button>
             </div>
         </div>
     </div>
@@ -3410,6 +3895,7 @@
             Map data ©2026 Google
         </div>
         <div id="hud">
+            <div id="mob-hud-brand-logo">CartoLinka</div>
             <!-- Vzdialenosť (Pravítko) -->
             <div class="hud-row" id="hud-dist-row">
                 <div class="hud-item-grid">
@@ -3664,7 +4150,7 @@
 <div id="help-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="help-modal-title">
     <div class="help-modal-box">
         <div class="help-modal-header">
-            <span class="help-modal-title" id="help-modal-title">❓ Návod na používanie – V3SOFT CartoLinka v1.073</span>
+            <span class="help-modal-title" id="help-modal-title">❓ Návod na používanie – V3SOFT CartoLinka v1.111</span>
             <button type="button" id="btn-close-help" title="Zavrieť nápovedu (Esc)">✕ Zavrieť</button>
         </div>
         <div class="help-modal-body">
@@ -3857,11 +4343,11 @@
                     <br>• <em>Potvrdiť a vymazať:</em> Bezpečne vymaže uloženú históriu trás, bodov záujmu a fotografií pre uvoľnenie pamäte (váš uložený <em>Mapy.com API Kľúč</em> a vlastné nastavenia ovládacieho panela zostanú zachované).
                 </div>
                 <div class="help-item">
-                    <span class="help-item-title">▶ Spustiť:</span>
+                    <span class="help-item-title">PLAY:</span>
                     Okamžite vyčistí náhľad a spustí plynulú animáciu vykresľovania trasy priamo v okne prehliadača.
                 </div>
                 <div class="help-item">
-                    <span class="help-item-title">⛶ Fullscreen (5s štart):</span>
+                    <span class="help-item-title">⚪ REC (5s):</span>
                     Skryje horný ovládací panel, prepne mapu na celú obrazovku, nastaví počiatočný pohľad kamery a <strong>po 5 sekundách tichého odpočtu na pozadí</strong> (bez rušivých čísel na obrazovke) automaticky spustí animáciu. Ideálne pre čisté nahrávanie obrazovky (OBS Studio, Nvidia ShadowPlay). Stlačením klávesu <code>Esc</code> sa kedykoľvek vrátite späť do menu.
                 </div>
             </div>
@@ -3880,7 +4366,7 @@
             <div class="info-line"><strong>Koncept a dizajn:</strong> Vlado Troják</div>
             <div class="info-line"><strong>Kód a vývoj:</strong> AI Gemini Argon</div>
             <div class="info-line"><strong>Rok výroby:</strong> 11/2026</div>
-            <div class="info-line"><strong>Verzia:</strong> v1.073</div>
+            <div class="info-line"><strong>Verzia:</strong> <span id="info-version-val">v1.111</span></div>
             <div class="info-freeware">Táto aplikácia je freeware.</div>
             <div class="info-yt-label">Tu môžeš sledovať moje videá:</div>
             <a href="https://www.youtube.com/@VladoTrojak" target="_blank" rel="noopener noreferrer" class="btn-yt-link">
@@ -3927,6 +4413,41 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
+    // =========================================================================
+    // 0. DETEKCIA MOBILNÉHO PREHLIADAČA A OZNAČENIE VERZIE (SUFFIX 'M')
+    // =========================================================================
+    const IS_MOBILE_BROWSER = (function () {
+        if (navigator.userAgentData && typeof navigator.userAgentData.mobile === 'boolean') {
+            if (navigator.userAgentData.mobile) return true;
+        }
+        const ua = navigator.userAgent || navigator.vendor || window.opera || '';
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|Tablet/i.test(ua)) {
+            return true;
+        }
+        // Detekcia pre iPadOS 13+ (hlási sa ako Macintosh, ale má dotykový displej)
+        if (/Macintosh/i.test(ua) && navigator.maxTouchPoints && navigator.maxTouchPoints > 1) {
+            return true;
+        }
+        return false;
+    })();
+
+    if (IS_MOBILE_BROWSER) {
+        document.body.classList.add('is-mobile-browser');
+        document.title = document.title.replace(/v(\d+\.\d+)/, 'v$1M');
+        const verBadgeEl = document.querySelector('.app-version-num');
+        if (verBadgeEl) {
+            verBadgeEl.textContent = verBadgeEl.textContent.replace(/v(\d+\.\d+)/, 'v$1M');
+        }
+        const helpTitleEl = document.getElementById('help-modal-title');
+        if (helpTitleEl) {
+            helpTitleEl.textContent = helpTitleEl.textContent.replace(/v(\d+\.\d+)/, 'v$1M');
+        }
+        const infoVerEl = document.getElementById('info-version-val');
+        if (infoVerEl) {
+            infoVerEl.textContent = infoVerEl.textContent.replace(/v(\d+\.\d+)/, 'v$1M');
+        }
+    }
+
     // =========================================================================
     // 1. EXTRÉMNY BUFFER DLAŽDÍC V JADRE LEAFLETU + ASYNCHRÓNNE DEKÓDOVANIE
     // =========================================================================
@@ -7351,7 +7872,7 @@
     }
 
     function makeEditorPopoverDraggable(panel) {
-        if (!panel) return;
+        if (!panel || IS_MOBILE_BROWSER) return;
         let isDragging = false;
         let startMouseX = 0;
         let startMouseY = 0;
@@ -7421,6 +7942,13 @@
             if (btnActivityIndicatorEl) btnActivityIndicatorEl.classList.remove('active');
             resetEditorPopoverPosition(activityMenuPanelEl);
         }
+        const pColPanel = document.getElementById('panel-color-panel');
+        const pColBtn = document.getElementById('btn-panel-color');
+        if (pColPanel) {
+            pColPanel.classList.remove('open');
+            if (pColBtn) pColBtn.classList.remove('active');
+            resetEditorPopoverPosition(pColPanel);
+        }
         const isOpen = poiEditorPanel.classList.toggle('open');
         resetEditorPopoverPosition(poiEditorPanel);
         btnPoiEditor.classList.toggle('active', isOpen);
@@ -7474,15 +8002,20 @@
     // =========================================================================
     // AUTOMATICKÁ DETEKCIA A RUČNÉ NASTAVENIE AKTIVITY (TURISTIKA / BEH / MTB / ROAD / MOTO)
     // =========================================================================
-    const ACTIVITY_SHOE_SVG = '<svg viewBox="0 0 24 24"><path d="M19.5 16h-2l-3.2-3.5L13 8V5H6v11c0 1.66 1.34 3 3 3h11.5c.83 0 1.5-.67 1.5-1.5S20.83 16 19.5 16zM8 7h3v2H8V7zm0 4h3.5l1.2 1.5H8V11zm11 6H9c-.55 0-1-.45-1-1v-1h11v2z"/></svg>';
-    const ACTIVITY_WHEEL_SVG = '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 2c1.93 0 3.68.69 5.05 1.83L12.88 10c-.27-.11-.57-.18-.88-.18s-.61.07-.88.18L6.95 5.83C8.32 4.69 10.07 4 12 4zm-7.93 7h5.95c.05.34.17.66.35.95l-4.21 4.21C4.88 14.99 4.19 13.57 4.07 11zm7.93 9c-1.93 0-3.68-.69-5.05-1.83l4.17-4.17c.27.11.57.18.88.18s.61-.07.88-.18l4.17 4.17C15.68 19.31 13.93 20 12 20zm5.86-3.84l-4.21-4.21c.18-.29.3-.61.35-.95h5.95c-.12 2.57-.81 3.99-2.09 5.16zm.12-7.16h-5.95c-.05-.34-.17-.66-.35-.95l4.21-4.21C19.12 7.01 19.81 8.43 19.98 10zM6.14 5.84l4.21 4.21c-.18.29-.3.61-.35.95H4.05c.17-1.57.86-2.99 2.09-4.16z"/></svg>';
+    const ACTIVITY_ICONS_SVG = {
+        turistika: '<svg viewBox="0 0 24 24"><path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM17.5 10.78c-1.23-.37-2.22-1.17-2.8-2.18l-1-1.6c-.41-.65-1.11-1-1.84-1-.78 0-1.59.5-1.78 1.44S7 23 7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3c1 1.15 2.41 2.01 4 2.34V23H19V9h-1.5v1.78zM7.43 13.13l-2.12-.41c-.54-.11-.9-.63-.79-1.17l.76-3.93c.21-1.08 1.26-1.79 2.34-1.58l1.16.23-1.35 6.86z"/></svg>',
+        beh:       '<svg viewBox="0 0 24 24"><path d="M13.49 5.48c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-3.6 13.9l1-4.4 2.1 2v6h2v-7.5l-2.1-2 .6-3c1.3 1.5 3.3 2.5 5.5 2.5v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1l-5.2 2.2v4.7h2v-3.4l1.8-.7-1.6 8.1-4.9-1-.4 2 7 1.4z"/></svg>',
+        mtb:       '<svg viewBox="0 0 24 24"><path d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z"/></svg>',
+        road:      '<svg viewBox="0 0 24 24"><path d="M18.4 4H13v3h-2V4H5.6L2 20h9v-4h2v4h9L18.4 4zM11 13v-4h2v4h-2z"/></svg>',
+        moto:      '<svg viewBox="0 0 24 24"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.08 3.11H5.77L6.85 7zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>'
+    };
 
     const ACTIVITY_META = {
-        turistika: { label: 'Turistika', isShoe: true },
-        beh:       { label: 'Beh',       isShoe: true },
-        mtb:       { label: 'MTB',       isShoe: false },
-        road:      { label: 'Road',      isShoe: false },
-        moto:      { label: 'Moto',      isShoe: false }
+        turistika: { label: 'Turistika', badge: 'Turista', isShoe: true,  svg: ACTIVITY_ICONS_SVG.turistika },
+        beh:       { label: 'Beh',       badge: 'Bežec',   isShoe: true,  svg: ACTIVITY_ICONS_SVG.beh },
+        mtb:       { label: 'MTB',       badge: 'Kopec',   isShoe: false, svg: ACTIVITY_ICONS_SVG.mtb },
+        road:      { label: 'Road',      badge: 'Cesta',   isShoe: false, svg: ACTIVITY_ICONS_SVG.road },
+        moto:      { label: 'Moto',      badge: 'Auto',    isShoe: false, svg: ACTIVITY_ICONS_SVG.moto }
     };
 
     let currentTrackActivity = 'mtb';
@@ -7502,14 +8035,14 @@
     function updateActivityIndicatorUI() {
         const meta = ACTIVITY_META[currentTrackActivity] || ACTIVITY_META.mtb;
         if (activityIndicatorIconEl) {
-            activityIndicatorIconEl.innerHTML = meta.isShoe ? ACTIVITY_SHOE_SVG : ACTIVITY_WHEEL_SVG;
+            activityIndicatorIconEl.innerHTML = meta.svg || ACTIVITY_ICONS_SVG.mtb;
         }
         if (activityIndicatorLabelEl) {
             activityIndicatorLabelEl.innerText = meta.label;
         }
         if (btnActivityIndicatorEl) {
             const modeTxt = currentActivityIsManual ? 'ručne nastavená' : 'automaticky rozpoznaná';
-            btnActivityIndicatorEl.title = `Aktivita: ${meta.label} (${ meta.isShoe ? 'Topánka' : 'Koleso' } – ${modeTxt}). Kliknutím zmeníte aktivitu.`;
+            btnActivityIndicatorEl.title = `Aktivita: ${meta.label} (${meta.badge} – ${modeTxt}). Kliknutím zmeníte aktivitu.`;
         }
         activityOptButtons.forEach(btn => {
             btn.classList.toggle('selected', btn.getAttribute('data-act') === currentTrackActivity);
@@ -7986,6 +8519,13 @@
                 if (gBtn) gBtn.classList.remove('active');
                 resetEditorPopoverPosition(gPanel);
             }
+            const pColPanel = document.getElementById('panel-color-panel');
+            const pColBtn = document.getElementById('btn-panel-color');
+            if (pColPanel) {
+                pColPanel.classList.remove('open');
+                if (pColBtn) pColBtn.classList.remove('active');
+                resetEditorPopoverPosition(pColPanel);
+            }
             const isOpen = activityMenuPanelEl.classList.toggle('open');
             resetEditorPopoverPosition(activityMenuPanelEl);
             btnActivityIndicatorEl.classList.toggle('active', isOpen);
@@ -8057,6 +8597,10 @@
 
     function updateFinalSummaryBannerLayout() {
         if (!finalSummaryBannerEl || !finalSummaryHudEl) return;
+        if (IS_MOBILE_BROWSER) {
+            finalSummaryBannerEl.style.display = 'none';
+            return;
+        }
         const isActive = finalSummaryHudEl.children.length > 0 &&
                          (finalSummaryHudEl.classList.contains('final-summary-visible') || finalSummaryBannerEl.style.display === 'flex');
         if (!isActive || finalSummaryHudEl.offsetWidth === 0) {
@@ -8901,6 +9445,13 @@
             if (btnActivityIndicatorEl) btnActivityIndicatorEl.classList.remove('active');
             resetEditorPopoverPosition(activityMenuPanelEl);
         }
+        const pColPanel = document.getElementById('panel-color-panel');
+        const pColBtn = document.getElementById('btn-panel-color');
+        if (pColPanel) {
+            pColPanel.classList.remove('open');
+            if (pColBtn) pColBtn.classList.remove('active');
+            resetEditorPopoverPosition(pColPanel);
+        }
         const isOpen = summaryEditorPanel.classList.toggle('open');
         resetEditorPopoverPosition(summaryEditorPanel);
         btnSummaryEditor.classList.toggle('active', isOpen);
@@ -8954,6 +9505,10 @@
         }
         const banner = document.getElementById('brand-banner');
         if (!banner) return;
+        if (IS_MOBILE_BROWSER) {
+            banner.style.display = 'none';
+            return;
+        }
 
         if (!rawPoints || rawPoints.length === 0) {
             banner.style.display = 'none';
@@ -9104,28 +9659,32 @@
         timeRow.style.display = (showTime && hasTimeData) ? 'block' : 'none';
         tempRow.style.display = (showTemp && hasTempData) ? 'block' : 'none';
 
-        miniDistItem.style.display = showDist ? 'flex' : 'none';
-        miniEleItem.style.display = showEle ? 'flex' : 'none';
-        miniSpeedItem.style.display = showSpeed ? 'flex' : 'none';
-        miniPaceItem.style.display = showPace ? 'flex' : 'none';
-        miniPwrItem.style.display = canShowPwrHud ? 'flex' : 'none';
-        miniHrItem.style.display = (showHr && hasHrData) ? 'flex' : 'none';
+        if (miniDistItem) miniDistItem.style.display = showDist ? 'flex' : 'none';
+        if (miniEleItem) miniEleItem.style.display = showEle ? 'flex' : 'none';
+        if (miniSpeedItem) miniSpeedItem.style.display = showSpeed ? 'flex' : 'none';
+        if (miniPaceItem) miniPaceItem.style.display = showPace ? 'flex' : 'none';
+        if (miniPwrItem) miniPwrItem.style.display = canShowPwrHud ? 'flex' : 'none';
+        if (miniHrItem) miniHrItem.style.display = (showHr && hasHrData) ? 'flex' : 'none';
         if (miniSlopeItem) miniSlopeItem.style.display = showSlope ? 'flex' : 'none';
-        miniTimeItem.style.display = (showTime && hasTimeData) ? 'flex' : 'none';
-        miniTempItem.style.display = (showTemp && hasTempData) ? 'flex' : 'none';
+        if (miniTimeItem) miniTimeItem.style.display = (showTime && hasTimeData) ? 'flex' : 'none';
+        if (miniTempItem) miniTempItem.style.display = (showTemp && hasTempData) ? 'flex' : 'none';
+
+        if (IS_MOBILE_BROWSER) {
+            hudMode = 'klasik';
+        }
 
         const anyRowVisible = showDist || showEle || showSpeed || showPace || canShowPwrHud || (showHr && hasHrData) || showSlope || (showTime && hasTimeData) || (showTemp && hasTempData);
         if (hudEnabled && rawPoints.length > 0 && anyRowVisible) {
-            if (hudMode === 'klasik') {
+            if (hudMode === 'klasik' || IS_MOBILE_BROWSER) {
                 hud.style.display = 'block';
-                miniHud.style.display = 'none';
+                if (miniHud) miniHud.style.display = 'none';
             } else {
                 hud.style.display = 'none';
-                miniHud.style.display = 'flex';
+                if (miniHud) miniHud.style.display = 'flex';
             }
         } else {
             hud.style.display = 'none';
-            miniHud.style.display = 'none';
+            if (miniHud) miniHud.style.display = 'none';
         }
 
         const allRows = [distRow, eleRow, speedRow, paceRow, pwrRow, hrRow, slopeRow, timeRow, tempRow].filter(Boolean);
@@ -9135,7 +9694,8 @@
             visibleRows[visibleRows.length - 1].style.marginBottom = '0px';
         }
 
-        if (profileEnabled && rawPoints.length > 1) {
+        const isMobilePortrait = IS_MOBILE_BROWSER && window.matchMedia && window.matchMedia('(orientation: portrait)').matches;
+        if (profileEnabled && rawPoints.length > 1 && !isMobilePortrait) {
             const wasHidden = profileHud.style.display === 'none';
             profileHud.style.display = 'block';
             if (wasHidden) {
@@ -9603,6 +10163,13 @@
                 if (btnActivityIndicatorEl) btnActivityIndicatorEl.classList.remove('active');
                 resetEditorPopoverPosition(activityMenuPanelEl);
             }
+            const pColPanel = document.getElementById('panel-color-panel');
+            const pColBtn = document.getElementById('btn-panel-color');
+            if (pColPanel) {
+                pColPanel.classList.remove('open');
+                if (pColBtn) pColBtn.classList.remove('active');
+                resetEditorPopoverPosition(pColPanel);
+            }
             const isOpen = gradConfigPanelEl.classList.toggle('open');
             if (isOpen) {
                 updateGradConfigMeasuredStats();
@@ -9846,13 +10413,13 @@
         if (hudEnabled) {
             btnToggleHud.innerText = '📊 Štatistika: ZAP';
             btnToggleHud.classList.remove('inactive');
-            hudModeGroup.classList.remove('group-disabled');
-            btnHudMode.disabled = false;
+            if (hudModeGroup) hudModeGroup.classList.remove('group-disabled');
+            if (btnHudMode) btnHudMode.disabled = false;
         } else {
             btnToggleHud.innerText = '📊 Štatistika: VYP';
             btnToggleHud.classList.add('inactive');
-            hudModeGroup.classList.add('group-disabled');
-            btnHudMode.disabled = true;
+            if (hudModeGroup) hudModeGroup.classList.add('group-disabled');
+            if (btnHudMode) btnHudMode.disabled = true;
         }
         updateHudVisibility();
     });
@@ -9886,7 +10453,10 @@
     const mapyAttributionEl = document.getElementById('mapy-attribution');
 
     function applyMapyLogoSize() {
-        const px = parseInt(mapyLogoSizeSelect.value) || 50;
+        const px = IS_MOBILE_BROWSER ? 32 : (parseInt(mapyLogoSizeSelect.value) || 50);
+        if (IS_MOBILE_BROWSER && mapyLogoSizeSelect) {
+            mapyLogoSizeSelect.value = '32';
+        }
         document.documentElement.style.setProperty('--mapy-logo-height', px + 'px');
         const copySize = (px <= 32) ? 10 : (px >= 64 ? 13 : 11);
         document.documentElement.style.setProperty('--mapy-copy-font-size', copySize + 'px');
@@ -9922,9 +10492,11 @@
                 if (lblWidthEl) lblWidthEl.innerText = '15';
                 if (headSizeInput) headSizeInput.value = '0';
                 if (lblHeadSizeEl) lblHeadSizeEl.innerText = '0';
-                if (hudOpacityInput) hudOpacityInput.value = '100';
-                if (lblHudOpacityEl) lblHudOpacityEl.innerText = '100';
-                document.documentElement.style.setProperty('--hud-bg-opacity', '1.00');
+                if (!IS_MOBILE_BROWSER) {
+                    if (hudOpacityInput) hudOpacityInput.value = '100';
+                    if (lblHudOpacityEl) lblHudOpacityEl.innerText = '100';
+                    document.documentElement.style.setProperty('--hud-bg-opacity', '1.00');
+                }
                 syncCanvasStyles();
                 if (typeof updateBrandBannerLayout === 'function') updateBrandBannerLayout();
             } else if (wasSolidOrChroma) {
@@ -9933,9 +10505,10 @@
                 if (lblWidthEl) lblWidthEl.innerText = '6';
                 if (headSizeInput) headSizeInput.value = '40';
                 if (lblHeadSizeEl) lblHeadSizeEl.innerText = '40';
-                if (hudOpacityInput) hudOpacityInput.value = '80';
-                if (lblHudOpacityEl) lblHudOpacityEl.innerText = '80';
-                document.documentElement.style.setProperty('--hud-bg-opacity', '0.80');
+                const targetOp = IS_MOBILE_BROWSER ? '85' : '80';
+                if (hudOpacityInput) hudOpacityInput.value = targetOp;
+                if (lblHudOpacityEl) lblHudOpacityEl.innerText = targetOp;
+                document.documentElement.style.setProperty('--hud-bg-opacity', IS_MOBILE_BROWSER ? '0.85' : '0.80');
                 syncCanvasStyles();
                 if (typeof updateBrandBannerLayout === 'function') updateBrandBannerLayout();
             } else if (lineColorInput) {
@@ -11935,11 +12508,197 @@
     }
 
 
-    // Prepínanie vzhľadu ovládacieho panela (SKLO / NORMAL / RETRO) tlačidlom Štýl
+    // Prepínanie vzhľadu ovládacieho panela (SKLO / NORMAL / RETRO) tlačidlom Štýl a výber farby tlačidlom Farba
     const btnStyle = document.getElementById('btn-style');
     const controlsEl = document.getElementById('controls');
     const appContainerEl = document.getElementById('app-container');
     let currentPanelStyle = 'glass';
+
+    const DEFAULT_PANEL_THEME_COLORS = {
+        glass: '#12161c',
+        normal: '#222222',
+        retro: '#39ff14'
+    };
+    let panelThemeColors = { ...DEFAULT_PANEL_THEME_COLORS };
+
+    const btnPanelColorEl = document.getElementById('btn-panel-color');
+    const panelColorDotEl = document.getElementById('panel-color-dot');
+    const panelColorPanelEl = document.getElementById('panel-color-panel');
+    const panelColorTitleEl = document.getElementById('panel-color-title');
+    const panelThemeColorInputEl = document.getElementById('panel-theme-color-input');
+    const btnResetPanelColorEl = document.getElementById('btn-reset-panel-color');
+    const btnClosePanelColorEl = document.getElementById('btn-close-panel-color');
+
+    function parseHexToRgbObj(hexStr, fallback = { r: 34, g: 34, b: 34 }) {
+        let c = String(hexStr || '').replace('#', '').trim();
+        if (c.length === 3) {
+            c = c[0] + c[0] + c[1] + c[1] + c[2] + c[2];
+        }
+        if (c.length !== 6) return fallback;
+        const num = parseInt(c, 16);
+        if (isNaN(num)) return fallback;
+        return {
+            r: (num >> 16) & 255,
+            g: (num >> 8) & 255,
+            b: num & 255
+        };
+    }
+
+    function rgbToHexStr(r, g, b) {
+        const cl = v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0');
+        return `#${cl(r)}${cl(g)}${cl(b)}`;
+    }
+
+    function mixRgbToHex(rgb, factor, addWhite = 0) {
+        const r = rgb.r * factor + 255 * addWhite;
+        const g = rgb.g * factor + 255 * addWhite;
+        const b = rgb.b * factor + 255 * addWhite;
+        return rgbToHexStr(r, g, b);
+    }
+
+    function applyPanelThemeColors() {
+        const rootStyle = document.documentElement.style;
+
+        // 1. Farba pre štýl SKLO (odtieň priehľadného pozadia)
+        const glassHex = (panelThemeColors.glass || DEFAULT_PANEL_THEME_COLORS.glass).toLowerCase();
+        const gRgb = parseHexToRgbObj(glassHex, { r: 18, g: 22, b: 28 });
+        rootStyle.setProperty('--glass-panel-bg', `rgba(${gRgb.r}, ${gRgb.g}, ${gRgb.b}, 0.33)`);
+        rootStyle.setProperty('--glass-popover-bg', `rgba(${gRgb.r}, ${gRgb.g}, ${gRgb.b}, 0.55)`);
+        rootStyle.setProperty('--glass-grad-popover-bg', `rgba(${gRgb.r}, ${gRgb.g}, ${gRgb.b}, 0.76)`);
+
+        // 2. Farba pre štýl NORMAL (odtieň pozadia ovládacieho panelu)
+        const normalHex = (panelThemeColors.normal || DEFAULT_PANEL_THEME_COLORS.normal).toLowerCase();
+        const nRgb = parseHexToRgbObj(normalHex, { r: 34, g: 34, b: 34 });
+        rootStyle.setProperty('--normal-panel-bg', normalHex);
+        const borderR = Math.min(255, nRgb.r + 22);
+        const borderG = Math.min(255, nRgb.g + 22);
+        const borderB = Math.min(255, nRgb.b + 22);
+        rootStyle.setProperty('--normal-panel-border', rgbToHexStr(borderR, borderG, borderB));
+
+        // 3. Farba pre štýl RETRO (zmena z defaultnej jasnej zelenej na zvolenú farbu)
+        const retroHex = (panelThemeColors.retro || DEFAULT_PANEL_THEME_COLORS.retro).toLowerCase();
+        if (retroHex === DEFAULT_PANEL_THEME_COLORS.retro) {
+            rootStyle.setProperty('--retro-main', '#39ff14');
+            rootStyle.setProperty('--retro-bright', '#76ff03');
+            rootStyle.setProperty('--retro-border', '#00ff41');
+            rootStyle.setProperty('--retro-muted', '#1ec81e');
+            rootStyle.setProperty('--retro-dim', '#175c17');
+            rootStyle.setProperty('--retro-dim-hover', '#268c26');
+            rootStyle.setProperty('--retro-placeholder', '#156515');
+            rootStyle.setProperty('--retro-empty', '#1e7e1e');
+            rootStyle.setProperty('--retro-border-mid', '#1b8a1b');
+            rootStyle.setProperty('--retro-border-dark', '#145214');
+            rootStyle.setProperty('--retro-border-dim', '#0e380e');
+            rootStyle.setProperty('--retro-border-dim-btm', '#061c06');
+            rootStyle.setProperty('--retro-border-dim-hover', '#195c19');
+            rootStyle.setProperty('--retro-btn-btm', '#0b4f0b');
+            rootStyle.setProperty('--retro-bg-panel', '#040d04');
+            rootStyle.setProperty('--retro-bg-input', '#020802');
+            rootStyle.setProperty('--retro-bg-card', '#061506');
+            rootStyle.setProperty('--retro-bg-card-dis', '#030a03');
+            rootStyle.setProperty('--retro-bg-file-btn', '#072207');
+            rootStyle.setProperty('--retro-btn-grad-top', '#0b2e0b');
+            rootStyle.setProperty('--retro-btn-grad-btm', '#051605');
+            rootStyle.setProperty('--retro-btn-hover-top', '#134b13');
+            rootStyle.setProperty('--retro-btn-hover-btm', '#092609');
+            rootStyle.setProperty('--retro-btn-act-top', '#195e19');
+            rootStyle.setProperty('--retro-btn-act-btm', '#0d360d');
+            rootStyle.setProperty('--retro-btn-dis-top', '#051005');
+            rootStyle.setProperty('--retro-btn-dis-btm', '#020802');
+            rootStyle.setProperty('--retro-btn-dis-hov-top', '#081c08');
+            rootStyle.setProperty('--retro-btn-dis-hov-btm', '#041004');
+            rootStyle.setProperty('--retro-style-btn-top', '#39ff14');
+            rootStyle.setProperty('--retro-style-btn-btm', '#00c800');
+            rootStyle.setProperty('--retro-style-btn-border', '#aaff80');
+            rootStyle.setProperty('--retro-style-btn-btm-border', '#006400');
+            rootStyle.setProperty('--retro-style-btn-text', '#021002');
+            rootStyle.setProperty('--retro-style-hov-top', '#66ff33');
+            rootStyle.setProperty('--retro-style-hov-btm', '#1ae000');
+            rootStyle.setProperty('--retro-style-hov-border', '#ccffb3');
+            rootStyle.setProperty('--retro-glow-12', 'rgba(0, 255, 65, 0.12)');
+            rootStyle.setProperty('--retro-glow-18', 'rgba(0, 255, 65, 0.18)');
+            rootStyle.setProperty('--retro-glow-25', 'rgba(0, 255, 65, 0.25)');
+            rootStyle.setProperty('--retro-glow-28', 'rgba(57, 255, 20, 0.28)');
+            rootStyle.setProperty('--retro-glow-32', 'rgba(57, 255, 20, 0.32)');
+            rootStyle.setProperty('--retro-glow-35', 'rgba(57, 255, 20, 0.35)');
+            rootStyle.setProperty('--retro-glow-40', 'rgba(118, 255, 3, 0.4)');
+            rootStyle.setProperty('--retro-glow-45', 'rgba(57, 255, 20, 0.45)');
+            rootStyle.setProperty('--retro-glow-55', 'rgba(57, 255, 20, 0.55)');
+            rootStyle.setProperty('--retro-glow-65', 'rgba(57, 255, 20, 0.65)');
+            rootStyle.setProperty('--retro-glow-85', 'rgba(57, 255, 20, 0.85)');
+            rootStyle.setProperty('--retro-glow-100', 'rgba(57, 255, 20, 1)');
+            rootStyle.setProperty('--retro-glow-05', 'rgba(0, 255, 65, 0.05)');
+        } else {
+            const rRgb = parseHexToRgbObj(retroHex, { r: 57, g: 255, b: 20 });
+            rootStyle.setProperty('--retro-main', retroHex);
+            rootStyle.setProperty('--retro-bright', mixRgbToHex(rRgb, 0.78, 0.28));
+            rootStyle.setProperty('--retro-border', mixRgbToHex(rRgb, 0.92, 0.08));
+            rootStyle.setProperty('--retro-muted', mixRgbToHex(rRgb, 0.75, 0));
+            rootStyle.setProperty('--retro-dim', mixRgbToHex(rRgb, 0.38, 0));
+            rootStyle.setProperty('--retro-dim-hover', mixRgbToHex(rRgb, 0.56, 0));
+            rootStyle.setProperty('--retro-placeholder', mixRgbToHex(rRgb, 0.40, 0));
+            rootStyle.setProperty('--retro-empty', mixRgbToHex(rRgb, 0.50, 0));
+            rootStyle.setProperty('--retro-border-mid', mixRgbToHex(rRgb, 0.55, 0));
+            rootStyle.setProperty('--retro-border-dark', mixRgbToHex(rRgb, 0.32, 0));
+            rootStyle.setProperty('--retro-border-dim', mixRgbToHex(rRgb, 0.22, 0));
+            rootStyle.setProperty('--retro-border-dim-btm', mixRgbToHex(rRgb, 0.12, 0));
+            rootStyle.setProperty('--retro-border-dim-hover', mixRgbToHex(rRgb, 0.36, 0));
+            rootStyle.setProperty('--retro-btn-btm', mixRgbToHex(rRgb, 0.30, 0));
+            rootStyle.setProperty('--retro-bg-panel', mixRgbToHex(rRgb, 0.055, 0));
+            rootStyle.setProperty('--retro-bg-input', mixRgbToHex(rRgb, 0.032, 0));
+            rootStyle.setProperty('--retro-bg-card', mixRgbToHex(rRgb, 0.085, 0));
+            rootStyle.setProperty('--retro-bg-card-dis', mixRgbToHex(rRgb, 0.04, 0));
+            rootStyle.setProperty('--retro-bg-file-btn', mixRgbToHex(rRgb, 0.14, 0));
+            rootStyle.setProperty('--retro-btn-grad-top', mixRgbToHex(rRgb, 0.18, 0));
+            rootStyle.setProperty('--retro-btn-grad-btm', mixRgbToHex(rRgb, 0.085, 0));
+            rootStyle.setProperty('--retro-btn-hover-top', mixRgbToHex(rRgb, 0.29, 0));
+            rootStyle.setProperty('--retro-btn-hover-btm', mixRgbToHex(rRgb, 0.15, 0));
+            rootStyle.setProperty('--retro-btn-act-top', mixRgbToHex(rRgb, 0.36, 0));
+            rootStyle.setProperty('--retro-btn-act-btm', mixRgbToHex(rRgb, 0.21, 0));
+            rootStyle.setProperty('--retro-btn-dis-top', mixRgbToHex(rRgb, 0.065, 0));
+            rootStyle.setProperty('--retro-btn-dis-btm', mixRgbToHex(rRgb, 0.032, 0));
+            rootStyle.setProperty('--retro-btn-dis-hov-top', mixRgbToHex(rRgb, 0.11, 0));
+            rootStyle.setProperty('--retro-btn-dis-hov-btm', mixRgbToHex(rRgb, 0.065, 0));
+            rootStyle.setProperty('--retro-style-btn-top', retroHex);
+            rootStyle.setProperty('--retro-style-btn-btm', mixRgbToHex(rRgb, 0.78, 0));
+            rootStyle.setProperty('--retro-style-btn-border', mixRgbToHex(rRgb, 0.65, 0.35));
+            rootStyle.setProperty('--retro-style-btn-btm-border', mixRgbToHex(rRgb, 0.40, 0));
+            rootStyle.setProperty('--retro-style-btn-text', mixRgbToHex(rRgb, 0.06, 0));
+            rootStyle.setProperty('--retro-style-hov-top', mixRgbToHex(rRgb, 0.80, 0.20));
+            rootStyle.setProperty('--retro-style-hov-btm', mixRgbToHex(rRgb, 0.88, 0));
+            rootStyle.setProperty('--retro-style-hov-border', mixRgbToHex(rRgb, 0.50, 0.50));
+            rootStyle.setProperty('--retro-glow-12', `rgba(${rRgb.r}, ${rRgb.g}, ${rRgb.b}, 0.12)`);
+            rootStyle.setProperty('--retro-glow-18', `rgba(${rRgb.r}, ${rRgb.g}, ${rRgb.b}, 0.18)`);
+            rootStyle.setProperty('--retro-glow-25', `rgba(${rRgb.r}, ${rRgb.g}, ${rRgb.b}, 0.25)`);
+            rootStyle.setProperty('--retro-glow-28', `rgba(${rRgb.r}, ${rRgb.g}, ${rRgb.b}, 0.28)`);
+            rootStyle.setProperty('--retro-glow-32', `rgba(${rRgb.r}, ${rRgb.g}, ${rRgb.b}, 0.32)`);
+            rootStyle.setProperty('--retro-glow-35', `rgba(${rRgb.r}, ${rRgb.g}, ${rRgb.b}, 0.35)`);
+            rootStyle.setProperty('--retro-glow-40', `rgba(${rRgb.r}, ${rRgb.g}, ${rRgb.b}, 0.40)`);
+            rootStyle.setProperty('--retro-glow-45', `rgba(${rRgb.r}, ${rRgb.g}, ${rRgb.b}, 0.45)`);
+            rootStyle.setProperty('--retro-glow-55', `rgba(${rRgb.r}, ${rRgb.g}, ${rRgb.b}, 0.55)`);
+            rootStyle.setProperty('--retro-glow-65', `rgba(${rRgb.r}, ${rRgb.g}, ${rRgb.b}, 0.65)`);
+            rootStyle.setProperty('--retro-glow-85', `rgba(${rRgb.r}, ${rRgb.g}, ${rRgb.b}, 0.85)`);
+            rootStyle.setProperty('--retro-glow-100', `rgba(${rRgb.r}, ${rRgb.g}, ${rRgb.b}, 1)`);
+            rootStyle.setProperty('--retro-glow-05', `rgba(${rRgb.r}, ${rRgb.g}, ${rRgb.b}, 0.05)`);
+        }
+
+        syncPanelColorPickerUI();
+    }
+
+    function syncPanelColorPickerUI() {
+        const styleKey = (currentPanelStyle === 'normal' || currentPanelStyle === 'retro') ? currentPanelStyle : 'glass';
+        const curColor = panelThemeColors[styleKey] || DEFAULT_PANEL_THEME_COLORS[styleKey];
+        if (panelThemeColorInputEl) {
+            panelThemeColorInputEl.value = curColor;
+        }
+        if (panelColorDotEl) {
+            panelColorDotEl.style.backgroundColor = curColor;
+        }
+        if (panelColorTitleEl) {
+            const labelMap = { glass: 'SKLO', normal: 'NORMAL', retro: 'RETRO' };
+            panelColorTitleEl.innerText = `🎨 Farba panela (${labelMap[styleKey]})`;
+        }
+    }
 
     function syncGlassModeLayout() {
         const isGlass = controlsEl.classList.contains('glass-theme') && controlsEl.style.display !== 'none';
@@ -11950,6 +12709,7 @@
             document.documentElement.style.setProperty('--controls-height', '0px');
             appContainerEl.classList.remove('glass-mode');
         }
+        syncPanelColorPickerUI();
         map.invalidateSize({ pan: false });
         resizeRouteCanvas();
     }
@@ -11976,6 +12736,85 @@
         syncGlassModeLayout();
     });
 
+    if (panelColorPanelEl) {
+        makeEditorPopoverDraggable(panelColorPanelEl);
+        panelColorPanelEl.addEventListener('click', e => {
+            e.stopPropagation();
+        });
+    }
+
+    if (btnPanelColorEl && panelColorPanelEl) {
+        btnPanelColorEl.addEventListener('click', e => {
+            e.stopPropagation();
+            if (poiEditorPanel) {
+                poiEditorPanel.classList.remove('open');
+                btnPoiEditor.classList.remove('active');
+                resetEditorPopoverPosition(poiEditorPanel);
+            }
+            if (summaryEditorPanel) {
+                summaryEditorPanel.classList.remove('open');
+                btnSummaryEditor.classList.remove('active');
+                resetEditorPopoverPosition(summaryEditorPanel);
+            }
+            const gPanel = document.getElementById('grad-config-panel');
+            const gBtn = document.getElementById('btn-grad-config');
+            if (gPanel) {
+                gPanel.classList.remove('open');
+                if (gBtn) gBtn.classList.remove('active');
+                resetEditorPopoverPosition(gPanel);
+            }
+            if (typeof activityMenuPanelEl !== 'undefined' && activityMenuPanelEl) {
+                activityMenuPanelEl.classList.remove('open');
+                if (btnActivityIndicatorEl) btnActivityIndicatorEl.classList.remove('active');
+                resetEditorPopoverPosition(activityMenuPanelEl);
+            }
+            syncPanelColorPickerUI();
+            const isOpen = panelColorPanelEl.classList.toggle('open');
+            resetEditorPopoverPosition(panelColorPanelEl);
+            btnPanelColorEl.classList.toggle('active', isOpen);
+        });
+    }
+
+    if (btnClosePanelColorEl && panelColorPanelEl && btnPanelColorEl) {
+        btnClosePanelColorEl.addEventListener('click', () => {
+            panelColorPanelEl.classList.remove('open');
+            btnPanelColorEl.classList.remove('active');
+            resetEditorPopoverPosition(panelColorPanelEl);
+        });
+    }
+
+    document.addEventListener('click', e => {
+        if (panelColorPanelEl && panelColorPanelEl.classList.contains('open')) {
+            const wrapper = document.getElementById('panel-color-group');
+            if (wrapper && !wrapper.contains(e.target)) {
+                panelColorPanelEl.classList.remove('open');
+                if (btnPanelColorEl) btnPanelColorEl.classList.remove('active');
+                resetEditorPopoverPosition(panelColorPanelEl);
+            }
+        }
+    });
+
+    if (panelThemeColorInputEl) {
+        const onPanelColorChange = () => {
+            const styleKey = (currentPanelStyle === 'normal' || currentPanelStyle === 'retro') ? currentPanelStyle : 'glass';
+            panelThemeColors[styleKey] = panelThemeColorInputEl.value;
+            applyPanelThemeColors();
+            if (typeof saveUserSettingsToStorage === 'function') saveUserSettingsToStorage();
+        };
+        panelThemeColorInputEl.addEventListener('input', onPanelColorChange);
+        panelThemeColorInputEl.addEventListener('change', onPanelColorChange);
+    }
+
+    if (btnResetPanelColorEl) {
+        btnResetPanelColorEl.addEventListener('click', () => {
+            const styleKey = (currentPanelStyle === 'normal' || currentPanelStyle === 'retro') ? currentPanelStyle : 'glass';
+            panelThemeColors[styleKey] = DEFAULT_PANEL_THEME_COLORS[styleKey];
+            applyPanelThemeColors();
+            if (typeof saveUserSettingsToStorage === 'function') saveUserSettingsToStorage();
+        });
+    }
+
+    applyPanelThemeColors();
     syncGlassModeLayout();
 
     // Štandardné tlačidlo Spustiť (okamžite)
@@ -12289,6 +13128,9 @@
 
     const DEFAULT_USER_SETTINGS = {
         panelStyle: 'glass',
+        panelColorGlass: '#12161c',
+        panelColorNormal: '#222222',
+        panelColorRetro: '#39ff14',
         trimStatsMode: 'zero',
         mapStyle: 'satellite_hybrid',
         mapyLogoSize: '50',
@@ -12364,6 +13206,9 @@
         try {
             const settings = {
                 panelStyle: currentPanelStyle,
+                panelColorGlass: panelThemeColors.glass,
+                panelColorNormal: panelThemeColors.normal,
+                panelColorRetro: panelThemeColors.retro,
                 trimStatsMode: document.getElementById('trim-stats-mode').value,
                 mapStyle: document.getElementById('map-style').value,
                 mapyLogoSize: document.getElementById('mapy-logo-size').value,
@@ -12422,11 +13267,11 @@
                 showTime: showTime,
                 showTemp: showTemp,
                 tempOffset: document.getElementById('temp-offset').value,
-                hudScale: document.getElementById('hud-scale').value,
-                hudOpacity: document.getElementById('hud-opacity').value,
-                hudFontSize: document.getElementById('hud-font-size').value,
+                hudScale: IS_MOBILE_BROWSER ? '40' : (document.getElementById('hud-scale') ? document.getElementById('hud-scale').value : '70'),
+                hudOpacity: IS_MOBILE_BROWSER ? '85' : (document.getElementById('hud-opacity') ? document.getElementById('hud-opacity').value : '80'),
+                hudFontSize: IS_MOBILE_BROWSER ? '32' : (document.getElementById('hud-font-size') ? document.getElementById('hud-font-size').value : '40'),
                 hudFontColor: document.getElementById('hud-font-color').value,
-                keepBuffer: document.getElementById('keep-buffer').value,
+                keepBuffer: IS_MOBILE_BROWSER ? '8' : (document.getElementById('keep-buffer') ? document.getElementById('keep-buffer').value : '8'),
                 poiInputIcon: document.getElementById('poi-input-icon').value,
                 poiInputDuration: document.getElementById('poi-input-duration').value,
                 summaryInputIcon: document.getElementById('summary-input-icon').value,
@@ -12443,7 +13288,18 @@
         if (!s || typeof s !== 'object') return;
         isRestoringUserSettings = true;
         try {
-            // 1. Štýl ovládacieho panela (SKLO / NORMAL / RETRO)
+            // 1. Štýl ovládacieho panela (SKLO / NORMAL / RETRO) a vlastné farby panela
+            if (typeof s.panelColorGlass === 'string' && s.panelColorGlass.startsWith('#')) {
+                panelThemeColors.glass = s.panelColorGlass;
+            }
+            if (typeof s.panelColorNormal === 'string' && s.panelColorNormal.startsWith('#')) {
+                panelThemeColors.normal = s.panelColorNormal;
+            }
+            if (typeof s.panelColorRetro === 'string' && s.panelColorRetro.startsWith('#')) {
+                panelThemeColors.retro = s.panelColorRetro;
+            }
+            applyPanelThemeColors();
+
             if (s.panelStyle === 'normal' || s.panelStyle === 'retro' || s.panelStyle === 'glass') {
                 currentPanelStyle = s.panelStyle;
                 controlsEl.classList.remove('retro-theme', 'glass-theme');
@@ -12462,7 +13318,7 @@
 
             // 3. Mapový podklad a veľkosť loga Mapy.com
             if (s.mapyLogoSize !== undefined) {
-                mapyLogoSizeSelect.value = s.mapyLogoSize;
+                mapyLogoSizeSelect.value = IS_MOBILE_BROWSER ? '32' : s.mapyLogoSize;
                 applyMapyLogoSize();
             }
             if (s.mapStyle !== undefined) {
@@ -12608,12 +13464,12 @@
                 hudEnabled = s.hudEnabled;
                 btnToggleHud.innerText = hudEnabled ? '📊 Štatistika: ZAP' : '📊 Štatistika: VYP';
                 btnToggleHud.classList.toggle('inactive', !hudEnabled);
-                hudModeGroup.classList.toggle('group-disabled', !hudEnabled);
-                btnHudMode.disabled = !hudEnabled;
+                if (hudModeGroup) hudModeGroup.classList.toggle('group-disabled', !hudEnabled);
+                if (btnHudMode) btnHudMode.disabled = !hudEnabled;
             }
             if (s.hudMode === 'klasik' || s.hudMode === 'mini') {
-                hudMode = s.hudMode;
-                btnHudMode.innerText = (hudMode === 'klasik') ? '🎛️ KLASIK HUD' : '🎛️ MINI HUD';
+                hudMode = IS_MOBILE_BROWSER ? 'klasik' : s.hudMode;
+                if (btnHudMode) btnHudMode.innerText = (hudMode === 'klasik') ? '🎛️ KLASIK HUD' : '🎛️ MINI HUD';
             }
             if (typeof s.showDist === 'boolean') {
                 showDist = s.showDist;
@@ -12659,23 +13515,35 @@
                 document.getElementById('lbl-temp-offset').innerText = toVal > 0 ? `+${toVal}` : toVal;
             }
             if (s.hudScale !== undefined) {
-                const scVal = Math.max(55, Math.min(70, parseInt(s.hudScale) || 70));
-                document.getElementById('hud-scale').value = scVal;
-                document.getElementById('lbl-hud-scale').innerText = scVal;
+                const scVal = IS_MOBILE_BROWSER ? 40 : Math.max(55, Math.min(70, parseInt(s.hudScale) || 70));
+                const hsEl = document.getElementById('hud-scale');
+                if (hsEl) {
+                    if (IS_MOBILE_BROWSER) hsEl.min = '40';
+                    hsEl.value = scVal;
+                }
+                const lblHsEl = document.getElementById('lbl-hud-scale');
+                if (lblHsEl) lblHsEl.innerText = scVal;
                 document.documentElement.style.setProperty('--hud-scale', (scVal / 100).toFixed(2));
             }
             if (s.hudOpacity !== undefined) {
-                const opVal = parseInt(s.hudOpacity);
+                const opVal = IS_MOBILE_BROWSER ? 85 : parseInt(s.hudOpacity);
                 if (!isNaN(opVal)) {
-                    document.getElementById('hud-opacity').value = opVal;
-                    document.getElementById('lbl-hud-opacity').innerText = opVal;
+                    const opEl = document.getElementById('hud-opacity');
+                    const lblOpEl = document.getElementById('lbl-hud-opacity');
+                    if (opEl) opEl.value = opVal;
+                    if (lblOpEl) lblOpEl.innerText = opVal;
                     document.documentElement.style.setProperty('--hud-bg-opacity', (opVal / 100).toFixed(2));
                 }
             }
             if (s.hudFontSize !== undefined) {
-                const fsVal = Math.max(40, Math.min(55, parseInt(s.hudFontSize) || 40));
-                document.getElementById('hud-font-size').value = fsVal;
-                document.getElementById('lbl-font-size').innerText = fsVal;
+                const fsVal = IS_MOBILE_BROWSER ? 32 : Math.max(40, Math.min(55, parseInt(s.hudFontSize) || 40));
+                const fsEl = document.getElementById('hud-font-size');
+                if (fsEl) {
+                    if (IS_MOBILE_BROWSER) fsEl.min = '32';
+                    fsEl.value = fsVal;
+                }
+                const lblFsEl = document.getElementById('lbl-font-size');
+                if (lblFsEl) lblFsEl.innerText = fsVal;
                 document.documentElement.style.setProperty('--hud-font-size', fsVal + 'px');
             }
             if (s.hudFontColor !== undefined) {
@@ -12683,10 +13551,12 @@
                 document.documentElement.style.setProperty('--hud-font-color', s.hudFontColor);
             }
             if (s.keepBuffer !== undefined) {
-                const kbVal = Math.max(4, Math.min(18, parseInt(s.keepBuffer) || 8));
+                const kbVal = IS_MOBILE_BROWSER ? 8 : Math.max(4, Math.min(18, parseInt(s.keepBuffer) || 8));
                 EXTREME_KEEP_BUFFER = kbVal;
-                document.getElementById('keep-buffer').value = kbVal;
-                document.getElementById('lbl-keep-buffer').innerText = kbVal;
+                const kbEl = document.getElementById('keep-buffer');
+                const lblKbEl = document.getElementById('lbl-keep-buffer');
+                if (kbEl) kbEl.value = kbVal;
+                if (lblKbEl) lblKbEl.innerText = kbVal;
                 L.GridLayer.prototype.options.keepBuffer = EXTREME_KEEP_BUFFER;
                 if (currentTileLayer) {
                     currentTileLayer.options.keepBuffer = EXTREME_KEEP_BUFFER;
@@ -12796,6 +13666,285 @@
     loadUserSettingsFromStorage();
     bindUserSettingsPersistence();
     updateStorageUsageBadge();
+
+    // =========================================================================
+    // INICIALIZÁCIA MOBILNÉHO ROZHRANIA (AKORDEÓNOVÉ MENU, NORMAL ŠTÝL, +/- TIAHLA)
+    // =========================================================================
+    function initMobileInterface() {
+        if (!IS_MOBILE_BROWSER) return;
+
+        // 1. Vynútenie štýlu NORMAL a fixnej mierky HUD okien (40%), písma (32px), priehľadnosti (85%) a loga Mapy.com (32px) pre mobil
+        currentPanelStyle = 'normal';
+        controlsEl.classList.remove('glass-theme', 'retro-theme');
+        appContainerEl.classList.remove('glass-mode');
+        document.documentElement.style.setProperty('--controls-height', '0px');
+        document.documentElement.style.setProperty('--hud-scale', '0.40');
+        document.documentElement.style.setProperty('--hud-font-size', '32px');
+        document.documentElement.style.setProperty('--hud-bg-opacity', '0.85');
+        const hudScaleInput = document.getElementById('hud-scale');
+        const lblHudScale = document.getElementById('lbl-hud-scale');
+        if (hudScaleInput) {
+            hudScaleInput.min = '40';
+            hudScaleInput.value = '40';
+        }
+        if (lblHudScale) lblHudScale.innerText = '40';
+        const hudFontSizeInput = document.getElementById('hud-font-size');
+        const lblFontSize = document.getElementById('lbl-font-size');
+        if (hudFontSizeInput) {
+            hudFontSizeInput.min = '32';
+            hudFontSizeInput.value = '32';
+        }
+        if (lblFontSize) lblFontSize.innerText = '32';
+        const hudOpacityInput = document.getElementById('hud-opacity');
+        const lblHudOpacity = document.getElementById('lbl-hud-opacity');
+        if (hudOpacityInput) {
+            hudOpacityInput.value = '85';
+            hudOpacityInput.remove();
+        }
+        if (lblHudOpacity) lblHudOpacity.innerText = '85';
+        const cgHudOpacity = document.getElementById('cg-hud-opacity');
+        if (cgHudOpacity) cgHudOpacity.remove();
+
+        // Odstránenie MINI HUD a prepínača Typ okna štatistiky v mobilnej verzii
+        hudMode = 'klasik';
+        const miniHudDom = document.getElementById('mini-hud');
+        if (miniHudDom) miniHudDom.remove();
+        const hudModeGroupDom = document.getElementById('hud-mode-group');
+        if (hudModeGroupDom) hudModeGroupDom.remove();
+
+        // Odstránenie samostatných PC bannerov CartoLinka (v mobile je logo iba priamo hore v okne KLASIK HUD)
+        const pcBrandBanner = document.getElementById('brand-banner');
+        if (pcBrandBanner) pcBrandBanner.remove();
+        const pcFinalSummaryBanner = document.getElementById('final-summary-brand-banner');
+        if (pcFinalSummaryBanner) pcFinalSummaryBanner.remove();
+
+        if (mapyLogoSizeSelect) {
+            mapyLogoSizeSelect.value = '32';
+        }
+        applyMapyLogoSize();
+        const cgMapyLogo = document.getElementById('mapy-logo-size-group');
+        if (cgMapyLogo) cgMapyLogo.remove();
+
+        // Fixné nastavenie Buffer na hodnotu 8 a úplné odstránenie tiahla pre buffer v mobilnom rozhraní
+        EXTREME_KEEP_BUFFER = 8;
+        L.GridLayer.prototype.options.keepBuffer = EXTREME_KEEP_BUFFER;
+        if (currentTileLayer) {
+            currentTileLayer.options.keepBuffer = EXTREME_KEEP_BUFFER;
+        }
+        const keepBufferInput = document.getElementById('keep-buffer');
+        const lblKeepBuffer = document.getElementById('lbl-keep-buffer');
+        if (keepBufferInput) {
+            keepBufferInput.value = '8';
+            keepBufferInput.remove();
+        }
+        if (lblKeepBuffer) lblKeepBuffer.innerText = '8';
+        const cgKeepBuffer = document.getElementById('cg-keep-buffer');
+        if (cgKeepBuffer) cgKeepBuffer.remove();
+
+        // 2. Zabalenie všetkých range posuvníkov do dotykového boxu s tlačidlami - a +
+        const rangeInputs = Array.from(controlsEl.querySelectorAll('input[type="range"]'));
+        rangeInputs.forEach(slider => {
+            if (slider.parentElement && slider.parentElement.classList.contains('mob-slider-wrap')) return;
+            const wrap = document.createElement('div');
+            wrap.className = 'mob-slider-wrap';
+
+            const btnMinus = document.createElement('button');
+            btnMinus.type = 'button';
+            btnMinus.className = 'mob-step-btn';
+            btnMinus.textContent = '−';
+
+            const btnPlus = document.createElement('button');
+            btnPlus.type = 'button';
+            btnPlus.className = 'mob-step-btn';
+            btnPlus.textContent = '+';
+
+            const stepBy = dir => {
+                if (slider.disabled) return;
+                const step = parseFloat(slider.step) || 1;
+                const min = parseFloat(slider.min) || 0;
+                const max = parseFloat(slider.max) || 100;
+                const cur = parseFloat(slider.value) || 0;
+                const next = Math.max(min, Math.min(max, Math.round((cur + dir * step) * 100) / 100));
+                slider.value = next;
+                slider.dispatchEvent(new Event('input', { bubbles: true }));
+                slider.dispatchEvent(new Event('change', { bubbles: true }));
+            };
+
+            btnMinus.addEventListener('click', () => stepBy(-1));
+            btnPlus.addEventListener('click', () => stepBy(1));
+
+            slider.parentNode.insertBefore(wrap, slider);
+            wrap.appendChild(btnMinus);
+            wrap.appendChild(slider);
+            wrap.appendChild(btnPlus);
+        });
+
+        // 3. Preskupenie ovládacích prvkov do hornej lišty a 4 rozbaľovacích menu
+        const rows = Array.from(controlsEl.querySelectorAll(':scope > .controls-row'));
+        if (rows.length < 4) return;
+
+        const topBar = document.createElement('div');
+        topBar.className = 'mob-top-bar';
+        const topRow1 = document.createElement('div');
+        topRow1.className = 'mob-top-row-1';
+        const topRow1Btns = document.createElement('div');
+        topRow1Btns.className = 'mob-top-row-1-btns';
+        const topRow2 = document.createElement('div');
+        topRow2.className = 'mob-top-row-2';
+
+        const badge = controlsEl.querySelector('.app-version-badge');
+        if (badge) topRow1.appendChild(badge);
+        if (btnInfo) topRow1Btns.appendChild(btnInfo);
+        if (btnHelp) topRow1Btns.appendChild(btnHelp);
+        topRow1.appendChild(topRow1Btns);
+
+        if (btnResetCache) topRow2.appendChild(btnResetCache);
+
+        const btnPlayEl = document.getElementById('btn-play');
+        const btnFsEl = document.getElementById('btn-fullscreen');
+        if (btnPlayEl) {
+            btnPlayEl.innerHTML = '▶';
+            btnPlayEl.title = 'Spustiť';
+            btnPlayEl.style.width = 'auto';
+            topRow2.appendChild(btnPlayEl);
+        }
+        if (btnFsEl) {
+            btnFsEl.innerHTML = '⛶ 5s';
+            btnFsEl.style.width = 'auto';
+            topRow2.appendChild(btnFsEl);
+        }
+        topBar.appendChild(topRow1);
+        topBar.appendChild(topRow2);
+
+        const tabsGrid = document.createElement('div');
+        tabsGrid.className = 'mob-tabs-grid';
+
+        const categories = [
+            { title: '1. 📁 Súbor & Mapa', sourceRow: rows[0] },
+            { title: '2. 🎨 Čiara & Vzhľad', sourceRow: rows[1] },
+            { title: '3. 🎥 Kamera & Rýchlosť', sourceRow: rows[2] },
+            { title: '4. 📊 HUD, POI & Súhrn', sourceRow: rows[3] }
+        ];
+
+        // Presun kamery, zoomu a míľnikov z 2. riadku do 3. kategórie (Kamera & Rýchlosť)
+        const camGroup = document.getElementById('camera-mode')?.closest('.control-group');
+        const zoomGrp = document.getElementById('zoom-group');
+        const mileGrp = document.getElementById('milestone-km')?.closest('.control-group');
+        const flashGrp = document.getElementById('milestone-flash-effect')?.closest('.control-group');
+        const flashColGrp = document.getElementById('milestone-color-group');
+
+        // Presun HUD prepínačov z 3. riadku do 4. kategórie (HUD, POI & Súhrn)
+        const profBtnGrp = document.getElementById('btn-toggle-profile')?.closest('.control-group');
+        if (profBtnGrp) {
+            const profLbl = profBtnGrp.querySelector('label');
+            if (profLbl) {
+                profLbl.innerHTML = 'Okno profilu <span style="color:#ffeb3b; font-size:9px;">(iba na šírku)</span>';
+            }
+        }
+        const hudBtnGrp = document.getElementById('btn-toggle-hud')?.closest('.control-group');
+        const hudItemsGrp = document.querySelector('.hud-items-toggles')?.closest('.control-group');
+
+        const drawers = [];
+        const tabButtons = [];
+
+        categories.forEach((cat, idx) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'mob-tab-btn';
+            btn.innerHTML = `<span>${cat.title}</span><span class="mob-tab-arrow">▼</span>`;
+
+            const drawer = document.createElement('div');
+            drawer.className = 'mob-panel-drawer';
+
+            const groups = Array.from(cat.sourceRow.querySelectorAll('.control-group'));
+            groups.forEach(g => {
+                if (g.id !== 'cg-reset-cache') {
+                    drawer.appendChild(g);
+                }
+            });
+
+            btn.addEventListener('click', () => {
+                const willOpen = !drawer.classList.contains('open');
+                drawers.forEach(d => d.classList.remove('open'));
+                tabButtons.forEach(b => {
+                    b.classList.remove('active');
+                    const arr = b.querySelector('.mob-tab-arrow');
+                    if (arr) arr.textContent = '▼';
+                });
+                if (willOpen) {
+                    drawer.classList.add('open');
+                    btn.classList.add('active');
+                    const arr = btn.querySelector('.mob-tab-arrow');
+                    if (arr) arr.textContent = '▲';
+                }
+                setTimeout(() => {
+                    map.invalidateSize({ pan: false });
+                    resizeRouteCanvas();
+                }, 50);
+            });
+
+            tabsGrid.appendChild(btn);
+            tabButtons.push(btn);
+            drawers.push(drawer);
+        });
+
+        // V 2. zásuvke (Čiara & Vzhľad) prehodenie polohy CONFIG (#grad-config-group) a HRÚBKA (#cg-width),
+        // aby bola Hrúbka priamo nad tiahlom pre veľkosť Hlavičky (#cg-head-size)
+        if (drawers[1]) {
+            const gradCfgGrp = drawers[1].querySelector('#grad-config-group');
+            const widthGrp = drawers[1].querySelector('#cg-width');
+            if (gradCfgGrp && widthGrp) {
+                drawers[1].insertBefore(widthGrp, gradCfgGrp);
+            }
+        }
+
+        // Usporiadanie skupín do správnych zásuviek (3 = Kamera & Rýchlosť, 4 = HUD, POI & Súhrn)
+        [camGroup, zoomGrp, mileGrp, flashGrp, flashColGrp].forEach(g => {
+            if (g && drawers[2]) drawers[2].insertBefore(g, drawers[2].firstChild);
+        });
+        [hudItemsGrp, profBtnGrp, hudBtnGrp].forEach(g => {
+            if (g && drawers[3]) drawers[3].insertBefore(g, drawers[3].firstChild);
+        });
+
+        rows.forEach(r => r.remove());
+        controlsEl.appendChild(topBar);
+        controlsEl.appendChild(tabsGrid);
+        drawers.forEach(d => controlsEl.appendChild(d));
+
+        // Automatické zbalenie zásuvky pri spustení animácie
+        if (btnPlayEl) {
+            btnPlayEl.addEventListener('click', () => {
+                drawers.forEach(d => d.classList.remove('open'));
+                tabButtons.forEach(b => {
+                    b.classList.remove('active');
+                    const arr = b.querySelector('.mob-tab-arrow');
+                    if (arr) arr.textContent = '▼';
+                });
+                setTimeout(() => {
+                    map.invalidateSize({ pan: false });
+                    resizeRouteCanvas();
+                }, 50);
+            });
+        }
+
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                updateHudVisibility();
+                map.invalidateSize({ pan: false });
+                resizeRouteCanvas();
+            }, 120);
+        });
+        window.addEventListener('resize', () => {
+            updateHudVisibility();
+        });
+
+        updateHudVisibility();
+        map.invalidateSize({ pan: false });
+        resizeRouteCanvas();
+    }
+
+    initMobileInterface();
+
 </script>
 </body>
 </html>
