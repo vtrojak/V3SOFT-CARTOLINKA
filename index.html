@@ -13241,7 +13241,9 @@
                 panelColorRetro: panelThemeColors.retro,
                 trimStatsMode: document.getElementById('trim-stats-mode').value,
                 mapStyle: document.getElementById('map-style').value,
-                mapyLogoSize: document.getElementById('mapy-logo-size').value,
+                mapyLogoSize: IS_MOBILE_BROWSER
+    ? '32'
+    : (document.getElementById('mapy-logo-size')?.value || '50'),
                 lineColorMode: document.getElementById('line-color-mode').value,
                 lineColor: document.getElementById('line-color').value,
                 slopeColorMin: document.getElementById('slope-color-min').value,
