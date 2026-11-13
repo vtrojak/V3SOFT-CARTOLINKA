@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="favicon.png">
-    <title>V3SOFT CartoLinka v1.123 (WebGL GPU Engine)</title>
+    <title>V3SOFT CartoLinka v1.13 (WebGL GPU Engine)</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
@@ -460,21 +460,30 @@
         }
         .grad-config-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr) auto;
+            grid-template-columns: repeat(4, 62px) auto;
             gap: 8px;
             align-items: end;
+            justify-content: space-between;
+        }
+        body:not(.is-mobile-browser) .grad-config-grid .poi-field-col input {
+            width: 62px;
         }
         .grad-row-actions {
             display: flex;
             gap: 5px;
             align-items: center;
             height: 30px;
+            justify-self: end;
         }
         #controls .btn-grad-save-default,
         #controls.glass-theme .btn-grad-save-default {
             position: relative;
+            width: 92px;
+            min-width: 92px;
+            max-width: 92px;
             height: 30px;
-            padding: 0 10px;
+            padding: 0 8px;
+            box-sizing: border-box;
             font-size: 11px;
             font-weight: 800;
             letter-spacing: 0.4px;
@@ -2808,6 +2817,60 @@
         #btn-reset-cache:active:not(:disabled) {
             transform: translateY(1px) scale(0.98);
         }
+        #controls #btn-reset-cache.cache-warn-50,
+        #controls.glass-theme #btn-reset-cache.cache-warn-50,
+        #controls.retro-theme #btn-reset-cache.cache-warn-50,
+        body.is-mobile-browser #controls #btn-reset-cache.cache-warn-50 {
+            background: #9e0000 !important;
+            border-color: #c62828 !important;
+            border-bottom-color: #5f0000 !important;
+            color: #ffffff !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85) !important;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 3px 6px rgba(0, 0, 0, 0.65), 0 0 10px rgba(158, 0, 0, 0.55) !important;
+        }
+        #controls #btn-reset-cache.cache-warn-50:hover:not(:disabled),
+        #controls.glass-theme #btn-reset-cache.cache-warn-50:hover:not(:disabled),
+        #controls.retro-theme #btn-reset-cache.cache-warn-50:hover:not(:disabled),
+        body.is-mobile-browser #controls #btn-reset-cache.cache-warn-50:hover:not(:disabled) {
+            background: #b00000 !important;
+            border-color: #e53935 !important;
+        }
+        #controls #btn-reset-cache.cache-warn-75,
+        #controls.glass-theme #btn-reset-cache.cache-warn-75,
+        #controls.retro-theme #btn-reset-cache.cache-warn-75,
+        body.is-mobile-browser #controls #btn-reset-cache.cache-warn-75 {
+            background: #cc0000 !important;
+            border-color: #ef5350 !important;
+            border-bottom-color: #7f0000 !important;
+            color: #ffffff !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85) !important;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32), 0 3px 6px rgba(0, 0, 0, 0.7), 0 0 12px rgba(204, 0, 0, 0.65) !important;
+        }
+        #controls #btn-reset-cache.cache-warn-75:hover:not(:disabled),
+        #controls.glass-theme #btn-reset-cache.cache-warn-75:hover:not(:disabled),
+        #controls.retro-theme #btn-reset-cache.cache-warn-75:hover:not(:disabled),
+        body.is-mobile-browser #controls #btn-reset-cache.cache-warn-75:hover:not(:disabled) {
+            background: #de0000 !important;
+            border-color: #ff5252 !important;
+        }
+        #controls #btn-reset-cache.cache-warn-90,
+        #controls.glass-theme #btn-reset-cache.cache-warn-90,
+        #controls.retro-theme #btn-reset-cache.cache-warn-90,
+        body.is-mobile-browser #controls #btn-reset-cache.cache-warn-90 {
+            background: #ff0000 !important;
+            border-color: #ff8a80 !important;
+            border-bottom-color: #990000 !important;
+            color: #ffffff !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85) !important;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 3px 7px rgba(0, 0, 0, 0.75), 0 0 15px rgba(255, 0, 0, 0.8) !important;
+        }
+        #controls #btn-reset-cache.cache-warn-90:hover:not(:disabled),
+        #controls.glass-theme #btn-reset-cache.cache-warn-90:hover:not(:disabled),
+        #controls.retro-theme #btn-reset-cache.cache-warn-90:hover:not(:disabled),
+        body.is-mobile-browser #controls #btn-reset-cache.cache-warn-90:hover:not(:disabled) {
+            background: #ff1a1a !important;
+            border-color: #ff9e80 !important;
+        }
         #reset-cache-modal-overlay {
             position: fixed;
             top: 0;
@@ -2826,8 +2889,9 @@
             display: flex;
         }
         .reset-modal-box {
-            width: 540px;
-            max-width: 94vw;
+            width: 650px;
+            max-width: 95vw;
+            max-height: 90vh;
             background: #1b1b1b;
             border: 1px solid #484848;
             border-radius: 12px;
@@ -2844,6 +2908,7 @@
             padding: 14px 20px;
             background: #242424;
             border-bottom: 1px solid #383838;
+            flex-shrink: 0;
         }
         .reset-modal-title {
             font-size: 15px;
@@ -2857,9 +2922,23 @@
             padding: 5px 12px;
             height: 28px;
             font-size: 12px;
+            justify-content: center;
+            flex-shrink: 0;
         }
         #btn-close-reset-modal:hover {
             background: #555555;
+        }
+        body.is-mobile-browser #btn-close-reset-modal {
+            background: linear-gradient(180deg, #ff1744 0%, #c62828 100%) !important;
+            color: #ffffff !important;
+            border: 1px solid #ff5252 !important;
+            border-bottom-color: #8e0000 !important;
+            box-shadow: 0 2px 6px rgba(255, 23, 68, 0.55) !important;
+            font-weight: 900 !important;
+            font-size: 14px !important;
+            width: 34px !important;
+            height: 32px !important;
+            padding: 0 !important;
         }
         .reset-modal-body {
             padding: 22px 24px 24px 24px;
@@ -2868,6 +2947,8 @@
             display: flex;
             flex-direction: column;
             gap: 14px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .reset-usage-card {
             background: #242424;
@@ -2920,28 +3001,43 @@
             border-radius: 4px;
         }
         .reset-modal-actions {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-end;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
             gap: 10px;
             margin-top: 4px;
+            width: 100%;
         }
-        #btn-cancel-reset-cache {
-            background: linear-gradient(180deg, #525252 0%, #383838 100%);
-            border: 1px solid #666;
+        .reset-modal-actions button {
+            width: 100%;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+        body.is-mobile-browser .reset-modal-actions {
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+        body.is-mobile-browser .reset-modal-actions button {
+            height: 38px;
+            font-size: 13px;
+        }
+        #btn-reset-line-coloring {
+            background: linear-gradient(180deg, #8e24aa 0%, #6a1b9a 100%);
+            border: 1px solid #ba68c8;
+            border-bottom-color: #38006b;
             color: #ffffff;
-            padding: 8px 14px;
+            padding: 8px 12px;
             height: 34px;
+            box-shadow: 0 3px 8px rgba(171, 71, 188, 0.42);
         }
-        #btn-cancel-reset-cache:hover {
-            background: linear-gradient(180deg, #616161 0%, #454545 100%);
+        #btn-reset-line-coloring:hover {
+            background: linear-gradient(180deg, #9c27b0 0%, #7b1fa2 100%);
         }
         #btn-reset-factory-settings {
             background: linear-gradient(180deg, #ff8f00 0%, #e65100 100%);
             border: 1px solid #ffb300;
             border-bottom-color: #bf360c;
             color: #ffffff;
-            padding: 8px 14px;
+            padding: 8px 12px;
             height: 34px;
             box-shadow: 0 3px 8px rgba(255, 152, 0, 0.38);
         }
@@ -2953,7 +3049,7 @@
             border: 1px solid #ef5350;
             border-bottom-color: #8e0000;
             color: #ffffff;
-            padding: 8px 14px;
+            padding: 8px 12px;
             height: 34px;
             box-shadow: 0 3px 8px rgba(229, 57, 53, 0.45);
         }
@@ -3243,6 +3339,8 @@
         }
         body.is-mobile-browser .grad-row-actions .btn-grad-save-default {
             flex: 1 1 auto !important;
+            width: auto !important;
+            max-width: none !important;
         }
         body.is-mobile-browser .poi-add-form > .poi-field-col:nth-child(2) {
             grid-column: 1 / -1 !important;
@@ -3329,7 +3427,7 @@
         <div class="controls-row">
             <div class="app-version-badge">
                 <span class="app-version-title">V3SOFT <span class="brand-carto">Carto</span><span class="brand-linka">Linka</span></span>
-                <span class="app-version-num">v1.123</span>
+                <span class="app-version-num">v1.13</span>
             </div>
             <button id="btn-info" type="button" title="Informácie o aplikácii">ℹ️ INFO</button>
             <button id="btn-help" type="button" title="Zobraziť podrobný návod a vysvetlenie všetkých nastavení aplikácie">❓ HELP</button>
@@ -3456,9 +3554,9 @@
             <div class="control-group poi-dropdown-wrapper group-disabled" id="grad-config-group">
                 <label>Pásma</label>
                 <button id="btn-grad-config" type="button" aria-expanded="false" aria-controls="grad-config-panel" aria-haspopup="dialog" title="Nastaviť vlastné rozpätie MID a hraničné body plnej sýtosti pre Sklon (%), Rýchlosť (km/h), Tempo (min/km), Tep (hr/min) a Výkon (W)" disabled>⚙️ Config</button>
-                <div id="grad-config-panel" class="poi-editor-popover" role="dialog" aria-modal="false" aria-label="Konfigurácia farebných pásiem" style="width: 655px;">
+                <div id="grad-config-panel" class="poi-editor-popover" role="dialog" aria-modal="false" aria-label="Konfigurácia farebných pásiem" style="width: 500px;">
                     <div class="poi-editor-header">
-                        <span class="poi-editor-title">⚙️ Konfigurácia farebných pásiem (Sklon, Rýchlosť, Tempo, Tep & Výkon)</span>
+                        <span class="poi-editor-title">⚙️ Konfigurácia farebných pásiem</span>
                         <div class="poi-editor-actions">
                             <button type="button" id="btn-reset-grad-config" class="btn-poi-small" title="Obnoviť predvolené hodnoty všetkých pásiem pre aktuálnu aktivitu">↺ Predvolené</button>
                             <button type="button" id="btn-close-grad-config" class="btn-poi-small" title="Zavrieť okno">✕ Zavrieť</button>
@@ -3466,7 +3564,7 @@
                     </div>
                     <div class="grad-config-section" id="grad-sec-slope">
                         <div class="grad-config-sec-title">
-                            <span>⛰️ Sklon (%) – rozpätie MID a hraničné body</span>
+                            <span>⛰️ Sklon (%)</span>
                             <span class="grad-config-sec-stats" id="cfg-slope-measured-stats">Min: -- | Max: -- %</span>
                         </div>
                         <div class="grad-config-grid">
@@ -3494,7 +3592,7 @@
                     </div>
                     <div class="grad-config-section" id="grad-sec-speed">
                         <div class="grad-config-sec-title">
-                            <span>⏱️ Rýchlosť (km/h) – rozpätie MID a hraničné body</span>
+                            <span>⏱️ Rýchlosť (km/h)</span>
                             <span class="grad-config-sec-stats" id="cfg-speed-measured-stats">Min: -- | Priemer: -- | Max: -- km/h</span>
                         </div>
                         <div class="grad-config-grid">
@@ -3522,7 +3620,7 @@
                     </div>
                     <div class="grad-config-section" id="grad-sec-pace">
                         <div class="grad-config-sec-title">
-                            <span>🏃 Tempo (min/km) – rozpätie MID a hranice</span>
+                            <span>🏃 Tempo (min/km)</span>
                             <span class="grad-config-sec-stats" id="cfg-pace-measured-stats">Min: --:-- | Priemer: --:-- | Max: --:-- /km</span>
                         </div>
                         <div class="grad-config-grid">
@@ -3550,7 +3648,7 @@
                     </div>
                     <div class="grad-config-section" id="grad-sec-hr">
                         <div class="grad-config-sec-title">
-                            <span>❤️ Tep (hr/min) – rozpätie MID a hraničné body</span>
+                            <span>❤️ Tep (hr/min)</span>
                             <span class="grad-config-sec-stats" id="cfg-hr-measured-stats">Min: -- | Priemer: -- | Max: -- bpm</span>
                         </div>
                         <div class="grad-config-grid">
@@ -3578,7 +3676,7 @@
                     </div>
                     <div class="grad-config-section" id="grad-sec-pwr">
                         <div class="grad-config-sec-title">
-                            <span>⚡ Výkon (W) – rozpätie MID a hraničné body</span>
+                            <span>⚡ Výkon (W)</span>
                             <span class="grad-config-sec-stats" id="cfg-pwr-measured-stats">Min: -- | Priemer: -- | Max: -- W</span>
                         </div>
                         <div class="grad-config-grid">
@@ -4181,7 +4279,7 @@
 <div id="help-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="help-modal-title">
     <div class="help-modal-box">
         <div class="help-modal-header">
-            <span class="help-modal-title" id="help-modal-title">❓ Návod na používanie – V3SOFT CartoLinka v1.123</span>
+            <span class="help-modal-title" id="help-modal-title">❓ Návod na používanie – V3SOFT CartoLinka v1.13</span>
             <button type="button" id="btn-close-help" title="Zavrieť nápovedu (Esc)">✕ Zavrieť</button>
         </div>
         <div class="help-modal-body">
@@ -4256,7 +4354,7 @@
                     <br>• <em>Rýchlosť / Tempo / Tep / Výkon:</em> Fungujú na rovnakom princípe ako Sklon.
                     <br>• <em>Tlačidlo ⚙️ Config (Pásma):</em> Nachádza sa hneď za výberom farieb <strong>Min / Mid / Max</strong> a otvára samostatné konfiguračné okno, v ktorom si môžete ľubovoľne upraviť rozpätie pásma <strong>MID (od – do)</strong> aj <strong>hraničné body plnej sýtosti MIN a MAX</strong> zvlášť pre <em>Sklon (%)</em>, <em>Rýchlosť (km/h)</em>, <em>Tempo (min/km)</em>, <em>Tep (hr/min)</em> a <em>Výkon (W)</em>:
                     <br>&nbsp;&nbsp;– V hlavičke každej sekcie sa po načítaní súboru zobrazujú reálne namerané hodnoty aktuálnej trasy (<strong>Min | Priemer | Max</strong>, pri sklone <strong>Min | Max %</strong>), čo uľahčuje presné nastavenie prahov.
-                    <br>&nbsp;&nbsp;– Červené tlačidlo <strong>ULOŽIŤ</strong> pri danom riadku uloží vaše nastavené hodnoty do pamäte aplikácie ako nové predvolené hodnoty pre aktuálnu aktivitu (tieto vlastné predvolené hodnoty zostanú trvalo zachované aj po použití tlačidla <strong>RESET</strong> – <em>Továrenské nastavenia</em> aj <em>Potvrdiť a vymazať</em>).
+                    <br>&nbsp;&nbsp;– Červené tlačidlo <strong>ULOŽIŤ</strong> pri danom riadku uloží vaše nastavené hodnoty do pamäte aplikácie ako nové predvolené hodnoty pre aktuálnu aktivitu (tieto vlastné predvolené hodnoty zostanú zachované aj pri <em>Továrenských nastaveniach</em> a <em>Potvrdiť a vymazať</em>; na továrenské hodnoty ich vráti iba špeciálne tlačidlo <em>Predvolené farbenie čiary</em> v okne RESET).
                     <br>&nbsp;&nbsp;– Tlačidlo <strong>↺</strong> na konci riadku vráti danú veličinu na predvolené hodnoty a horné tlačidlo <strong>↺ Predvolené</strong> obnoví všetky pásma pre aktuálnu aktivitu naraz.
                 </div>
                 <div class="help-item">
@@ -4383,8 +4481,8 @@
                 </div>
                 <div class="help-item">
                     <span class="help-item-title">Vyčistiť pamäť – RESET (0% – 100%):</span>
-                    Zobrazuje aktuálne percentuálne zaplnenie pamäte prehliadača (<code>LocalStorage</code> s limitom ~5 MB), do ktorej sa ukladajú vlastné nastavenia používateľa, body záujmu (POI), skomprimované fotografie a súhrny štatistík pre jednotlivé trasy. Kliknutím na tlačidlo <strong>RESET</strong> sa otvorí informačné okno s presným prehľadom obsadenosti pamäte a tromi možnosťami:
-                    <br>• <em>Zrušiť (Späť):</em> Zatvorí okno bez vykonania akýchkoľvek zmien.
+                    Zobrazuje aktuálne percentuálne zaplnenie pamäte prehliadača (<code>LocalStorage</code> s limitom ~5 MB), do ktorej sa ukladajú vlastné nastavenia používateľa, body záujmu (POI), skomprimované fotografie a súhrny štatistík pre jednotlivé trasy. Kliknutím na tlačidlo <strong>RESET</strong> sa otvorí informačné okno s presným prehľadom obsadenosti pamäte (zatvára sa krížikom <strong>✕</strong> vpravo hore) a tromi akciami:
+                    <br>• <em>Predvolené farbenie čiary:</em> Vráti na továrenské predvolené hodnoty výhradne všetky možnosti farbenia čiary (režim farbenia na <em>Jednofarebná</em>, farbu čiary, farby gradientu <em>Min / Mid / Max</em> a všetky farebné pásma v okne <em>⚙️ Config</em> pre všetky aktivity vrátane prípadných vlastných uložených hodnôt), pričom všetky ostatné nastavenia aplikácie, uložené trasy, fotky aj <em>Mapy.com API Kľúč</em> zostanú nedotknuté.
                     <br>• <em>Továrenské nastavenia:</em> Vráti všetky používateľské nastavenia (zvolený štýl ovládacieho panela, mapový podklad, farbu a hrúbku čiary, hlavičku, neón, kameru, rýchlosť, priehľadnosť, veľkosť a farbu písma v okne štatistiky, prepínače údajov aj buffer) do predvoleného (továrenského) stavu, pričom v pamäti uchová všetko ostatné (uložené trasy, body záujmu, fotografie, súhrny aj <em>Mapy.com API Kľúč</em>).
                     <br>• <em>Potvrdiť a vymazať:</em> Bezpečne vymaže uloženú históriu trás, bodov záujmu a fotografií pre uvoľnenie pamäte (váš uložený <em>Mapy.com API Kľúč</em> a vlastné nastavenia ovládacieho panela zostanú zachované).
                 </div>
@@ -4410,7 +4508,7 @@
                 <h3>7. Mobilná verzia rozhrania (označenie verzie s príponou „M“)</h3>
                 <div class="help-item">
                     <span class="help-item-title">Automatická detekcia dotykových zariadení:</span>
-                    Pri otvorení aplikácie na smartfóne alebo tablete (Android, iOS, iPadOS) sa rozhranie automaticky prepne do mobilného režimu (v názve verzie pribudne písmeno <strong>M</strong>, napr. <em>v1.123M</em>):
+                    Pri otvorení aplikácie na smartfóne alebo tablete (Android, iOS, iPadOS) sa rozhranie automaticky prepne do mobilného režimu (v názve verzie pribudne písmeno <strong>M</strong>, napr. <em>v1.13M</em>):
                     <br>• <strong>4 akordeónové sekcie:</strong> Namiesto štyroch širokých riadkov sú nastavenia rozdelené do 4 prehľadných rozbaľovacích kariet (<em>1. 📁 Súbor & Mapa</em>, <em>2. 🎨 Čiara & Vzhľad</em>, <em>3. 🎥 Kamera & Rýchlosť</em>, <em>4. 📊 HUD, POI & Súhrn</em>), ktoré sa pri spustení animácie automaticky zbalia.
                     <br>• <strong>Dotykové posuvníky s tlačidlami − / +:</strong> Každý posuvník je vybavený zväčšeným dotykovým tiahlom a bočnými tlačidlami <strong>−</strong> a <strong>+</strong> pre presné krokovanie hodnôt jedným ťuknutím.
                     <br>• <strong>Optimalizované rozmery a orientácia displeja:</strong> Pre zachovanie maximálneho čistého výhľadu na mapu sú na mobile pevne prednastavené optimálne hodnoty mierky HUD (40 %), písma (32 px), priehľadnosti (85 %), loga Mapy.com (32 px), štýlu panela (NORMAL) a buffera dlaždíc (8), pričom tieto ladiace posuvníky a prepínač MINI HUD sú na mobile skryté. Okno výškového profilu (<em>⛰️ Profil</em>) sa na mobilnom displeji zobrazuje iba pri otočení telefónu <strong>na šírku (landscape)</strong>.
@@ -4431,7 +4529,7 @@
             <div class="info-line"><strong>Koncept a dizajn:</strong> Vlado Troják</div>
             <div class="info-line"><strong>Kód a vývoj:</strong> AI Gemini Argon</div>
             <div class="info-line"><strong>Rok výroby:</strong> 11/2026</div>
-            <div class="info-line"><strong>Verzia:</strong> <span id="info-version-val">v1.123</span></div>
+            <div class="info-line"><strong>Verzia:</strong> <span id="info-version-val">v1.13</span></div>
             <div class="info-freeware">Táto aplikácia je freeware.</div>
             <div class="info-yt-label">Tu môžeš sledovať moje videá:</div>
             <a href="https://www.youtube.com/@VladoTrojak" target="_blank" rel="noopener noreferrer" class="btn-yt-link">
@@ -4445,7 +4543,7 @@
 <div id="reset-cache-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="reset-modal-title">
     <div class="reset-modal-box">
         <div class="reset-modal-header">
-            <span class="reset-modal-title" id="reset-modal-title">🧹 Vyčistiť pamäť prehliadača (LocalStorage)</span>
+            <span class="reset-modal-title" id="reset-modal-title">🧹 Vyčistiť pamäť</span>
             <button type="button" id="btn-close-reset-modal" title="Zavrieť okno (Esc)">✕</button>
         </div>
         <div class="reset-modal-body">
@@ -4466,7 +4564,7 @@
                 🔒 <strong>Bezpečný reset:</strong> Váš uložený <strong>Mapy.com API Kľúč</strong> zostane zachovaný a nebude vymazaný.
             </div>
             <div class="reset-modal-actions">
-                <button type="button" id="btn-cancel-reset-cache" title="Zavrieť okno bez vymazania pamäte alebo zmeny nastavení">Zrušiť (Späť)</button>
+                <button type="button" id="btn-reset-line-coloring" title="Vrátiť na predvolené hodnoty iba všetky možnosti farbenia čiary (režim farbenia, farbu čiary, farby Min/Mid/Max a všetky farebné pásma v Config pre všetky aktivity). Ostatné nastavenia, trasy, fotky a API kľúč zostanú nedotknuté.">Predvolené farbenie čiary</button>
                 <button type="button" id="btn-reset-factory-settings" title="Vrátiť všetky nastavenia ovládacieho panela, čiary, kamery a štatistiky do továrenského nastavenia (uložené trasy, fotky a API kľúč zostanú zachované)">Továrenské nastavenia</button>
                 <button type="button" id="btn-confirm-reset-cache" title="Vymazať z pamäte všetky uložené trasy, body záujmu a fotografie">Potvrdiť a vymazať</button>
             </div>
@@ -4739,8 +4837,11 @@
         try {
             localStorage.setItem(CUSTOM_GRAD_DEFAULTS_STORAGE_KEY, JSON.stringify(ACTIVITY_GRAD_DEFAULTS));
             if (typeof updateStorageUsageBadge === 'function') updateStorageUsageBadge();
+            return true;
         } catch (err) {
             console.warn('Chyba pri ukladaní vlastných predvolených pásiem:', err);
+            alert('Pamäť prehliadača (LocalStorage ~5 MB) je plná! Predvolené farebné pásma sa nepodarilo uložiť. Uvoľnite pamäť vymazaním uložených trás a fotografií cez tlačidlo RESET.');
+            return false;
         }
     }
 
@@ -6810,6 +6911,7 @@
                 km: p.km,
                 origKm: (typeof p.origKm === 'number' && !isNaN(p.origKm)) ? p.origKm : p.km,
                 customKm: Boolean(p.customKm),
+                customName: Boolean(p.customName),
                 name: p.name,
                 icon: p.icon,
                 duration: p.duration,
@@ -6846,6 +6948,7 @@
                     km: loadedKm,
                     origKm: loadedOrigKm,
                     customKm: Boolean(item.customKm),
+                    customName: Boolean(item.customName),
                     name: String(item.name || 'Bod záujmu'),
                     icon: POI_ICONS_SVG[item.icon] ? item.icon : 'mountain',
                     duration: Math.max(0.5, parseFloat(item.duration) || 4.0),
@@ -7406,7 +7509,7 @@
                         usedFreshBreakIds.add(matchedBreak.id);
                         p.origKm = matchedBreak.origKm;
                         p.km = matchedBreak.km;
-                        p.name = matchedBreak.name;
+                        if (!p.customName) p.name = matchedBreak.name;
                         continue;
                     }
                 } else {
@@ -7414,7 +7517,7 @@
                     if (fresh) {
                         p.origKm = fresh.origKm;
                         p.km = fresh.km;
-                        p.name = fresh.name;
+                        if (!p.customName) p.name = fresh.name;
                         if (typeof fresh.rawTempC === 'number') {
                             p.rawTempC = fresh.rawTempC;
                         }
@@ -7783,8 +7886,23 @@
             inputName.value = poi.name;
             inputName.placeholder = 'Názov POI';
             inputName.title = 'Upraviť názov bodu záujmu';
+            let nameSaveTimer = null;
             inputName.addEventListener('input', () => {
                 poi.name = inputName.value;
+                poi.customName = true;
+                if (nameSaveTimer) clearTimeout(nameSaveTimer);
+                nameSaveTimer = setTimeout(() => {
+                    nameSaveTimer = null;
+                    savePoisToStorage();
+                }, 300);
+            });
+            inputName.addEventListener('change', () => {
+                if (nameSaveTimer) {
+                    clearTimeout(nameSaveTimer);
+                    nameSaveTimer = null;
+                }
+                poi.name = inputName.value;
+                poi.customName = true;
                 savePoisToStorage();
             });
 
@@ -9895,7 +10013,7 @@
         let updatedTempPois = false;
         for (let i = 0; i < poiItems.length; i++) {
             const p = poiItems[i];
-            if (p.isAuto && typeof p.rawTempC === 'number' && !isNaN(p.rawTempC)) {
+            if (p.isAuto && !p.customName && typeof p.rawTempC === 'number' && !isNaN(p.rawTempC)) {
                 if (p.autoType === 'max_temp' && p.name.startsWith('Max. teplota (')) {
                     p.name = `Max. teplota (${Math.round(p.rawTempC + val)} °C)`;
                     updatedTempPois = true;
@@ -10302,7 +10420,7 @@
                     ACTIVITY_GRAD_DEFAULTS[act][k] = String(gradConfigByActivity[act][k]);
                 }
             });
-            saveCustomGradDefaultsToStorage();
+            if (!saveCustomGradDefaultsToStorage()) return;
             if (typeof saveUserSettingsToStorage === 'function') saveUserSettingsToStorage();
 
             // Krátka vizuálna odozva na tlačidle
@@ -13098,6 +13216,16 @@
         if (lblCacheUsage) {
             lblCacheUsage.innerText = `${stats.pctRounded}%`;
         }
+        if (btnResetCache) {
+            btnResetCache.classList.remove('cache-warn-50', 'cache-warn-75', 'cache-warn-90');
+            if (stats.pctRounded >= 90) {
+                btnResetCache.classList.add('cache-warn-90');
+            } else if (stats.pctRounded >= 75) {
+                btnResetCache.classList.add('cache-warn-75');
+            } else if (stats.pctRounded >= 50) {
+                btnResetCache.classList.add('cache-warn-50');
+            }
+        }
         if (resetCacheModalOverlay && resetCacheModalOverlay.classList.contains('open')) {
             populateResetModalStats(stats);
         }
@@ -13738,6 +13866,47 @@
         }
         updateStorageUsageBadge();
         closeResetCacheModal();
+    }
+
+    function resetLineColoringToFactoryDefaults() {
+        try {
+            localStorage.removeItem(CUSTOM_GRAD_DEFAULTS_STORAGE_KEY);
+        } catch (err) {
+            console.warn('LocalStorage nie je dostupné:', err);
+        }
+        for (const k of Object.keys(FACTORY_GRAD_DEFAULTS)) {
+            ACTIVITY_GRAD_DEFAULTS[k] = { ...FACTORY_GRAD_DEFAULTS[k] };
+        }
+        gradConfigByActivity = createDefaultGradConfigByActivity();
+        DEFAULT_USER_SETTINGS.gradConfigByActivity = createDefaultGradConfigByActivity();
+
+        const modeSelect = document.getElementById('line-color-mode');
+        if (modeSelect) modeSelect.value = 'solid';
+
+        const mapStyleEl = document.getElementById('map-style');
+        const mapStyleVal = mapStyleEl ? mapStyleEl.value : 'satellite_hybrid';
+        const isSolidOrChroma = (mapStyleVal === 'none' || mapStyleVal === 'green' || mapStyleVal === 'blue' || mapStyleVal === 'red');
+        const lineColorInput = document.getElementById('line-color');
+        if (lineColorInput) {
+            lineColorInput.value = isSolidOrChroma ? '#ffffff' : ((mapStyleVal === 'mapy_outdoor') ? '#c800ff' : '#c8ff00');
+        }
+
+        applyDefaultGradientPaletteIfNotCustom(true);
+        const act = (typeof currentTrackActivity !== 'undefined' && ACTIVITY_GRAD_DEFAULTS[currentTrackActivity]) ? currentTrackActivity : 'mtb';
+        loadActivityGradToDom(act);
+        syncCanvasStyles(true);
+
+        if (!isAnimating && rawPoints && rawPoints.length > 1) {
+            renderTrimmedRoutePreview();
+        }
+        saveUserSettingsToStorage();
+        updateStorageUsageBadge();
+        closeResetCacheModal();
+    }
+
+    const btnResetLineColoring = document.getElementById('btn-reset-line-coloring');
+    if (btnResetLineColoring) {
+        btnResetLineColoring.addEventListener('click', resetLineColoringToFactoryDefaults);
     }
 
     const btnResetFactorySettings = document.getElementById('btn-reset-factory-settings');
