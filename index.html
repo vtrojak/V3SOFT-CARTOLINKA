@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="favicon.png">
-    <title>V3SOFT CartoLinka v1.116 (WebGL GPU Engine)</title>
+    <title>V3SOFT CartoLinka v1.123 (WebGL GPU Engine)</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
@@ -109,11 +109,11 @@
         .controls-row-4 {
             justify-content: space-between;
             gap: 8px;
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
         }
         .controls-row-left {
             display: flex;
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
             gap: 8px;
             align-items: center;
             flex: 1 1 auto;
@@ -150,6 +150,7 @@
                 gap: 6px;
             }
             body:not(.is-mobile-browser) #cg-trim { width: 150px; }
+            body:not(.is-mobile-browser) #cg-topo-dim { width: 78px; }
             body:not(.is-mobile-browser) #cg-width { width: 68px; }
             body:not(.is-mobile-browser) #cg-head-size { width: 76px; }
             body:not(.is-mobile-browser) #zoom-group { width: 56px; }
@@ -214,6 +215,7 @@
             font-variant-numeric: tabular-nums;
         }
         #cg-trim { width: 175px; }
+        #cg-topo-dim { width: 90px; }
         #cg-width { width: 78px; }
         #cg-head-size { width: 88px; }
         #zoom-group { width: 62px; }
@@ -488,8 +490,8 @@
             border-radius: 5px;
             transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
         }
-        #controls .btn-grad-save-default:hover:not(:disabled),
-        #controls.glass-theme .btn-grad-save-default:hover:not(:disabled) {
+        #controls .btn-grad-save-default:hover:not(:disabled):not(.saved-flash),
+        #controls.glass-theme .btn-grad-save-default:hover:not(:disabled):not(.saved-flash) {
             background: linear-gradient(180deg, #ff5252 0%, #d32f2f 100%) !important;
             border-color: #ff8a80 !important;
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5),
@@ -497,53 +499,21 @@
                         0 0 15px rgba(255, 82, 82, 0.75) !important;
         }
         #controls .btn-grad-save-default.saved-flash,
-        #controls.glass-theme .btn-grad-save-default.saved-flash {
+        #controls .btn-grad-save-default.saved-flash:hover,
+        #controls .btn-grad-save-default.saved-flash:focus,
+        #controls .btn-grad-save-default.saved-flash:active,
+        #controls.glass-theme .btn-grad-save-default.saved-flash,
+        #controls.glass-theme .btn-grad-save-default.saved-flash:hover,
+        #controls.glass-theme .btn-grad-save-default.saved-flash:focus,
+        #controls.glass-theme .btn-grad-save-default.saved-flash:active,
+        #controls.retro-theme .btn-grad-save-default.saved-flash,
+        #controls.retro-theme .btn-grad-save-default.saved-flash:hover {
             background: linear-gradient(180deg, #43a047 0%, #2e7d32 100%) !important;
             border-color: #81c784 !important;
+            border-bottom-color: #1b5e20 !important;
             box-shadow: 0 0 14px rgba(76, 175, 80, 0.8) !important;
         }
-        #controls .btn-grad-save-default::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: calc(100% + 8px);
-            right: 0;
-            width: 295px;
-            background: rgba(16, 18, 22, 0.96);
-            color: #f5f5f5;
-            font-size: 11px;
-            font-weight: 600;
-            line-height: 1.45;
-            letter-spacing: 0.2px;
-            text-transform: none;
-            white-space: normal;
-            text-align: left;
-            padding: 9px 12px;
-            border-radius: 7px;
-            border: 1px solid #ef5350;
-            box-shadow: 0 10px 26px rgba(0, 0, 0, 0.88);
-            pointer-events: none;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(4px);
-            transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
-            z-index: 10020;
-        }
-        #controls #grad-sec-slope .btn-grad-save-default::after {
-            bottom: auto;
-            top: calc(100% + 8px);
-            transform: translateY(-4px);
-        }
-        #controls .btn-grad-save-default:hover::after,
-        #controls #grad-sec-slope .btn-grad-save-default:hover::after {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        #controls.retro-theme .btn-grad-save-default::after {
-            background: var(--retro-bg-panel);
-            color: var(--retro-main);
-            border-color: var(--retro-border);
-        }
+
         .btn-grad-row-reset {
             height: 30px;
             width: 30px;
@@ -639,19 +609,6 @@
             cursor: not-allowed;
             opacity: 0.6;
         }
-        .btn-toggle {
-            background: #388e3c;
-        }
-        .btn-toggle:hover:not(:disabled) {
-            background: #4caf50;
-        }
-        .btn-toggle.inactive {
-            background: #555555;
-            color: #ccc;
-        }
-        .btn-toggle.inactive:hover:not(:disabled) {
-            background: #666666;
-        }
         .hud-items-toggles {
             display: flex;
             gap: 4px;
@@ -661,19 +618,6 @@
             padding: 4px 8px;
             height: 30px;
             font-size: 11px;
-            background: #388e3c;
-            border: 1px solid #4caf50;
-        }
-        .btn-mini-toggle:hover:not(:disabled) {
-            background: #43a047;
-        }
-        .btn-mini-toggle.inactive {
-            background: #3a3a3a;
-            color: #888;
-            border-color: #555;
-        }
-        .btn-mini-toggle.inactive:hover:not(:disabled) {
-            background: #4a4a4a;
         }
         #btn-toggle-hud {
             width: 148px;
@@ -686,10 +630,6 @@
         #btn-hud-mode {
             width: 138px;
             justify-content: center;
-            background: #00897b;
-        }
-        #btn-hud-mode:hover:not(:disabled) {
-            background: #26a69a;
         }
 
         /* MINI HUD (alternatívne okno v jednom riadku naspodku s fixným rozmerom) */
@@ -766,16 +706,11 @@
         }
 
         #btn-play {
-            background: #ef6c00;
             width: 64px;
             padding: 8px 10px;
             justify-content: center;
         }
-        #btn-play:hover:not(:disabled) {
-            background: #fb8c00;
-        }
         #btn-fullscreen {
-            background: #e53935;
             width: 96px;
             padding: 8px 10px;
             gap: 6px;
@@ -793,9 +728,6 @@
         #controls.retro-theme .rec-circle-icon {
             background: #ffffff;
             box-shadow: 0 0 5px rgba(255, 255, 255, 0.9);
-        }
-        #btn-fullscreen:hover:not(:disabled) {
-            background: #ff5252;
         }
         .control-group.group-disabled {
             opacity: 0.42;
@@ -819,7 +751,7 @@
             background: #000;
             overflow: hidden;
         }
-        #map, #route-canvas {
+        #map, #map-dim-overlay, #route-canvas {
             width: 100%;
             height: 100%;
             position: absolute;
@@ -829,6 +761,14 @@
         #map {
             background: #000;
             z-index: 100;
+        }
+        /* Polopriehľadný stmavovací filter nad topografickou mapou (medzi #map a #route-canvas) */
+        #map-dim-overlay {
+            z-index: 450;
+            pointer-events: none;
+            background: #000000;
+            opacity: 0;
+            transition: opacity 0.15s ease;
         }
         /* Vlastný transparentný HTML5 <canvas> natvrdo umiestnený nad vrstvou mapy */
         #route-canvas {
@@ -912,17 +852,9 @@
             position: relative;
         }
         #btn-poi-editor {
-            background: #6a1b9a;
             width: 136px;
             padding: 8px 10px;
             justify-content: center;
-        }
-        #btn-poi-editor:hover:not(:disabled) {
-            background: #8e24aa;
-        }
-        #btn-poi-editor.active {
-            background: #ab47bc;
-            box-shadow: 0 0 10px rgba(171, 71, 188, 0.6);
         }
         .poi-editor-popover {
             position: absolute;
@@ -958,8 +890,9 @@
             cursor: grabbing;
             user-select: none;
         }
-        #map-container.preview-layer-top {
-            z-index: 10050;
+
+        #controls.preview-behind-hud {
+            z-index: 9020 !important;
         }
         #poi-hud.preview-layer-top {
             z-index: 10060 !important;
@@ -1551,11 +1484,7 @@
 
         /* Tlačidlo HELP a modálne okno s kompletným návodom */
         #btn-help {
-            background: #0d47a1;
             justify-content: center;
-        }
-        #btn-help:hover:not(:disabled) {
-            background: #1565c0;
         }
         #help-modal-overlay {
             position: fixed;
@@ -1675,11 +1604,7 @@
 
         /* Tlačidlo INFO a modálne okno INFO */
         #btn-info {
-            background: #0d47a1;
             justify-content: center;
-        }
-        #btn-info:hover:not(:disabled) {
-            background: #1565c0;
         }
         #info-modal-overlay {
             position: fixed;
@@ -2352,6 +2277,10 @@
         #btn-summary-editor:active:not(:disabled) {
             transform: translateY(1px) scale(0.98);
         }
+        #summary-editor-panel {
+            left: auto;
+            right: 0;
+        }
         .summary-add-form {
             display: grid;
             grid-template-columns: 1fr 142px 68px auto;
@@ -2450,6 +2379,7 @@
             overflow: hidden;
         }
         #app-container.glass-mode #map-container:not(:fullscreen):not(:-webkit-full-screen) #map,
+        #app-container.glass-mode #map-container:not(:fullscreen):not(:-webkit-full-screen) #map-dim-overlay,
         #app-container.glass-mode #map-container:not(:fullscreen):not(:-webkit-full-screen) #route-canvas {
             top: calc(-1 * var(--controls-height, 0px));
             height: calc(100% + var(--controls-height, 0px));
@@ -3057,6 +2987,10 @@
         /* =========================================================================
            MOBILNÉ ROZHRANIE (.is-mobile-browser) – AKORDEÓNOVÉ MENU & DOTYKOVÉ TIAHLA
            ========================================================================= */
+        body.is-mobile-browser,
+        body.is-mobile-browser #app-container {
+            height: 100dvh;
+        }
         body.is-mobile-browser #controls {
             background: #222222 !important;
             border-bottom: 1px solid #383838 !important;
@@ -3190,13 +3124,20 @@
             flex-grow: 1;
         }
         body.is-mobile-browser #cg-trim,
+        body.is-mobile-browser #cg-topo-dim,
         body.is-mobile-browser #cg-hud-items {
             width: 100% !important;
             flex-basis: 100% !important;
         }
+        body.is-mobile-browser .trim-sliders-row {
+            flex-direction: column;
+            height: auto;
+            gap: 8px;
+            width: 100%;
+        }
         body.is-mobile-browser .hud-items-toggles {
             display: grid !important;
-            grid-template-columns: repeat(5, 1fr) !important;
+            grid-template-columns: repeat(3, 1fr) !important;
             gap: 5px !important;
             width: 100% !important;
         }
@@ -3262,6 +3203,20 @@
             border: 2px solid #ffffff;
             box-shadow: 0 2px 6px rgba(0,0,0,0.65);
         }
+        body.is-mobile-browser input[type="range"]::-moz-range-track {
+            height: 8px;
+            border-radius: 4px;
+            background: #444;
+            border: 1px solid #666;
+        }
+        body.is-mobile-browser input[type="range"]::-moz-range-thumb {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: #00e5ff;
+            border: 2px solid #ffffff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.65);
+        }
         /* Fixné veľkosti a neprekrývajúce sa pozície HUD a pop-up okien v mobile */
         body.is-mobile-browser .poi-editor-popover {
             position: fixed !important;
@@ -3271,16 +3226,28 @@
             max-width: 95vw !important;
             max-height: 88vh !important;
             overflow-y: auto !important;
-            overflow-x: auto !important;
+            overflow-x: hidden !important;
             -webkit-overflow-scrolling: touch;
             box-sizing: border-box !important;
         }
+
         body.is-mobile-browser .poi-add-form,
         body.is-mobile-browser .summary-add-form,
         body.is-mobile-browser .grad-config-grid {
             grid-template-columns: 1fr 1fr !important;
         }
-        body.is-mobile-browser .poi-add-form > .poi-field-col:nth-child(2),
+        body.is-mobile-browser .grad-row-actions {
+            grid-column: 1 / -1 !important;
+            justify-content: flex-end !important;
+            margin-top: 2px !important;
+        }
+        body.is-mobile-browser .grad-row-actions .btn-grad-save-default {
+            flex: 1 1 auto !important;
+        }
+        body.is-mobile-browser .poi-add-form > .poi-field-col:nth-child(2) {
+            grid-column: 1 / -1 !important;
+            order: -1 !important;
+        }
         body.is-mobile-browser .summary-add-form > .poi-field-col:nth-child(1) {
             grid-column: 1 / -1 !important;
         }
@@ -3300,13 +3267,16 @@
             max-height: 48vh !important;
             padding-bottom: 6px !important;
         }
+        body.is-mobile-browser .btn-poi-preview {
+            display: none !important;
+        }
         body.is-mobile-browser .poi-row-item {
-            grid-template-columns: 52px 74px minmax(240px, 1fr) 132px 52px 34px 34px 34px !important;
+            grid-template-columns: 52px 74px minmax(240px, 1fr) 132px 52px 34px 34px !important;
             width: max-content !important;
             min-width: 100% !important;
         }
         body.is-mobile-browser .summary-row-item {
-            grid-template-columns: 52px minmax(250px, 1fr) 138px 62px 34px 34px !important;
+            grid-template-columns: 52px minmax(250px, 1fr) 138px 62px 34px !important;
             width: max-content !important;
             min-width: 100% !important;
         }
@@ -3359,7 +3329,7 @@
         <div class="controls-row">
             <div class="app-version-badge">
                 <span class="app-version-title">V3SOFT <span class="brand-carto">Carto</span><span class="brand-linka">Linka</span></span>
-                <span class="app-version-num">v1.116</span>
+                <span class="app-version-num">v1.123</span>
             </div>
             <button id="btn-info" type="button" title="Informácie o aplikácii">ℹ️ INFO</button>
             <button id="btn-help" type="button" title="Zobraziť podrobný návod a vysvetlenie všetkých nastavení aplikácie">❓ HELP</button>
@@ -3376,14 +3346,14 @@
             </div>
             <div class="control-group">
                 <label>Hodnoty pri orezaní</label>
-                <select id="trim-stats-mode" style="width: 170px;" title="Spôsob výpočtu kilometrov a výškových metrov po orezaní začiatku GPX / TCX trasy">
-                    <option value="zero" selected>Od nuly (0 km / 0 m)</option>
-                    <option value="preserve">Pôvodné hodnoty (nenulovať)</option>
+                <select id="trim-stats-mode" style="width: 142px;" title="Spôsob výpočtu kilometrov a výškových metrov po orezaní začiatku GPX / TCX trasy">
+                    <option value="zero">Od nuly (0 km / 0 m)</option>
+                    <option value="preserve" selected>Pôvodné hodnoty (nenulovať)</option>
                 </select>
             </div>
             <div class="control-group">
                 <label>Podklad mapy</label>
-                <select id="map-style" style="width: 196px;" title="Výber mapového podkladu alebo jednofarebného plátna pre Chroma Key">
+                <select id="map-style" style="width: 162px;" title="Výber mapového podkladu alebo jednofarebného plátna pre Chroma Key">
                     <option value="none">Čierne pozadie (bez mapy)</option>
                     <option value="green">Zelené plátno (Chroma Key)</option>
                     <option value="blue">Modré plátno (Chroma Key)</option>
@@ -3397,10 +3367,14 @@
                     <option value="cyclosm">CyclOSM (Cyklistická)</option>
                 </select>
             </div>
+            <div class="control-group group-disabled" id="cg-topo-dim">
+                <label>Stmavenie (<span id="lbl-topo-dim">40</span>%)</label>
+                <input type="range" id="topo-dim" min="0" max="80" step="5" value="40" style="width: 72px;" title="Polopriehľadný stmavovací filter nad topografickou mapou (0% = vypnuté, 5% – 80% = intenzita stmavenia podkladu pre zvýraznenie čiary a neónu)" disabled>
+            </div>
             <div class="control-group group-disabled" id="mapy-key-group">
                 <label>Mapy.com API Kľúč</label>
                 <div class="api-key-input-row">
-                    <input type="password" id="mapy-api-key" placeholder="Vlož API kľúč" style="width: 125px;" autocomplete="off" spellcheck="false" title="Vložte osobný API kľúč pre mapové podklady Mapy.com (automaticky sa uloží do prehliadača)" disabled>
+                    <input type="password" id="mapy-api-key" placeholder="Vlož API kľúč" style="width: 98px;" autocomplete="off" spellcheck="false" title="Vložte osobný API kľúč pre mapové podklady Mapy.com (automaticky sa uloží do prehliadača)" disabled>
                     <button type="button" id="btn-toggle-api-key" title="Zobraziť / skryť Mapy.com API kľúč" disabled>
                         <svg id="icon-api-key-eye" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
                     </button>
@@ -3513,7 +3487,7 @@
                                 <input type="number" id="cfg-slope-max-sat" step="0.5" min="0" max="50" value="6" title="Hodnota stúpania v %, pri ktorej farba dosiahne plnú sýtosť MAX (napr. +6 % alebo +12 %)">
                             </div>
                             <div class="grad-row-actions">
-                                <button type="button" class="btn-grad-save-default" data-grad-row="slope" data-tooltip="Uloží do pamäte aplikácie nastavené hodnoty ako predvolené. Teda hodnoty ku ktorým sa dá vrátiť stlačením tlačidla predvolené. Cez tlačidlo RESET (ani Továrenské nastavenia, ani potvrdiť a vymazať) sa tieto užívateľom nastavené hodnoty nezmenia.">ULOŽIŤ</button>
+                                <button type="button" class="btn-grad-save-default" data-grad-row="slope" title="Uloží nastavené hodnoty do pamäte ako predvolené">ULOŽIŤ</button>
                                 <button type="button" class="btn-grad-row-reset" data-grad-row="slope" title="Vrátiť tento riadok (Sklon) na predvolené hodnoty pre aktuálnu aktivitu">↺</button>
                             </div>
                         </div>
@@ -3541,7 +3515,7 @@
                                 <input type="number" id="cfg-speed-max-sat" step="1" min="1" max="150" value="20" title="Rýchlosť v km/h, nad ktorou farba dosiahne plnú sýtosť MAX (až po max. rýchlosť jazdy)">
                             </div>
                             <div class="grad-row-actions">
-                                <button type="button" class="btn-grad-save-default" data-grad-row="speed" data-tooltip="Uloží do pamäte aplikácie nastavené hodnoty ako predvolené. Teda hodnoty ku ktorým sa dá vrátiť stlačením tlačidla predvolené. Cez tlačidlo RESET (ani Továrenské nastavenia, ani potvrdiť a vymazať) sa tieto užívateľom nastavené hodnoty nezmenia.">ULOŽIŤ</button>
+                                <button type="button" class="btn-grad-save-default" data-grad-row="speed" title="Uloží nastavené hodnoty do pamäte ako predvolené">ULOŽIŤ</button>
                                 <button type="button" class="btn-grad-row-reset" data-grad-row="speed" title="Vrátiť tento riadok (Rýchlosť) na predvolené hodnoty pre aktuálnu aktivitu">↺</button>
                             </div>
                         </div>
@@ -3569,7 +3543,7 @@
                                 <input type="text" id="cfg-pace-max-sat" value="16" placeholder="16" title="Vyššie číslo / pomalší pohyb do kopca v min/km (napr. 16 alebo 6:45), nad ktorým farba dosiahne plnú sýtosť MAX">
                             </div>
                             <div class="grad-row-actions">
-                                <button type="button" class="btn-grad-save-default" data-grad-row="pace" data-tooltip="Uloží do pamäte aplikácie nastavené hodnoty ako predvolené. Teda hodnoty ku ktorým sa dá vrátiť stlačením tlačidla predvolené. Cez tlačidlo RESET (ani Továrenské nastavenia, ani potvrdiť a vymazať) sa tieto užívateľom nastavené hodnoty nezmenia.">ULOŽIŤ</button>
+                                <button type="button" class="btn-grad-save-default" data-grad-row="pace" title="Uloží nastavené hodnoty do pamäte ako predvolené">ULOŽIŤ</button>
                                 <button type="button" class="btn-grad-row-reset" data-grad-row="pace" title="Vrátiť tento riadok (Tempo) na predvolené hodnoty pre aktuálnu aktivitu">↺</button>
                             </div>
                         </div>
@@ -3597,7 +3571,7 @@
                                 <input type="number" id="cfg-hr-max-sat" step="1" min="50" max="250" value="170" title="Srdcový tep v hr/min (bpm), nad ktorým farba dosiahne plnú sýtosť MAX">
                             </div>
                             <div class="grad-row-actions">
-                                <button type="button" class="btn-grad-save-default" data-grad-row="hr" data-tooltip="Uloží do pamäte aplikácie nastavené hodnoty ako predvolené. Teda hodnoty ku ktorým sa dá vrátiť stlačením tlačidla predvolené. Cez tlačidlo RESET (ani Továrenské nastavenia, ani potvrdiť a vymazať) sa tieto užívateľom nastavené hodnoty nezmenia.">ULOŽIŤ</button>
+                                <button type="button" class="btn-grad-save-default" data-grad-row="hr" title="Uloží nastavené hodnoty do pamäte ako predvolené">ULOŽIŤ</button>
                                 <button type="button" class="btn-grad-row-reset" data-grad-row="hr" title="Vrátiť tento riadok (Tep) na predvolené hodnoty pre aktuálnu aktivitu">↺</button>
                             </div>
                         </div>
@@ -3625,7 +3599,7 @@
                                 <input type="number" id="cfg-pwr-max-sat" step="5" min="10" max="2500" value="300" title="Výkon vo wattoch (W), nad ktorým farba dosiahne plnú sýtosť MAX">
                             </div>
                             <div class="grad-row-actions">
-                                <button type="button" class="btn-grad-save-default" data-grad-row="pwr" data-tooltip="Uloží do pamäte aplikácie nastavené hodnoty ako predvolené. Teda hodnoty ku ktorým sa dá vrátiť stlačením tlačidla predvolené. Cez tlačidlo RESET (ani Továrenské nastavenia, ani potvrdiť a vymazať) sa tieto užívateľom nastavené hodnoty nezmenia.">ULOŽIŤ</button>
+                                <button type="button" class="btn-grad-save-default" data-grad-row="pwr" title="Uloží nastavené hodnoty do pamäte ako predvolené">ULOŽIŤ</button>
                                 <button type="button" class="btn-grad-row-reset" data-grad-row="pwr" title="Vrátiť tento riadok (Výkon) na predvolené hodnoty pre aktuálnu aktivitu">↺</button>
                             </div>
                         </div>
@@ -3793,7 +3767,7 @@
                         <div class="poi-add-form">
                             <div class="poi-field-col">
                                 <label>Kilometer (km)</label>
-                                <input type="number" id="poi-input-km" step="0.01" min="0" max="9999" value="1.00" placeholder="10.84" title="Kilometer na trase, na ktorom sa má zobraziť nový bod záujmu (napr. 10.84)">
+                                <input type="number" id="poi-input-km" step="0.01" min="-9999" max="9999" value="1.00" placeholder="10.84" title="Kilometer na trase, na ktorom sa má zobraziť nový bod záujmu (napr. 10.84)">
                             </div>
                             <div class="poi-field-col">
                                 <label>Názov bodu (POI)</label>
@@ -3935,6 +3909,7 @@
 
     <div id="map-container">
         <div id="map"></div>
+        <div id="map-dim-overlay" aria-hidden="true"></div>
         <!-- Vlastný transparentný HTML5 <canvas> umiestnený natvrdo nad mapou (pointer-events: none) -->
         <canvas id="route-canvas"></canvas>
         <!-- Povinné atribútovanie pre podklady Mapy.com (zelené logo + copyright vľavo hore) -->
@@ -4206,7 +4181,7 @@
 <div id="help-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="help-modal-title">
     <div class="help-modal-box">
         <div class="help-modal-header">
-            <span class="help-modal-title" id="help-modal-title">❓ Návod na používanie – V3SOFT CartoLinka v1.116</span>
+            <span class="help-modal-title" id="help-modal-title">❓ Návod na používanie – V3SOFT CartoLinka v1.123</span>
             <button type="button" id="btn-close-help" title="Zavrieť nápovedu (Esc)">✕ Zavrieť</button>
         </div>
         <div class="help-modal-body">
@@ -4238,6 +4213,10 @@
                     <br>• <em>Google Satellite Hybrid / Čistá:</em> Satelitné snímky Google s názvami obcí a cestnou sieťou (Hybrid) alebo čisté satelitné snímky bez popisov.
                     <br>• <em>Mapy.com Turistická / Letecká:</em> Detailná turistická mapa so značenými chodníkmi a cyklotrasami alebo letecká mapa od Seznam.cz (vyžadujú vloženie API kľúča).
                     <br>• <em>OpenTopoMap / Esri World Topographic / CyclOSM:</em> Topografické a špecializované cyklistické mapové podklady s vrstevnicami.
+                </div>
+                <div class="help-item">
+                    <span class="help-item-title">Stmavenie (0% – 80%):</span>
+                    Polopriehľadný stmavovací filter dostupný pre všetky svetlé topografické mapové podklady (<em>Mapy.com Turistická, OpenTopoMap, Esri World Topographic Map, CyclOSM</em>, predvolená hodnota <em>40%</em>). Hodnota <em>0%</em> znamená vypnutý filter (pôvodný jas mapy), vyššie hodnoty (<em>5% – 80%</em>) plynulo stmavia podkladovú mapu, aby nad ňou výrazne vynikla farba animovanej trasy a neónového efektu.
                 </div>
                 <div class="help-item">
                     <span class="help-item-title">Mapy.com API Kľúč:</span>
@@ -4431,7 +4410,7 @@
                 <h3>7. Mobilná verzia rozhrania (označenie verzie s príponou „M“)</h3>
                 <div class="help-item">
                     <span class="help-item-title">Automatická detekcia dotykových zariadení:</span>
-                    Pri otvorení aplikácie na smartfóne alebo tablete (Android, iOS, iPadOS) sa rozhranie automaticky prepne do mobilného režimu (v názve verzie pribudne písmeno <strong>M</strong>, napr. <em>v1.116M</em>):
+                    Pri otvorení aplikácie na smartfóne alebo tablete (Android, iOS, iPadOS) sa rozhranie automaticky prepne do mobilného režimu (v názve verzie pribudne písmeno <strong>M</strong>, napr. <em>v1.123M</em>):
                     <br>• <strong>4 akordeónové sekcie:</strong> Namiesto štyroch širokých riadkov sú nastavenia rozdelené do 4 prehľadných rozbaľovacích kariet (<em>1. 📁 Súbor & Mapa</em>, <em>2. 🎨 Čiara & Vzhľad</em>, <em>3. 🎥 Kamera & Rýchlosť</em>, <em>4. 📊 HUD, POI & Súhrn</em>), ktoré sa pri spustení animácie automaticky zbalia.
                     <br>• <strong>Dotykové posuvníky s tlačidlami − / +:</strong> Každý posuvník je vybavený zväčšeným dotykovým tiahlom a bočnými tlačidlami <strong>−</strong> a <strong>+</strong> pre presné krokovanie hodnôt jedným ťuknutím.
                     <br>• <strong>Optimalizované rozmery a orientácia displeja:</strong> Pre zachovanie maximálneho čistého výhľadu na mapu sú na mobile pevne prednastavené optimálne hodnoty mierky HUD (40 %), písma (32 px), priehľadnosti (85 %), loga Mapy.com (32 px), štýlu panela (NORMAL) a buffera dlaždíc (8), pričom tieto ladiace posuvníky a prepínač MINI HUD sú na mobile skryté. Okno výškového profilu (<em>⛰️ Profil</em>) sa na mobilnom displeji zobrazuje iba pri otočení telefónu <strong>na šírku (landscape)</strong>.
@@ -4452,7 +4431,7 @@
             <div class="info-line"><strong>Koncept a dizajn:</strong> Vlado Troják</div>
             <div class="info-line"><strong>Kód a vývoj:</strong> AI Gemini Argon</div>
             <div class="info-line"><strong>Rok výroby:</strong> 11/2026</div>
-            <div class="info-line"><strong>Verzia:</strong> <span id="info-version-val">v1.116</span></div>
+            <div class="info-line"><strong>Verzia:</strong> <span id="info-version-val">v1.123</span></div>
             <div class="info-freeware">Táto aplikácia je freeware.</div>
             <div class="info-yt-label">Tu môžeš sledovať moje videá:</div>
             <a href="https://www.youtube.com/@VladoTrojak" target="_blank" rel="noopener noreferrer" class="btn-yt-link">
@@ -4514,11 +4493,14 @@
         if (/Macintosh/i.test(ua) && navigator.maxTouchPoints && navigator.maxTouchPoints > 1) {
             return true;
         }
+
         return false;
     })();
 
     if (IS_MOBILE_BROWSER) {
         document.body.classList.add('is-mobile-browser');
+        document.getElementById('app-container')?.classList.remove('glass-mode');
+        document.getElementById('controls')?.classList.remove('glass-theme');
         document.title = document.title.replace(/v(\d+\.\d+)/, 'v$1M');
         const verBadgeEl = document.querySelector('.app-version-num');
         if (verBadgeEl) {
@@ -4628,13 +4610,7 @@
     const TOPO_GRADIENT_MAP_STYLES = new Set(['mapy_outdoor', 'opentopomap', 'esri_topo', 'cyclosm']);
 
     function getDefaultGradientPalette(mapStyleVal, colorModeVal) {
-        const isTopoMap = TOPO_GRADIENT_MAP_STYLES.has(mapStyleVal);
         const isSpeed = (colorModeVal === 'speed');
-        if (isTopoMap) {
-            return isSpeed
-                ? { min: '#e60000', mid: '#ff00e6', max: '#5a00ff' }
-                : { min: '#5a00ff', mid: '#ff00e6', max: '#e60000' };
-        }
         return isSpeed
             ? { min: '#ff0000', mid: '#ffff00', max: '#00ff00' }
             : { min: '#00ff00', mid: '#ffff00', max: '#ff0000' };
@@ -6192,8 +6168,15 @@
         });
     }
 
+    function formatPaceMinutesForConfigInput(minVal) {
+        const totalSec = Math.max(6, Math.round(minVal * 60));
+        const m = Math.floor(totalSec / 60);
+        const s = totalSec % 60;
+        return s === 0 ? String(m) : `${m}:${String(s).padStart(2, '0')}`;
+    }
+
     // Pomocná funkcia pre aplikovanie režimu farbenia čiary, palety gradientu a neónového efektu
-    function syncCanvasStyles() {
+    function syncCanvasStyles(writeBackToDom = false) {
         const modeSelect = document.getElementById('line-color-mode');
         const prevMode = currentLineColorMode;
         currentLineColorMode = modeSelect ? modeSelect.value : 'solid';
@@ -6251,6 +6234,12 @@
             slopeMidHighPct = sMidHigh;
             slopeMinSatPct = sMinSat;
             slopeMaxSatPct = sMaxSat;
+            if (writeBackToDom === true) {
+                elSlopeMidLow.value = String(sMidLow);
+                elSlopeMidHigh.value = String(sMidHigh);
+                elSlopeMinSat.value = String(sMinSat);
+                elSlopeMaxSat.value = String(sMaxSat);
+            }
         }
 
         const elSpeedMinSat = document.getElementById('cfg-speed-min-sat');
@@ -6266,6 +6255,12 @@
             speedMidHighKmh = vMidHigh;
             speedMinSatKmh = vMinSat;
             speedMaxSatKmh = vMaxSat;
+            if (writeBackToDom === true) {
+                elSpeedMidLow.value = String(vMidLow);
+                elSpeedMidHigh.value = String(vMidHigh);
+                elSpeedMinSat.value = String(vMinSat);
+                elSpeedMaxSat.value = String(vMaxSat);
+            }
         }
 
         const elPaceMinSat = document.getElementById('cfg-pace-min-sat');
@@ -6273,14 +6268,32 @@
         const elPaceMidHigh = document.getElementById('cfg-pace-mid-high');
         const elPaceMaxSat = document.getElementById('cfg-pace-max-sat');
         if (elPaceMinSat && elPaceMidLow && elPaceMidHigh && elPaceMaxSat) {
-            const pMidLow = Math.max(0.2, parsePaceConfigToMinutes(elPaceMidLow.value, 12.5));
-            const pMidHigh = Math.max(pMidLow, parsePaceConfigToMinutes(elPaceMidHigh.value, 13.5));
-            const pMinSat = Math.max(0.1, Math.min(pMidLow - 0.1, parsePaceConfigToMinutes(elPaceMinSat.value, 10.0)));
-            const pMaxSat = Math.max(pMidHigh + 0.1, parsePaceConfigToMinutes(elPaceMaxSat.value, 16.0));
+            const rawPMidLow = parsePaceConfigToMinutes(elPaceMidLow.value, 12.5);
+            const rawPMidHigh = parsePaceConfigToMinutes(elPaceMidHigh.value, 13.5);
+            const rawPMinSat = parsePaceConfigToMinutes(elPaceMinSat.value, 10.0);
+            const rawPMaxSat = parsePaceConfigToMinutes(elPaceMaxSat.value, 16.0);
+            const pMidLow = Math.max(0.2, rawPMidLow);
+            const pMidHigh = Math.max(pMidLow, rawPMidHigh);
+            const pMinSat = Math.max(0.1, Math.min(pMidLow - 0.1, rawPMinSat));
+            const pMaxSat = Math.max(pMidHigh + 0.1, rawPMaxSat);
             paceMidLowMinKm = pMidLow;
             paceMidHighMinKm = pMidHigh;
             paceMinSatMinKm = pMinSat;
             paceMaxSatMinKm = pMaxSat;
+            if (writeBackToDom === true) {
+                if (!elPaceMidLow.value.trim() || Math.abs(pMidLow - rawPMidLow) > 1e-4) {
+                    elPaceMidLow.value = formatPaceMinutesForConfigInput(pMidLow);
+                }
+                if (!elPaceMidHigh.value.trim() || Math.abs(pMidHigh - rawPMidHigh) > 1e-4) {
+                    elPaceMidHigh.value = formatPaceMinutesForConfigInput(pMidHigh);
+                }
+                if (!elPaceMinSat.value.trim() || Math.abs(pMinSat - rawPMinSat) > 1e-4) {
+                    elPaceMinSat.value = formatPaceMinutesForConfigInput(pMinSat);
+                }
+                if (!elPaceMaxSat.value.trim() || Math.abs(pMaxSat - rawPMaxSat) > 1e-4) {
+                    elPaceMaxSat.value = formatPaceMinutesForConfigInput(pMaxSat);
+                }
+            }
         }
 
         const elHrMinSat = document.getElementById('cfg-hr-min-sat');
@@ -6296,6 +6309,12 @@
             hrMidHighBpm = hMidHigh;
             hrMinSatBpm = hMinSat;
             hrMaxSatBpm = hMaxSat;
+            if (writeBackToDom === true) {
+                elHrMidLow.value = String(hMidLow);
+                elHrMidHigh.value = String(hMidHigh);
+                elHrMinSat.value = String(hMinSat);
+                elHrMaxSat.value = String(hMaxSat);
+            }
         }
 
         const elPwrMinSat = document.getElementById('cfg-pwr-min-sat');
@@ -6311,6 +6330,12 @@
             pwrMidHighWatts = wMidHigh;
             pwrMinSatWatts = wMinSat;
             pwrMaxSatWatts = wMaxSat;
+            if (writeBackToDom === true) {
+                elPwrMidLow.value = String(wMidLow);
+                elPwrMidHigh.value = String(wMidHigh);
+                elPwrMinSat.value = String(wMinSat);
+                elPwrMaxSat.value = String(wMaxSat);
+            }
         }
 
         currentLineColor = lineColorInput ? lineColorInput.value : '#c8ff00';
@@ -7541,15 +7566,16 @@
 
     function showPoiBanner(poi, nowMs = null, isPreview = false) {
         if (!poi || !poiHudEl) return;
-        if (isPreview) {
-            poiHudEl.classList.add('preview-layer-top');
-            if (poiPhotoHudEl) poiPhotoHudEl.classList.add('preview-layer-top');
-            if (typeof syncPreviewTopLayerState === 'function') syncPreviewTopLayerState();
-        }
 
         // Ak v stĺpci práve nie je žiadne aktívne okno (zostali len dohasínajúce sloty), pred novým štartom stĺpec vyčistíme
         if (!activePoiWindows.some(w => !w.closing)) {
             hidePoiHudImmediate();
+        }
+
+        if (isPreview) {
+            poiHudEl.classList.add('preview-layer-top');
+            if (poiPhotoHudEl) poiPhotoHudEl.classList.add('preview-layer-top');
+            if (typeof syncPreviewTopLayerState === 'function') syncPreviewTopLayerState();
         }
 
         const svgMarkup = POI_ICONS_SVG[poi.icon] || POI_ICONS_SVG.mountain;
@@ -7730,7 +7756,16 @@
             inputKm.min = '-9999';
             inputKm.max = '9999';
             inputKm.value = poi.km.toFixed(2);
-            inputKm.title = 'Kilometer na trase (napr. 10.84)';
+            const hasActiveTrackBounds = (rawPoints && rawPoints.length > 1);
+            const minTrackDispKm = hasActiveTrackBounds ? getDisplayDist(0) : -Infinity;
+            const maxTrackDispKm = hasActiveTrackBounds ? getDisplayDist(rawPoints[rawPoints.length - 1].cumDist) : Infinity;
+            const isOutOfTrimRange = hasActiveTrackBounds && (poi.km < minTrackDispKm - 0.005 || poi.km > maxTrackDispKm + 0.005);
+            if (isOutOfTrimRange) {
+                inputKm.style.borderColor = '#ef5350';
+                inputKm.title = `Kilometer (${poi.km.toFixed(2)} km) leží mimo aktuálneho orezaného úseku trasy (${minTrackDispKm.toFixed(2)} – ${maxTrackDispKm.toFixed(2)} km)`;
+            } else {
+                inputKm.title = 'Kilometer na trase (napr. 10.84)';
+            }
             inputKm.addEventListener('change', () => {
                 const mode = document.getElementById('trim-stats-mode').value;
                 poi.km = parseKmValue(inputKm.value, true);
@@ -7865,15 +7900,18 @@
                 }
             });
 
-            // 7. Tlačidlo živého náhľadu na mape
-            const btnPreview = document.createElement('button');
-            btnPreview.type = 'button';
-            btnPreview.className = 'btn-poi-icon-action';
-            btnPreview.innerText = '👁️';
-            btnPreview.title = 'Vyskúšať zobrazenie tohto POI hore v strede';
-            btnPreview.addEventListener('click', () => {
-                showPoiBanner(poi, null, true);
-            });
+            // 7. Tlačidlo živého náhľadu na mape (iba v PC režime)
+            let btnPreview = null;
+            if (!IS_MOBILE_BROWSER) {
+                btnPreview = document.createElement('button');
+                btnPreview.type = 'button';
+                btnPreview.className = 'btn-poi-icon-action btn-poi-preview';
+                btnPreview.innerText = '👁️';
+                btnPreview.title = 'Vyskúšať zobrazenie tohto POI hore v strede';
+                btnPreview.addEventListener('click', () => {
+                    showPoiBanner(poi, null, true);
+                });
+            }
 
             // 8. Tlačidlo vymazania
             const btnDel = document.createElement('button');
@@ -7894,7 +7932,7 @@
             row.appendChild(inputDur);
             row.appendChild(rowFileInput);
             row.appendChild(btnPhoto);
-            row.appendChild(btnPreview);
+            if (btnPreview) row.appendChild(btnPreview);
             row.appendChild(btnDel);
             poiListContainer.appendChild(row);
         });
@@ -7907,7 +7945,7 @@
 
     function addNewPoiFromForm() {
         const mode = document.getElementById('trim-stats-mode').value;
-        const kmVal = parseKmValue(poiInputKm.value);
+        const kmVal = parseKmValue(poiInputKm.value, true);
         const origKmVal = Math.max(0, Math.round(((mode === 'preserve') ? kmVal : (kmVal + trimOffsetDist)) * 100) / 100);
         const nameVal = poiInputName.value.trim() || `Bod ${kmVal.toFixed(2)} km`;
         const iconVal = poiInputIcon.value || 'mountain';
@@ -7942,14 +7980,16 @@
 
     function syncPreviewTopLayerState() {
         const mapContainerEl = document.getElementById('map-container');
-        if (!mapContainerEl) return;
+        const controlsPanelEl = document.getElementById('controls');
         const poiTop = poiHudEl && poiHudEl.classList.contains('preview-layer-top');
         const photoTop = poiPhotoHudEl && poiPhotoHudEl.classList.contains('preview-layer-top');
         const sumTop = typeof finalSummaryHudEl !== 'undefined' && finalSummaryHudEl && finalSummaryHudEl.classList.contains('preview-layer-top');
-        if (poiTop || photoTop || sumTop) {
-            mapContainerEl.classList.add('preview-layer-top');
-        } else {
-            mapContainerEl.classList.remove('preview-layer-top');
+        const anyTop = Boolean(poiTop || photoTop || sumTop);
+        if (mapContainerEl) {
+            mapContainerEl.classList.toggle('preview-layer-top', anyTop);
+        }
+        if (controlsPanelEl) {
+            controlsPanelEl.classList.toggle('preview-behind-hud', anyTop);
         }
     }
 
@@ -7957,15 +7997,37 @@
         if (!panel) return;
         panel.style.position = '';
         panel.style.left = '';
+        panel.style.right = '';
         panel.style.top = '';
         panel.style.margin = '';
         panel.classList.remove('is-dragging');
+    }
+
+    function clampEditorPopoverToViewport(panel) {
+        if (!panel || IS_MOBILE_BROWSER || !panel.classList.contains('open')) return;
+        const pad = 12;
+        const rect = panel.getBoundingClientRect();
+        if (rect.width <= 0) return;
+        if (rect.right > window.innerWidth - pad) {
+            const shiftLeft = rect.right - (window.innerWidth - pad);
+            panel.style.left = Math.round(panel.offsetLeft - shiftLeft) + 'px';
+            panel.style.right = 'auto';
+        }
+        const rectAfter = panel.getBoundingClientRect();
+        if (rectAfter.left < pad) {
+            const shiftRight = pad - rectAfter.left;
+            panel.style.left = Math.round(panel.offsetLeft + shiftRight) + 'px';
+            panel.style.right = 'auto';
+        }
     }
 
     function setEditorPopoverOpenState(panel, btn, isOpen) {
         if (panel) {
             panel.classList.toggle('open', Boolean(isOpen));
             resetEditorPopoverPosition(panel);
+            if (isOpen) {
+                clampEditorPopoverToViewport(panel);
+            }
         }
         if (btn) {
             btn.classList.toggle('active', Boolean(isOpen));
@@ -9445,16 +9507,19 @@
                 saveSummaryToStorage();
             });
 
-            // 6. Tlačidlo živého náhľadu na mape (👁️)
-            const btnPreview = document.createElement('button');
-            btnPreview.type = 'button';
-            btnPreview.className = 'btn-poi-icon-action';
-            btnPreview.innerText = '👁️';
-            btnPreview.title = 'Vyskúšať zobrazenie okna záverečnej štatistiky v strede obrazovky';
-            btnPreview.addEventListener('click', () => {
-                const enabledList = summaryItems.filter(s => s.enabled);
-                showFinalSummaryWindow(enabledList.length > 0 ? enabledList : [item], true);
-            });
+            // 6. Tlačidlo živého náhľadu na mape (👁️ – iba v PC režime)
+            let btnPreview = null;
+            if (!IS_MOBILE_BROWSER) {
+                btnPreview = document.createElement('button');
+                btnPreview.type = 'button';
+                btnPreview.className = 'btn-poi-icon-action btn-poi-preview';
+                btnPreview.innerText = '👁️';
+                btnPreview.title = 'Vyskúšať zobrazenie okna záverečnej štatistiky v strede obrazovky';
+                btnPreview.addEventListener('click', () => {
+                    const enabledList = summaryItems.filter(s => s.enabled);
+                    showFinalSummaryWindow(enabledList.length > 0 ? enabledList : [item], true);
+                });
+            }
 
             // 7. Tlačidlo vymazania (✕)
             const btnDel = document.createElement('button');
@@ -9472,7 +9537,7 @@
             row.appendChild(inputName);
             row.appendChild(selectIcon);
             row.appendChild(inputDur);
-            row.appendChild(btnPreview);
+            if (btnPreview) row.appendChild(btnPreview);
             row.appendChild(btnDel);
             summaryListContainer.appendChild(row);
         });
@@ -9887,12 +9952,12 @@
         const el = document.getElementById(id);
         if (el) {
             el.addEventListener('input', () => {
+                syncCanvasStyles(false);
                 syncCurrentActivityGradFromDom();
-                syncCanvasStyles();
             });
             el.addEventListener('change', () => {
+                syncCanvasStyles(true);
                 syncCurrentActivityGradFromDom();
-                syncCanvasStyles();
             });
         }
     });
@@ -10226,6 +10291,7 @@
             const rowType = btn.getAttribute('data-grad-row');
             const keys = GRAD_ROW_KEYS_MAP[rowType];
             if (!keys) return;
+            syncCanvasStyles(true);
             syncCurrentActivityGradFromDom();
             const act = (typeof currentTrackActivity !== 'undefined' && ACTIVITY_GRAD_DEFAULTS[currentTrackActivity]) ? currentTrackActivity : 'mtb';
             if (!ACTIVITY_GRAD_DEFAULTS[act]) {
@@ -10471,6 +10537,37 @@
     const mapyLogoSizeSelect = document.getElementById('mapy-logo-size');
     const mapyLogoSizeGroup = document.getElementById('mapy-logo-size-group');
     const mapyAttributionEl = document.getElementById('mapy-attribution');
+    const topoDimInput = document.getElementById('topo-dim');
+    const topoDimGroup = document.getElementById('cg-topo-dim');
+    const lblTopoDim = document.getElementById('lbl-topo-dim');
+    const mapDimOverlayEl = document.getElementById('map-dim-overlay');
+
+    function syncTopoDimOverlay() {
+        const styleEl = document.getElementById('map-style');
+        const styleVal = styleEl ? styleEl.value : 'satellite_hybrid';
+        const isTopo = TOPO_GRADIENT_MAP_STYLES.has(styleVal);
+        if (topoDimGroup) {
+            topoDimGroup.classList.toggle('group-disabled', !isTopo);
+        }
+        if (topoDimInput) {
+            topoDimInput.disabled = !isTopo;
+        }
+        const parsedPct = topoDimInput ? parseInt(topoDimInput.value) : 40;
+        const rawPct = isNaN(parsedPct) ? 40 : parsedPct;
+        const clampedPct = Math.max(0, Math.min(80, rawPct));
+        if (lblTopoDim) {
+            lblTopoDim.innerText = clampedPct;
+        }
+        if (mapDimOverlayEl) {
+            mapDimOverlayEl.style.opacity = (isTopo && clampedPct > 0) ? (clampedPct / 100).toFixed(2) : '0';
+        }
+    }
+
+    if (topoDimInput) {
+        topoDimInput.addEventListener('input', () => {
+            syncTopoDimOverlay();
+        });
+    }
 
     function applyMapyLogoSize() {
         const px = IS_MOBILE_BROWSER ? 32 : (parseInt(mapyLogoSizeSelect.value) || 50);
@@ -10551,6 +10648,7 @@
         if (btnToggleApiKey) btnToggleApiKey.disabled = !needsMapyKey;
         mapyLogoSizeGroup.classList.toggle('group-disabled', !needsMapyKey);
         mapyLogoSizeSelect.disabled = !needsMapyKey;
+        syncTopoDimOverlay();
 
         // Zobrazenie povinného loga a copyrightu Mapy.com vľavo hore pri použití podkladu Mapy.com
         if (mapyAttributionEl) {
@@ -12727,7 +12825,7 @@
     }
 
     function syncGlassModeLayout() {
-        const isGlass = controlsEl.classList.contains('glass-theme') && controlsEl.style.display !== 'none';
+        const isGlass = !IS_MOBILE_BROWSER && controlsEl.classList.contains('glass-theme') && controlsEl.style.display !== 'none';
         if (isGlass) {
             document.documentElement.style.setProperty('--controls-height', (controlsEl.offsetHeight || 0) + 'px');
             appContainerEl.classList.add('glass-mode');
@@ -13141,8 +13239,9 @@
         panelColorGlass: '#12161c',
         panelColorNormal: '#222222',
         panelColorRetro: '#39ff14',
-        trimStatsMode: 'zero',
+        trimStatsMode: 'preserve',
         mapStyle: 'satellite_hybrid',
+        topoDim: '40',
         mapyLogoSize: '50',
         lineColorMode: 'solid',
         lineColor: '#c8ff00',
@@ -13221,6 +13320,7 @@
                 panelColorRetro: panelThemeColors.retro,
                 trimStatsMode: document.getElementById('trim-stats-mode').value,
                 mapStyle: document.getElementById('map-style').value,
+                topoDim: document.getElementById('topo-dim') ? document.getElementById('topo-dim').value : '40',
                 mapyLogoSize: IS_MOBILE_BROWSER
     ? '32'
     : (document.getElementById('mapy-logo-size')?.value || '50'),
@@ -13313,12 +13413,14 @@
             applyPanelThemeColors();
 
             if (s.panelStyle === 'normal' || s.panelStyle === 'retro' || s.panelStyle === 'glass') {
-                currentPanelStyle = s.panelStyle;
+                currentPanelStyle = IS_MOBILE_BROWSER ? 'normal' : s.panelStyle;
                 controlsEl.classList.remove('retro-theme', 'glass-theme');
-                if (currentPanelStyle === 'retro') {
-                    controlsEl.classList.add('retro-theme');
-                } else if (currentPanelStyle === 'glass') {
-                    controlsEl.classList.add('glass-theme');
+                if (!IS_MOBILE_BROWSER) {
+                    if (currentPanelStyle === 'retro') {
+                        controlsEl.classList.add('retro-theme');
+                    } else if (currentPanelStyle === 'glass') {
+                        controlsEl.classList.add('glass-theme');
+                    }
                 }
                 syncGlassModeLayout();
             }
@@ -13328,7 +13430,13 @@
                 document.getElementById('trim-stats-mode').value = s.trimStatsMode;
             }
 
-            // 3. Mapový podklad a veľkosť loga Mapy.com
+            // 3. Mapový podklad, stmavenie topo mapy a veľkosť loga Mapy.com
+            if (s.topoDim !== undefined && topoDimInput) {
+                const parsedTd = parseInt(s.topoDim);
+                const tdVal = Math.max(0, Math.min(80, isNaN(parsedTd) ? 40 : parsedTd));
+                topoDimInput.value = tdVal;
+                if (lblTopoDim) lblTopoDim.innerText = tdVal;
+            }
             if (s.mapyLogoSize !== undefined) {
                 mapyLogoSizeSelect.value = IS_MOBILE_BROWSER ? '32' : s.mapyLogoSize;
                 applyMapyLogoSize();
@@ -13341,6 +13449,7 @@
                 lastAppliedMapStyle = s.mapStyle;
                 updateMapLayer();
             }
+            syncTopoDimOverlay();
 
             // 4. Vzhľad čiary, režim farbenia, paleta gradientu, hlavička, vyhladenie, neón a stopa
             if (s.lineColorMode === 'solid' || s.lineColorMode === 'slope' || s.lineColorMode === 'speed' || s.lineColorMode === 'pace' || s.lineColorMode === 'hr' || s.lineColorMode === 'power') {
@@ -13358,6 +13467,7 @@
             if (s.slopeColorMax !== undefined) {
                 document.getElementById('slope-color-max').value = s.slopeColorMax;
             }
+            applyDefaultGradientPaletteIfNotCustom(false);
             gradConfigByActivity = createDefaultGradConfigByActivity();
             if (s.gradConfigByActivity && typeof s.gradConfigByActivity === 'object') {
                 for (const actKey of Object.keys(ACTIVITY_GRAD_DEFAULTS)) {
@@ -13637,7 +13747,7 @@
 
     function bindUserSettingsPersistence() {
         const watchedControlIds = [
-            'trim-stats-mode', 'map-style', 'mapy-logo-size',
+            'trim-stats-mode', 'map-style', 'topo-dim', 'mapy-logo-size',
             'line-color-mode', 'line-color', 'slope-color-min', 'slope-color-mid', 'slope-color-max',
             'cfg-slope-min-sat', 'cfg-slope-mid-low', 'cfg-slope-mid-high', 'cfg-slope-max-sat',
             'cfg-speed-min-sat', 'cfg-speed-mid-low', 'cfg-speed-mid-high', 'cfg-speed-max-sat',
