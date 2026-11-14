@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="favicon.png">
-    <title>V3SOFT CartoLinka v1.132 (WebGL GPU Engine)</title>
+    <title>V3SOFT CartoLinka v1.133 (WebGL GPU Engine)</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
@@ -2669,22 +2669,17 @@
         }
 
 
-        /* Samostatné vycentrované okno záverečných štatistík (#final-summary-hud) */
+        /* Samostatné vycentrované okno záverečných štatistík a mapy/profilu (#final-summary-hud) */
         #final-summary-hud {
             position: absolute;
             top: 50%;
             left: 50%;
-            background: rgba(18, 18, 18, var(--hud-bg-opacity));
-            padding: 24px 36px;
-            border-radius: 16px;
             z-index: 9200;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-            border: 1px solid rgba(255, 255, 255, calc(0.18 * var(--hud-bg-opacity)));
-            box-shadow: 0 16px 45px rgba(0, 0, 0, calc(0.75 * var(--hud-bg-opacity)));
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            align-items: stretch;
             color: var(--hud-font-color);
-            min-width: 320px;
             pointer-events: none;
             opacity: 0;
             visibility: hidden;
@@ -2692,8 +2687,106 @@
             transform-origin: center center;
             transition: opacity 0.48s cubic-bezier(0.22, 1, 0.36, 1),
                         transform 0.48s cubic-bezier(0.22, 1, 0.36, 1),
-                        visibility 0.48s,
-                        background 0.15s ease;
+                        visibility 0.48s;
+        }
+        #final-summary-hud.dual-summary-mode {
+            grid-template-columns: 1fr 2fr;
+        }
+        .final-summary-card {
+            background: rgba(18, 18, 18, var(--hud-bg-opacity));
+            padding: 24px 36px;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            border: 1px solid rgba(255, 255, 255, calc(0.18 * var(--hud-bg-opacity)));
+            box-shadow: 0 16px 45px rgba(0, 0, 0, calc(0.75 * var(--hud-bg-opacity)));
+            color: var(--hud-font-color);
+            min-width: 320px;
+            box-sizing: border-box;
+            transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .final-summary-visual-card {
+            justify-content: space-between;
+            gap: 14px;
+            min-width: 640px;
+        }
+        .final-summary-vis-section {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+            min-height: 0;
+        }
+        .final-summary-vis-top {
+            flex: 0 0 38%;
+            min-height: 105px;
+        }
+        .final-summary-vis-bottom {
+            flex: 1 1 62%;
+            min-height: 155px;
+        }
+        .final-summary-vis-divider {
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.18);
+            flex-shrink: 0;
+            margin: 2px 0;
+        }
+        .final-summary-vis-subhdr {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 10px;
+            font-size: calc(var(--hud-font-size) * 0.26);
+            text-transform: uppercase;
+            color: #bbb;
+            font-weight: 800;
+            letter-spacing: 1.3px;
+            line-height: 1.1;
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+        .final-summary-vis-subhdr span:last-child {
+            color: var(--hud-font-color);
+            opacity: 0.92;
+        }
+        .final-summary-canvas-box {
+            position: relative;
+            flex: 1 1 auto;
+            width: 100%;
+            min-height: 72px;
+        }
+        .final-summary-canvas-box canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        #btn-toggle-summary-map.active-toggle {
+            background: linear-gradient(180deg, #43a047 0%, #2e7d32 100%);
+            border-color: #66bb6a;
+            color: #ffffff;
+        }
+        #btn-toggle-summary-map.inactive {
+            background: #424242;
+            border-color: #555;
+            color: #aaa;
+        }
+        body.is-mobile-browser .final-summary-visual-card {
+            min-width: 520px;
+        }
+        @media (orientation: portrait) {
+            body.is-mobile-browser #final-summary-hud.dual-summary-mode {
+                grid-template-columns: 1fr;
+                max-height: 86dvh;
+            }
+            body.is-mobile-browser .final-summary-card,
+            body.is-mobile-browser .final-summary-visual-card {
+                min-width: 260px;
+                padding: 18px 24px;
+            }
         }
         #final-summary-hud.final-summary-visible {
             opacity: 1;
@@ -3440,7 +3533,7 @@
         <div class="controls-row">
             <div class="app-version-badge">
                 <span class="app-version-title">V3SOFT <span class="brand-carto">Carto</span><span class="brand-linka">Linka</span></span>
-                <span class="app-version-num">v1.132</span>
+                <span class="app-version-num">v1.133</span>
             </div>
             <button id="btn-info" type="button" title="Informácie o aplikácii">ℹ️ INFO</button>
             <button id="btn-help" type="button" title="Zobraziť podrobný návod a vysvetlenie všetkých nastavení aplikácie">❓ HELP</button>
@@ -3932,6 +4025,7 @@
                         <div class="poi-editor-header">
                             <span class="poi-editor-title">📋 Súhrn štatistík jazdy</span>
                             <div class="poi-editor-actions">
+                                <button type="button" id="btn-toggle-summary-map" class="btn-poi-small active-toggle" title="Zapnúť alebo vypnúť druhé (2× širšie) záverečné okno s výškovým profilom a siluetou celej trasy vedľa súhrnu štatistík">🗺️ Profil & Silueta: ZAP</button>
                                 <button type="button" id="btn-clear-summary" class="btn-poi-small btn-poi-clear" title="Vymazať všetky položky súhrnu">🗑️ Vymazať všetky</button>
                                 <button type="button" id="btn-close-summary-editor" class="btn-poi-small" title="Zavrieť editor súhrnu">✕ Zavrieť</button>
                             </div>
@@ -4292,7 +4386,7 @@
 <div id="help-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="help-modal-title">
     <div class="help-modal-box">
         <div class="help-modal-header">
-            <span class="help-modal-title" id="help-modal-title">❓ Návod na používanie – V3SOFT CartoLinka v1.132</span>
+            <span class="help-modal-title" id="help-modal-title">❓ Návod na používanie – V3SOFT CartoLinka v1.133</span>
             <button type="button" id="btn-close-help" title="Zavrieť nápovedu (Esc)">✕ Zavrieť</button>
         </div>
         <div class="help-modal-body">
@@ -4453,7 +4547,8 @@
                     Otvára editor záverečného súhrnu štatistík jazdy, ktorý sa automaticky zobrazí vycentrovaný v strede obrazovky po dokončení animácie trasy:
                     <br>• <strong>Automatické štatistiky (oranžové riadky):</strong> Po nahratí trasy aplikácia automaticky vypočíta až 12 súhrnných položiek (<em>Prejdená vzdialenosť, Nastúpané metre, Celkový čas jazdy, Čistý čas jazdy bez prestávok, Priemerná rýchlosť z čistého času, Maximálna rýchlosť, Priemerné tempo pohybu, Priemerný tep, Priemerný výkon, Priemerná kadencia, Celkový počet otáčok</em> a <em>Priemerná teplota v pohybe</em>) a zapne tie, ktoré zodpovedajú rozpoznanej aktivite a dostupným senzorom.
                     <br>• <strong>Úprava a vlastné položky:</strong> Každý riadok môžete zapnúť/vypnúť (<em>ZAP/VYP</em>), ľubovoľne prepísať jeho text (oddelením cez dvojbodku <code>Názov: Hodnota</code> sa v záverečnom okne automaticky naformátuje veľká hodnota nad menším popisom), zmeniť mu ikonu, dĺžku zobrazenia pri náhľade (sek), pridať vlastný riadok tlačidlom <strong>+ Pridať</strong> alebo vyskúšať živý náhľad súhrnu priamo nad mapou tlačidlom <strong>👁️</strong>.
-                    <br>• <strong>Záverečná sekvencia po skončení animácie:</strong> Po príchode čiary do cieľa sa po <em>0,5 s</em> plynulo stiahnu priebežné HUD okná a profil, po <em>1,0 s</em> sa mapový podklad jemne stlmí, odhluční do čiernobieleho tónu a rozmaže (okrem čierneho pozadia a Chroma Key plátien), pričom sa súčasne plynulo zneviditeľní aj vykreslená čiara trasy, a po <em>2,0 s</em> sa v strede obrazovky s pulzným efektom rozsvieti finálna tabuľka <strong>Súhrn jazdy</strong>.
+                    <br>• <strong>Druhé záverečné okno – 🗺️ Profil & Silueta (ZAP / VYP):</strong> Priamo v hlavičke editora súhrnu môžete prepínačom <em>🗺️ Profil & Silueta: ZAP</em> zapnúť druhé, dvojnásobne široké okno (s rovnakou výškou) vedľa tabuľky štatistík. Jeho horná časť zobrazuje celkový <strong>výškový profil trasy</strong> a spodná časť pod deliacou čiarou vykresľuje <strong>čistú siluetu (pôdorys) celej trasy</strong> tenkou čiarou vo farbe písma s vyznačeným bodom štartu/cieľa a jemným tieňom.
+                    <br>• <strong>Záverečná sekvencia po skončení animácie:</strong> Po príchode čiary do cieľa sa po <em>0,5 s</em> plynulo stiahnu priebežné HUD okná a profil, po <em>1,0 s</em> sa mapový podklad jemne stlmí, odhluční do čiernobieleho tónu a rozmaže (okrem čierneho pozadia a Chroma Key plátien), pričom sa súčasne plynulo zneviditeľní aj vykreslená čiara trasy, a po <em>2,0 s</em> sa v strede obrazovky s pulzným efektom rozsvieti finálny <strong>Súhrn jazdy</strong> (spolu s oknom <strong>Profil & Silueta trasy</strong>).
                 </div>
             </div>
 
@@ -4521,7 +4616,7 @@
                 <h3>7. Mobilná verzia rozhrania (označenie verzie s príponou „M“)</h3>
                 <div class="help-item">
                     <span class="help-item-title">Automatická detekcia dotykových zariadení:</span>
-                    Pri otvorení aplikácie na smartfóne alebo tablete (Android, iOS, iPadOS) sa rozhranie automaticky prepne do mobilného režimu (v názve verzie pribudne písmeno <strong>M</strong>, napr. <em>v1.132M</em>):
+                    Pri otvorení aplikácie na smartfóne alebo tablete (Android, iOS, iPadOS) sa rozhranie automaticky prepne do mobilného režimu (v názve verzie pribudne písmeno <strong>M</strong>, napr. <em>v1.133M</em>):
                     <br>• <strong>4 akordeónové sekcie:</strong> Namiesto štyroch širokých riadkov sú nastavenia rozdelené do 4 prehľadných rozbaľovacích kariet (<em>1. 📁 Súbor & Mapa</em>, <em>2. 🎨 Čiara & Vzhľad</em>, <em>3. 🎥 Kamera & Rýchlosť</em>, <em>4. 📊 HUD, POI & Súhrn</em>), ktoré sa pri spustení animácie automaticky zbalia.
                     <br>• <strong>Dotykové posuvníky s tlačidlami − / +:</strong> Každý posuvník je vybavený zväčšeným dotykovým tiahlom a bočnými tlačidlami <strong>−</strong> a <strong>+</strong> pre presné krokovanie hodnôt jedným ťuknutím.
                     <br>• <strong>Optimalizované rozmery a orientácia displeja:</strong> Pre zachovanie maximálneho čistého výhľadu na mapu sú na mobile pevne prednastavené optimálne hodnoty mierky HUD (40 %), písma (32 px), priehľadnosti (85 %), loga Mapy.com (32 px), štýlu panela (NORMAL) a buffera dlaždíc (8), pričom tieto ladiace posuvníky a prepínač MINI HUD sú na mobile skryté. Okno výškového profilu (<em>⛰️ Profil</em>) sa na mobilnom displeji zobrazuje iba pri otočení telefónu <strong>na šírku (landscape)</strong>.
@@ -4562,7 +4657,7 @@
             <div class="info-line"><strong>Koncept a dizajn:</strong> Vlado Troják</div>
             <div class="info-line"><strong>Kód a vývoj:</strong> AI Gemini Argon</div>
             <div class="info-line"><strong>Rok výroby:</strong> 11/2026</div>
-            <div class="info-line"><strong>Verzia:</strong> <span id="info-version-val">v1.132</span></div>
+            <div class="info-line"><strong>Verzia:</strong> <span id="info-version-val">v1.133</span></div>
             <div class="info-freeware">Táto aplikácia je freeware.</div>
             <div class="info-yt-label">Tu môžeš sledovať moje videá:</div>
             <a href="https://www.youtube.com/@VladoTrojak" target="_blank" rel="noopener noreferrer" class="btn-yt-link">
@@ -8969,6 +9064,176 @@
         if (typeof syncPreviewTopLayerState === 'function') syncPreviewTopLayerState();
     }
 
+    let summaryVisualCardEnabled = true;
+    const btnToggleSummaryMap = document.getElementById('btn-toggle-summary-map');
+
+    function syncSummaryVisualToggleUI() {
+        if (!btnToggleSummaryMap) return;
+        btnToggleSummaryMap.innerText = summaryVisualCardEnabled ? '🗺️ Profil & Silueta: ZAP' : '🗺️ Profil & Silueta: VYP';
+        btnToggleSummaryMap.classList.toggle('active-toggle', summaryVisualCardEnabled);
+        btnToggleSummaryMap.classList.toggle('inactive', !summaryVisualCardEnabled);
+    }
+
+    if (btnToggleSummaryMap) {
+        btnToggleSummaryMap.addEventListener('click', () => {
+            summaryVisualCardEnabled = !summaryVisualCardEnabled;
+            syncSummaryVisualToggleUI();
+            if (typeof saveUserSettingsToStorage === 'function') saveUserSettingsToStorage();
+            if (finalSummaryHudEl && finalSummaryHudEl.classList.contains('final-summary-visible')) {
+                const enabledList = summaryItems.filter(s => s.enabled);
+                if (enabledList.length > 0) showFinalSummaryWindow(enabledList, true);
+            }
+        });
+    }
+
+    function renderFinalSummaryVisualCanvases() {
+        const profCanvas = document.getElementById('final-summary-profile-canvas');
+        const routeCanvasEl = document.getElementById('final-summary-silhouette-canvas');
+        const themeColor = document.getElementById('hud-font-color').value || '#ffffff';
+        const dpr = window.devicePixelRatio || 1;
+
+        // 1. Horný Canvas: Výškový profil celej orezanej trasy
+        if (profCanvas && rawPoints && rawPoints.length >= 2) {
+            const box = profCanvas.parentElement;
+            const w = (box && box.clientWidth) ? box.clientWidth : 560;
+            const h = (box && box.clientHeight) ? box.clientHeight : 90;
+            profCanvas.width = Math.round(w * dpr);
+            profCanvas.height = Math.round(h * dpr);
+            const ctx = profCanvas.getContext('2d');
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.clearRect(0, 0, w, h);
+
+            let minE = Infinity, maxE = -Infinity;
+            for (let i = 0; i < rawPoints.length; i++) {
+                const e = rawPoints[i].ele;
+                if (e < minE) minE = e;
+                if (e > maxE) maxE = e;
+            }
+            if (!isFinite(minE) || !isFinite(maxE)) { minE = 0; maxE = 100; }
+            const spanE = Math.max(10, maxE - minE);
+            const totalD = rawPoints[rawPoints.length - 1].cumDist || 1;
+
+            const padX = 8, topY = 8, bottomY = h - 8;
+            const plotW = Math.max(10, w - padX * 2);
+            const plotH = Math.max(10, bottomY - topY);
+
+            const grad = ctx.createLinearGradient(0, topY, 0, bottomY);
+            grad.addColorStop(0, hexToRgba(themeColor, 0.38));
+            grad.addColorStop(1, hexToRgba(themeColor, 0.02));
+
+            ctx.beginPath();
+            for (let i = 0; i < rawPoints.length; i++) {
+                const pt = rawPoints[i];
+                const x = padX + (pt.cumDist / totalD) * plotW;
+                const y = bottomY - ((pt.ele - minE) / spanE) * plotH;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.lineTo(padX + plotW, bottomY);
+            ctx.lineTo(padX, bottomY);
+            ctx.closePath();
+            ctx.fillStyle = grad;
+            ctx.fill();
+
+            ctx.save();
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
+            ctx.shadowBlur = 5;
+            ctx.shadowOffsetX = 1;
+            ctx.shadowOffsetY = 2;
+            ctx.beginPath();
+            for (let i = 0; i < rawPoints.length; i++) {
+                const pt = rawPoints[i];
+                const x = padX + (pt.cumDist / totalD) * plotW;
+                const y = bottomY - ((pt.ele - minE) / spanE) * plotH;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.strokeStyle = themeColor;
+            ctx.lineWidth = 2.2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        // 2. Spodný Canvas: Silueta celej trasy (2D pôdorys v Web Mercator so zachovaním pomeru strán)
+        const pts = (activePoints && activePoints.length >= 2) ? activePoints : rawPoints;
+        if (routeCanvasEl && pts && pts.length >= 2) {
+            const box = routeCanvasEl.parentElement;
+            const w = (box && box.clientWidth) ? box.clientWidth : 560;
+            const h = (box && box.clientHeight) ? box.clientHeight : 145;
+            routeCanvasEl.width = Math.round(w * dpr);
+            routeCanvasEl.height = Math.round(h * dpr);
+            const ctx = routeCanvasEl.getContext('2d');
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.clearRect(0, 0, w, h);
+
+            let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+            const mercPts = new Float64Array(pts.length * 2);
+            for (let i = 0; i < pts.length; i++) {
+                const mx = lonToMerc0X(pts[i].lon);
+                const my = latToMerc0Y(pts[i].lat);
+                mercPts[i * 2] = mx;
+                mercPts[i * 2 + 1] = my;
+                if (mx < minX) minX = mx;
+                if (mx > maxX) maxX = mx;
+                if (my < minY) minY = my;
+                if (my > maxY) maxY = my;
+            }
+
+            const pad = 14;
+            const availW = Math.max(20, w - pad * 2);
+            const availH = Math.max(20, h - pad * 2);
+            const spanX = Math.max(1e-9, maxX - minX);
+            const spanY = Math.max(1e-9, maxY - minY);
+            const scale = Math.min(availW / spanX, availH / spanY);
+
+            const offsetX = pad + (availW - spanX * scale) * 0.5;
+            const offsetY = pad + (availH - spanY * scale) * 0.5;
+
+            ctx.save();
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
+            ctx.shadowBlur = 6;
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+
+            ctx.beginPath();
+            for (let i = 0; i < pts.length; i++) {
+                const sx = offsetX + (mercPts[i * 2] - minX) * scale;
+                const sy = offsetY + (mercPts[i * 2 + 1] - minY) * scale;
+                if (i === 0) ctx.moveTo(sx, sy);
+                else ctx.lineTo(sx, sy);
+            }
+            ctx.strokeStyle = themeColor;
+            ctx.lineWidth = 2.4;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.stroke();
+
+            // Zvýraznenie Štartu a Cieľa jemnými bodkami
+            const startX = offsetX + (mercPts[0] - minX) * scale;
+            const startY = offsetY + (mercPts[1] - minY) * scale;
+            const endX = offsetX + (mercPts[(pts.length - 1) * 2] - minX) * scale;
+            const endY = offsetY + (mercPts[(pts.length - 1) * 2 + 1] - minY) * scale;
+
+            // Cieľový bod (krúžok s tmavým stredom)
+            ctx.beginPath();
+            ctx.arc(endX, endY, 4.2, 0, Math.PI * 2);
+            ctx.fillStyle = '#121212';
+            ctx.fill();
+            ctx.lineWidth = 2.0;
+            ctx.strokeStyle = themeColor;
+            ctx.stroke();
+
+            // Štartovací bod (plná bodka vo farbe písma)
+            ctx.beginPath();
+            ctx.arc(startX, startY, 3.8, 0, Math.PI * 2);
+            ctx.fillStyle = themeColor;
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+
     function showFinalSummaryWindow(itemsToShow, autoHide = false) {
         if (!finalSummaryHudEl) return;
         const activeList = (itemsToShow && itemsToShow.length > 0)
@@ -8986,11 +9251,17 @@
         }
 
         finalSummaryHudEl.innerHTML = '';
+        const showDual = summaryVisualCardEnabled && rawPoints && rawPoints.length >= 2;
+        finalSummaryHudEl.classList.toggle('dual-summary-mode', Boolean(showDual));
+
+        // 1. Ľavé okno: Karta so štatistikami jazdy
+        const statsCardEl = document.createElement('div');
+        statsCardEl.className = 'final-summary-card final-summary-stats-card';
 
         const headerEl = document.createElement('div');
         headerEl.className = 'final-summary-header';
         headerEl.innerText = 'Súhrn jazdy';
-        finalSummaryHudEl.appendChild(headerEl);
+        statsCardEl.appendChild(headerEl);
 
         activeList.forEach(item => {
             const rowEl = document.createElement('div');
@@ -9029,8 +9300,69 @@
 
             rowEl.appendChild(iconEl);
             rowEl.appendChild(textCol);
-            finalSummaryHudEl.appendChild(rowEl);
+            statsCardEl.appendChild(rowEl);
         });
+
+        finalSummaryHudEl.appendChild(statsCardEl);
+
+        // 2. Pravé symetrické okno: Výškový profil hore + deliaca čiara + Silueta trasy dole
+        if (showDual) {
+            const visCardEl = document.createElement('div');
+            visCardEl.className = 'final-summary-card final-summary-visual-card';
+
+            const visHeaderEl = document.createElement('div');
+            visHeaderEl.className = 'final-summary-header';
+            visHeaderEl.innerText = 'Profil a trasa';
+            visCardEl.appendChild(visHeaderEl);
+
+            let minE = Infinity, maxE = -Infinity;
+            for (let i = 0; i < rawPoints.length; i++) {
+                const e = rawPoints[i].ele;
+                if (e < minE) minE = e;
+                if (e > maxE) maxE = e;
+            }
+            const eleRangeTxt = (isFinite(minE) && isFinite(maxE))
+                ? `${Math.round(minE)} m – ${Math.round(maxE)} m`
+                : '';
+
+            // Horná sekcia: Výškový profil
+            const topSec = document.createElement('div');
+            topSec.className = 'final-summary-vis-section final-summary-vis-top';
+            const topSubHdr = document.createElement('div');
+            topSubHdr.className = 'final-summary-vis-subhdr';
+            topSubHdr.innerHTML = `<span>Výškový profil</span><span>${eleRangeTxt}</span>`;
+            const profBox = document.createElement('div');
+            profBox.className = 'final-summary-canvas-box';
+            const profCanvas = document.createElement('canvas');
+            profCanvas.id = 'final-summary-profile-canvas';
+            profBox.appendChild(profCanvas);
+            topSec.appendChild(topSubHdr);
+            topSec.appendChild(profBox);
+            visCardEl.appendChild(topSec);
+
+            // Deliaca čiara v strede pravého okna
+            const dividerEl = document.createElement('div');
+            dividerEl.className = 'final-summary-vis-divider';
+            visCardEl.appendChild(dividerEl);
+
+            // Spodná sekcia: Silueta celej trasy
+            const btmSec = document.createElement('div');
+            btmSec.className = 'final-summary-vis-section final-summary-vis-bottom';
+            const totalKmVal = getDisplayDist(rawPoints[rawPoints.length - 1].cumDist || 0).toFixed(1) + ' km';
+            const btmSubHdr = document.createElement('div');
+            btmSubHdr.className = 'final-summary-vis-subhdr';
+            btmSubHdr.innerHTML = `<span>Silueta trasy</span><span>${totalKmVal}</span>`;
+            const routeBox = document.createElement('div');
+            routeBox.className = 'final-summary-canvas-box';
+            const silCanvas = document.createElement('canvas');
+            silCanvas.id = 'final-summary-silhouette-canvas';
+            routeBox.appendChild(silCanvas);
+            btmSec.appendChild(btmSubHdr);
+            btmSec.appendChild(routeBox);
+            visCardEl.appendChild(btmSec);
+
+            finalSummaryHudEl.appendChild(visCardEl);
+        }
 
         finalSummaryHudEl.classList.remove('final-summary-visible');
         if (finalSummaryBannerEl) {
@@ -9038,6 +9370,9 @@
             finalSummaryBannerEl.style.display = 'flex';
         }
         void finalSummaryHudEl.offsetWidth;
+        if (showDual) {
+            renderFinalSummaryVisualCanvases();
+        }
         updateFinalSummaryBannerLayout();
         finalSummaryHudEl.classList.add('final-summary-visible');
         if (finalSummaryBannerEl) {
@@ -10619,6 +10954,9 @@
         if (profileEnabled && rawPoints.length > 1) {
             renderStaticProfile();
             renderProfileDot(lastProfileProgress, lastProfileEle);
+        }
+        if (finalSummaryHudEl && finalSummaryHudEl.classList.contains('final-summary-visible')) {
+            renderFinalSummaryVisualCanvases();
         }
     });
 
@@ -13467,7 +13805,8 @@
         poiInputIcon: 'mountain',
         poiInputDuration: '4.0',
         summaryInputIcon: 'distance',
-        summaryInputDuration: '5.0'
+        summaryInputDuration: '5.0',
+        summaryVisualCardEnabled: true
     };
 
     function saveUserSettingsToStorage() {
@@ -13548,7 +13887,8 @@
                 poiInputIcon: document.getElementById('poi-input-icon').value,
                 poiInputDuration: document.getElementById('poi-input-duration').value,
                 summaryInputIcon: document.getElementById('summary-input-icon').value,
-                summaryInputDuration: document.getElementById('summary-input-duration').value
+                summaryInputDuration: document.getElementById('summary-input-duration').value,
+                summaryVisualCardEnabled: summaryVisualCardEnabled
             };
             localStorage.setItem(USER_SETTINGS_STORAGE_KEY, JSON.stringify(settings));
             if (typeof updateStorageUsageBadge === 'function') updateStorageUsageBadge();
@@ -13856,6 +14196,10 @@
             }
             if (s.summaryInputDuration !== undefined) {
                 document.getElementById('summary-input-duration').value = s.summaryInputDuration;
+            }
+            if (typeof s.summaryVisualCardEnabled === 'boolean') {
+                summaryVisualCardEnabled = s.summaryVisualCardEnabled;
+                syncSummaryVisualToggleUI();
             }
 
             updateHudVisibility();
