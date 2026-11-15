@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="favicon.png">
-    <title>V3SOFT CartoLinka v1.135 (WebGL GPU Engine)</title>
+    <title>V3SOFT CartoLinka v1.136 (WebGL GPU Engine)</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
@@ -2713,7 +2713,7 @@
                         visibility 0.48s;
         }
         #final-summary-hud.dual-summary-mode {
-            grid-template-columns: 1fr 2fr;
+            grid-template-columns: minmax(max-content, 1fr) 2fr;
         }
         .final-summary-card {
             background: rgba(18, 18, 18, var(--hud-bg-opacity));
@@ -2726,8 +2726,12 @@
             box-shadow: 0 16px 45px rgba(0, 0, 0, calc(0.75 * var(--hud-bg-opacity)));
             color: var(--hud-font-color);
             min-width: 320px;
+            width: max-content;
             box-sizing: border-box;
             transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        #final-summary-hud.dual-summary-mode .final-summary-card {
+            width: 100%;
         }
         .final-summary-visual-card {
             justify-content: space-between;
@@ -2805,7 +2809,7 @@
         }
         @media (orientation: portrait) {
             body.is-mobile-browser #final-summary-hud.dual-summary-mode {
-                grid-template-columns: 1fr 2fr;
+                grid-template-columns: minmax(max-content, 1fr) 2fr;
                 gap: 14px;
             }
             body.is-mobile-browser .final-summary-card {
@@ -3616,7 +3620,7 @@
         <div class="controls-row">
             <div class="app-version-badge">
                 <span class="app-version-title">V3SOFT <span class="brand-carto">Carto</span><span class="brand-linka">Linka</span></span>
-                <span class="app-version-num">v1.135</span>
+                <span class="app-version-num">v1.136</span>
             </div>
             <button id="btn-info" type="button" title="Informácie o aplikácii">ℹ️ INFO</button>
             <button id="btn-help" type="button" title="Zobraziť podrobný návod a vysvetlenie všetkých nastavení aplikácie">❓ HELP</button>
@@ -3947,7 +3951,7 @@
             </div>
             <div class="control-group">
                 <label>Míľnik (km)</label>
-                <input type="number" id="milestone-km" value="1" min="0.1" max="100" step="0.5" style="width: 42px;" title="Interval v kilometroch, po ktorom sa v okne štatistiky aktualizujú kilometre a nastúpané metre">
+                <input type="number" id="milestone-km" value="1.0" min="0.1" max="100" step="0.1" style="width: 42px;" title="Interval v kilometroch, po ktorom sa v okne štatistiky aktualizujú kilometre a nastúpané metre">
             </div>
             <div class="control-group">
                 <label>Bliknutie</label>
@@ -4469,7 +4473,7 @@
 <div id="help-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="help-modal-title">
     <div class="help-modal-box">
         <div class="help-modal-header">
-            <span class="help-modal-title" id="help-modal-title">❓ Návod na používanie – V3SOFT CartoLinka v1.135</span>
+            <span class="help-modal-title" id="help-modal-title">❓ Návod na používanie – V3SOFT CartoLinka v1.136</span>
             <button type="button" id="btn-close-help" title="Zavrieť nápovedu (Esc)">✕ Zavrieť</button>
         </div>
         <div class="help-modal-body">
@@ -4699,7 +4703,7 @@
                 <h3>7. Mobilná verzia rozhrania (označenie verzie s príponou „M“)</h3>
                 <div class="help-item">
                     <span class="help-item-title">Automatická detekcia dotykových zariadení:</span>
-                    Pri otvorení aplikácie na smartfóne alebo tablete (Android, iOS, iPadOS) sa rozhranie automaticky prepne do mobilného režimu (v názve verzie pribudne písmeno <strong>M</strong>, napr. <em>v1.135M</em>):
+                    Pri otvorení aplikácie na smartfóne alebo tablete (Android, iOS, iPadOS) sa rozhranie automaticky prepne do mobilného režimu (v názve verzie pribudne písmeno <strong>M</strong>, napr. <em>v1.136M</em>):
                     <br>• <strong>4 akordeónové sekcie:</strong> Namiesto štyroch širokých riadkov sú nastavenia rozdelené do 4 prehľadných rozbaľovacích kariet (<em>1. 📁 Súbor & Mapa</em>, <em>2. 🎨 Čiara & Vzhľad</em>, <em>3. 🎥 Kamera & Rýchlosť</em>, <em>4. 📊 HUD, POI & Súhrn</em>), ktoré sa pri spustení animácie automaticky zbalia.
                     <br>• <strong>Dotykové posuvníky s tlačidlami − / +:</strong> Každý posuvník je vybavený zväčšeným dotykovým tiahlom a bočnými tlačidlami <strong>−</strong> a <strong>+</strong> pre presné krokovanie hodnôt jedným ťuknutím.
                     <br>• <strong>Optimalizované rozmery a orientácia displeja:</strong> Pre zachovanie maximálneho čistého výhľadu na mapu sú na mobile pevne prednastavené optimálne hodnoty mierky HUD (40 %), písma (32 px), priehľadnosti (85 %), loga Mapy.com (32 px), štýlu panela (NORMAL) a buffera dlaždíc (8), pričom tieto ladiace posuvníky a prepínač MINI HUD sú na mobile skryté. Okno výškového profilu (<em>⛰️ Profil</em>) sa na mobilnom displeji zobrazuje iba pri otočení telefónu <strong>na šírku (landscape)</strong>.
@@ -4740,7 +4744,7 @@
             <div class="info-line"><strong>Koncept a dizajn:</strong> Vlado Troják</div>
             <div class="info-line"><strong>Kód a vývoj:</strong> AI Gemini Argon</div>
             <div class="info-line"><strong>Rok výroby:</strong> 11/2026</div>
-            <div class="info-line"><strong>Verzia:</strong> <span id="info-version-val">v1.135</span></div>
+            <div class="info-line"><strong>Verzia:</strong> <span id="info-version-val">v1.136</span></div>
             <div class="info-freeware">Táto aplikácia je freeware.</div>
             <div class="info-yt-label">Tu môžeš sledovať moje videá:</div>
             <a href="https://www.youtube.com/@VladoTrojak" target="_blank" rel="noopener noreferrer" class="btn-yt-link">
@@ -8712,14 +8716,16 @@
         const btnPwrEl  = document.getElementById('toggle-item-pwr');
 
         if (isFootActivity) {
-            // Chodecká aktivita (Turistika / Beh): defaultne vypnuté rýchlosť aj výkon, zapnuté tempo
+            // Chodecká aktivita (Turistika / Beh): defaultne vypnuté rýchlosť aj výkon, zapnuté tempo, míľnik 0.1 km
             showSpeed = false;
             showPwr = false;
             if (applyDefaults) {
                 showPace = true;
+                const mileInputEl = document.getElementById('milestone-km');
+                if (mileInputEl) mileInputEl.value = '0.1';
             }
         } else {
-            // Kolesová aktivita (MTB / Road / Moto): ak nie je zaznamenaný výkon, vypnúť výkon; pri prepnutí zapnúť rýchlosť a vypnúť tempo
+            // Kolesová aktivita (MTB / Road / Moto): ak nie je zaznamenaný výkon, vypnúť výkon; pri prepnutí zapnúť rýchlosť, vypnúť tempo a nastaviť míľnik 1.0 km
             if (!allowPower) {
                 showPwr = false;
             } else if (applyDefaults) {
@@ -8728,6 +8734,8 @@
             if (applyDefaults) {
                 showSpeed = true;
                 showPace = false;
+                const mileInputEl = document.getElementById('milestone-km');
+                if (mileInputEl) mileInputEl.value = '1.0';
             }
         }
 
@@ -8791,6 +8799,33 @@
             let sumChanged = false;
             for (let i = 0; i < summaryItems.length; i++) {
                 const s = summaryItems[i];
+                const missingVal = (typeof isSummaryValueMissing === 'function') ? isSummaryValueMissing(s.name) : String(s.name || '').includes('--');
+
+                if (s.isAuto && (s.autoType === 'sum_total_rev' || s.icon === 'revolutions')) {
+                    const rawStr = String(s.name || '');
+                    const colonIdx = rawStr.indexOf(':');
+                    if (colonIdx !== -1) {
+                        const lblPart = rawStr.slice(0, colonIdx).trim();
+                        const valPart = rawStr.slice(colonIdx + 1).trim();
+                        if (lblPart === 'Celkový počet otáčok' || lblPart === 'Celkový počet krokov') {
+                            const newLbl = isFootActivity ? 'Celkový počet krokov' : 'Celkový počet otáčok';
+                            const newFullName = `${newLbl}: ${valPart}`;
+                            if (s.name !== newFullName) {
+                                s.name = newFullName;
+                                sumChanged = true;
+                            }
+                        }
+                    }
+                }
+
+                if (missingVal) {
+                    if (s.enabled) {
+                        s.enabled = false;
+                        sumChanged = true;
+                    }
+                    continue;
+                }
+
                 if (s.isAuto) {
                     if (s.autoType === 'sum_avg_pwr' || s.icon === 'power') {
                         const targetPwrEnabled = allowPower ? (applyDefaults ? true : s.enabled) : false;
@@ -9834,14 +9869,20 @@
         const movingHours = movingTimeMs / 3600000;
         const avgMovingSpeedKmh = (movingHours > 1e-5) ? (relDistForAvg / movingHours) : 0;
 
+        const hasValidTotalTime = Boolean(hasTimeData && totalElapsedMs > 0);
+        const hasValidMovingTime = Boolean(hasTimeData && movingTimeMs > 0);
+        const hasValidAvgSpeed = Boolean(hasTimeData && avgMovingSpeedKmh > 0);
+        const hasValidMaxSpeed = Boolean(hasTimeData && maxSpeedKmh > 0);
+        const hasValidAvgPace = Boolean(hasTimeData && avgMovingSpeedKmh >= 0.3);
+
         // 3. Celkový čas jazdy
         result.push({
             id: summaryNextId++,
             km: summaryTriggerKm,
-            name: `Celkový čas jazdy: ${hasTimeData ? formatRideDurationHMS(totalElapsedMs) : '--:--:--'}`,
+            name: `Celkový čas jazdy: ${hasValidTotalTime ? formatRideDurationHMS(totalElapsedMs) : '--:--:--'}`,
             icon: 'clock',
             duration: 5.0,
-            enabled: true,
+            enabled: hasValidTotalTime,
             isAuto: true,
             autoType: 'sum_total_time',
             triggered: false
@@ -9851,10 +9892,10 @@
         result.push({
             id: summaryNextId++,
             km: summaryTriggerKm,
-            name: `Čistý čas jazdy: ${hasTimeData ? formatRideDurationHMS(movingTimeMs) : '--:--:--'}`,
+            name: `Čistý čas jazdy: ${hasValidMovingTime ? formatRideDurationHMS(movingTimeMs) : '--:--:--'}`,
             icon: 'clock',
             duration: 5.0,
-            enabled: true,
+            enabled: hasValidMovingTime,
             isAuto: true,
             autoType: 'sum_moving_time',
             triggered: false
@@ -9866,10 +9907,10 @@
         result.push({
             id: summaryNextId++,
             km: summaryTriggerKm,
-            name: `Priemerná rýchlosť: ${hasTimeData ? avgMovingSpeedKmh.toFixed(1) + ' km/h' : '-- km/h'}`,
+            name: `Priemerná rýchlosť: ${hasValidAvgSpeed ? avgMovingSpeedKmh.toFixed(1) + ' km/h' : '-- km/h'}`,
             icon: 'speedometer',
             duration: 5.0,
-            enabled: !isFootActivitySum,
+            enabled: Boolean(!isFootActivitySum && hasValidAvgSpeed),
             isAuto: true,
             autoType: 'sum_avg_speed',
             triggered: false
@@ -9879,10 +9920,10 @@
         result.push({
             id: summaryNextId++,
             km: summaryTriggerKm,
-            name: `Maximálna rýchlosť: ${hasTimeData ? Math.round(maxSpeedKmh) + ' km/h' : '-- km/h'}`,
+            name: `Maximálna rýchlosť: ${hasValidMaxSpeed ? Math.round(maxSpeedKmh) + ' km/h' : '-- km/h'}`,
             icon: 'speedometer',
             duration: 5.0,
-            enabled: !isFootActivitySum,
+            enabled: Boolean(!isFootActivitySum && hasValidMaxSpeed),
             isAuto: true,
             autoType: 'sum_max_speed',
             triggered: false
@@ -9892,10 +9933,10 @@
         result.push({
             id: summaryNextId++,
             km: summaryTriggerKm,
-            name: `Priemerné tempo pohybu: ${hasTimeData && avgMovingSpeedKmh >= 0.3 ? formatPaceMinSec(avgMovingSpeedKmh) + ' /km' : '--:-- /km'}`,
+            name: `Priemerné tempo pohybu: ${hasValidAvgPace ? formatPaceMinSec(avgMovingSpeedKmh) + ' /km' : '--:-- /km'}`,
             icon: 'stopwatch',
             duration: 5.0,
-            enabled: isFootActivitySum,
+            enabled: Boolean(isFootActivitySum && hasValidAvgPace),
             isAuto: true,
             autoType: 'sum_avg_pace',
             triggered: false
@@ -10051,66 +10092,72 @@
         const dispAvgMovingTempC = rawAvgMovingTempC !== null ? Math.round((rawAvgMovingTempC + getTempOffset()) * 10) / 10 : null;
 
         // 8. Priemerný tep (počas pohybu)
+        const hasValidHr = Boolean(hasHrData && avgMovingHr !== null);
         result.push({
             id: summaryNextId++,
             km: summaryTriggerKm,
-            name: `Priemerný tep: ${hasHrData && avgMovingHr !== null ? avgMovingHr + ' bpm' : '-- bpm'}`,
+            name: `Priemerný tep: ${hasValidHr ? avgMovingHr + ' bpm' : '-- bpm'}`,
             icon: 'heart',
             duration: 5.0,
-            enabled: true,
+            enabled: hasValidHr,
             isAuto: true,
             autoType: 'sum_avg_hr',
             triggered: false
         });
 
         // 9. Priemerný výkon (počas pohybu a mimo nulových hodnôt)
-        const allowPwrInSum = !isFootActivitySum && hasPwrData && avgMovingPwr !== null;
+        const hasValidPwr = Boolean(hasPwrData && avgMovingPwr !== null);
+        const allowPwrInSum = Boolean(!isFootActivitySum && hasValidPwr);
         result.push({
             id: summaryNextId++,
             km: summaryTriggerKm,
-            name: `Priemerný výkon: ${hasPwrData && avgMovingPwr !== null ? avgMovingPwr + ' W' : '-- W'}`,
+            name: `Priemerný výkon: ${hasValidPwr ? avgMovingPwr + ' W' : '-- W'}`,
             icon: 'power',
             duration: 5.0,
-            enabled: Boolean(allowPwrInSum),
+            enabled: allowPwrInSum,
             isAuto: true,
             autoType: 'sum_avg_pwr',
             triggered: false
         });
 
         // 10. Priemerná kadencia (počas pohybu a nenulové hodnoty)
+        const hasValidCad = Boolean(hasCadData && avgMovingCad !== null);
         result.push({
             id: summaryNextId++,
             km: summaryTriggerKm,
-            name: `Priemerná kadencia: ${hasCadData && avgMovingCad !== null ? avgMovingCad + ' rpm' : '-- rpm'}`,
+            name: `Priemerná kadencia: ${hasValidCad ? avgMovingCad + ' rpm' : '-- rpm'}`,
             icon: 'cadence',
             duration: 5.0,
-            enabled: Boolean(hasCadData && avgMovingCad !== null),
+            enabled: hasValidCad,
             isAuto: true,
             autoType: 'sum_avg_cad',
             triggered: false
         });
 
-        // 11. Celkový počet otáčok (kadencie)
+        // 11. Celkový počet otáčok / krokov (podľa rozpoznanej aktivity)
+        const hasValidRev = Boolean(hasCadData && totalRevRounded !== null);
+        const revLabelPrefix = isFootActivitySum ? 'Celkový počet krokov' : 'Celkový počet otáčok';
         result.push({
             id: summaryNextId++,
             km: summaryTriggerKm,
-            name: `Celkový počet otáčok: ${hasCadData && totalRevRounded !== null ? totalRevRounded : '--'}`,
+            name: `${revLabelPrefix}: ${hasValidRev ? totalRevRounded : '--'}`,
             icon: 'revolutions',
             duration: 5.0,
-            enabled: Boolean(hasCadData && totalRevRounded !== null),
+            enabled: hasValidRev,
             isAuto: true,
             autoType: 'sum_total_rev',
             triggered: false
         });
 
         // 12. Priemerná teplota (počas pohybu, s odfiltrovaním stojacich úsekov a teplotným limitom)
+        const hasValidTemp = Boolean(hasTempData && dispAvgMovingTempC !== null);
         result.push({
             id: summaryNextId++,
             km: summaryTriggerKm,
-            name: `Priemerná teplota: ${hasTempData && dispAvgMovingTempC !== null ? dispAvgMovingTempC.toFixed(1) + ' °C' : '-- °C'}`,
+            name: `Priemerná teplota: ${hasValidTemp ? dispAvgMovingTempC.toFixed(1) + ' °C' : '-- °C'}`,
             icon: 'sun',
             duration: 5.0,
-            enabled: true,
+            enabled: hasValidTemp,
             isAuto: true,
             autoType: 'sum_avg_temp',
             rawTempC: rawAvgMovingTempC,
@@ -10118,6 +10165,13 @@
         });
 
         return result;
+    }
+
+    function isSummaryValueMissing(nameStr) {
+        const raw = String(nameStr || '');
+        const colonIdx = raw.indexOf(':');
+        const valPart = colonIdx !== -1 ? raw.slice(colonIdx + 1).trim() : raw.trim();
+        return valPart === '' || valPart.startsWith('--');
     }
 
     function updateAutoSummaryOnTrim() {
@@ -10130,8 +10184,9 @@
             if (existing) {
                 existing.km = fresh.km;
                 existing.name = fresh.name;
-                if (typeof fresh.rawTempC === 'number') {
-                    existing.rawTempC = fresh.rawTempC;
+                existing.rawTempC = (typeof fresh.rawTempC === 'number') ? fresh.rawTempC : null;
+                if (isSummaryValueMissing(fresh.name) && existing.enabled) {
+                    existing.enabled = false;
                 }
                 changed = true;
             }
@@ -11176,6 +11231,9 @@
         if (profileEnabled && rawPoints.length > 1) {
             renderStaticProfile();
             renderProfileDot(lastProfileProgress, lastProfileEle);
+        }
+        if (finalSummaryHudEl && finalSummaryHudEl.classList.contains('final-summary-visible')) {
+            renderFinalSummaryVisualCanvases();
         }
         if (typeof updateBrandBannerLayout === 'function') {
             updateBrandBannerLayout();
